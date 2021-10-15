@@ -1,4 +1,4 @@
-package uf.cs.cn;
+package uf.cs.cn.commtest;
 
 import java.io.*;
 import java.net.Socket;

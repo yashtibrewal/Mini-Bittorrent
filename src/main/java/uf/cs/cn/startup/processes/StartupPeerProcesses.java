@@ -1,4 +1,4 @@
-package uf.cs.cn;
+package uf.cs.cn.startup.processes;
 
 public class StartupPeerProcesses {
     public static void main(String[] args) {
@@ -8,31 +8,31 @@ public class StartupPeerProcesses {
         try {
             Runtime.getRuntime().exec("ssh -i " + rsaKeyLocationInLocal + " " + username +
                     "@lin114-00.cise.ufl.edu cd " + locationAtServer
-                    + " ; java PeerProcess 1001 ");
+                    + " ; java SinglePeerProcess 1001 ");
             Runtime.getRuntime().exec("ssh -i " + rsaKeyLocationInLocal + " " + username +
                     "@lin114-01.cise.ufl.edu cd " + locationAtServer
-                    + " ; java PeerProcess 1002 ");
+                    + " ; java SinglePeerProcess 1002 ");
             Runtime.getRuntime().exec("ssh -i " + rsaKeyLocationInLocal + " " + username +
                     "@lin114-02.cise.ufl.edu cd " + locationAtServer
-                    + " ; java PeerProcess 1003 ");
+                    + " ; java SinglePeerProcess 1003 ");
             Runtime.getRuntime().exec("ssh -i " + rsaKeyLocationInLocal + " " + username +
                     "@lin114-03.cise.ufl.edu cd " + locationAtServer
-                    + " ; java PeerProcess 1004 ");
+                    + " ; java SinglePeerProcess 1004 ");
             Runtime.getRuntime().exec("ssh -i " + rsaKeyLocationInLocal + " " + username +
                     "@lin114-04.cise.ufl.edu cd " + locationAtServer
-                    + " ; java PeerProcess 1005 ");
+                    + " ; java SinglePeerProcess 1005 ");
             Runtime.getRuntime().exec("ssh -i " + rsaKeyLocationInLocal + " " + username +
                     "@lin114-05.cise.ufl.edu cd " + locationAtServer
-                    + " ; java PeerProcess 1006 ");
+                    + " ; java SinglePeerProcess 1006 ");
             Runtime.getRuntime().exec("ssh -i " + rsaKeyLocationInLocal + " " + username +
                     "@lin114-06.cise.ufl.edu cd " + locationAtServer
-                    + " ; java PeerProcess 1007 ");
-            Runtime.getRuntime().exec("ssh -i " + rsaKeyLocationInLocal + " " + username +
-                    "@lin114-08.cise.ufl.edu cd " + locationAtServer
-                    + " ; java PeerProcess 1008 ");
+                    + " ; java SinglePeerProcess 1007 ");
             Runtime.getRuntime().exec("ssh -i " + rsaKeyLocationInLocal + " " + username +
                     "@lin114-07.cise.ufl.edu cd " + locationAtServer
-                    + " ; java PeerProcess 1009 ");
+                    + " ; java SinglePeerProcess 1008 ");
+            Runtime.getRuntime().exec("ssh -i " + rsaKeyLocationInLocal + " " + username +
+                    "@lin114-08.cise.ufl.edu cd " + locationAtServer
+                    + " ; java SinglePeerProcess 1009 ");
         } catch (Exception e) {
             System.err.println("Unable to start the remote peer Processes as expected");
             e.printStackTrace();

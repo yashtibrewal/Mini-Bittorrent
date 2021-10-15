@@ -5,6 +5,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.ByteBuffer;
 
 public class Server {
 
@@ -34,16 +35,21 @@ public class Server {
         }
 
         public void run() {
+            ByteBuffer buffer = ByteBuffer.allocate(32);
+            HandShakeMessage handShakeMessage = new HandShakeMessage();
             try(ObjectInputStream inputStream = new ObjectInputStream(connection.getInputStream());
                 ObjectOutputStream outputStream = new ObjectOutputStream(connection.getOutputStream())) {
                 outputStream.flush();
                 try {
                     while (true) {
-                        message = (String) inputStream.readObject();
-                        outputStream.writeObject(message.toUpperCase());
+                        byte bits[] = new byte[32];
+                        inputStream.read(bits);
+                        System.out.println("Received the following");
+                        System.out.println(new String(bits));
+                        outputStream.writeObject("ACK");
                         outputStream.flush();
                     }
-                } catch (ClassNotFoundException ex) {
+                } catch (Exception ex) {
                     System.err.println(index + " Client: Unknown contents");
                     ex.printStackTrace();
                 }

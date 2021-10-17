@@ -5,6 +5,9 @@ package uf.cs.cn.utils;
  */
 public class HandShakeMessageUtils {
 
+    // TODO: update length checks for all functions to 32 bytes
+    // TODO: Creating a separate Exception for Handshake Message errors, If needed, create a common for all message errors
+
     // peerId is numeric
     public static boolean checkPeerId(byte[] message) throws Exception {
         if (message.length < 32) {

@@ -1,18 +1,19 @@
+// feel free to add new content
 
 Features
 
-// feel free to change the content
-
+Write protocol
+Send and receive and parse handshake - done
 Connect to Client - demo done
 Connect to Server - demo done
-
-Write protocol
-1. Send and receive and parse handshake - In progress
-2. Run code based on config file and not hard coded files
-3. Create Actual Messages implementation
-4. Send and receive actual messages
-6. work on file division and combining ( the piece concept )
-7. configure ssh and things to make it work on UF machines -> (partially done) // feel free to change this @Punakshi
-8. Logging
-9. Testing
-10. Bug fixes and feature changes if any
+work on file division ( the piece concept )
+work on file combining
+Client connections management for PeerServer
+Server connections management for PeerClient
+Create Actual Messages implementation
+Run code based on config file and not hard coded files
+Send and receive actual messages
+configure ssh related to make it work on UF machines -> (partially done) // feel free to change this @Punakshi
+Logging
+Testing - started
+Bug fixes and feature changes if any

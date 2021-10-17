@@ -1,23 +1,39 @@
 package uf.cs.cn.message;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.lang.instrument.Instrumentation;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 
 public class ActualMessage {
+    private int message_length;
+    private byte message_type;
+    private byte[] payload;
 
-
-    int message_length;
-    byte message_type;
-    ArrayList<Character> message_payload;
-
-    ActualMessage() {
-        message_length = 100;
-        message_type = 1;
-        message_payload = new ArrayList<>(message_length);
+    ActualMessage(int message_length, byte message_type) throws Exception {
+        this.message_length = message_length;
+        this.setMessage_type(message_type);
+        payload = new byte[message_length];
     }
 
-    public void setMessage_length(int message_length) {
-        this.message_length = message_length;
+    public void setMessage_type(byte num) throws Exception {
+        if(num< 0 || num >7) {
+            throw new Exception("Invalid Message Type");
+        }
+        this.message_type = num;
+    }
+
+    public void setPayload(byte[] payload) {
+        this.payload = payload;
+    }
+
+    public byte[] getEncodedMessage() throws IOException {
+        // TODO: look for a better logic if any
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        outputStream.write(("" + message_length).getBytes());
+        outputStream.write(message_type);
+        outputStream.write(this.payload);
+        return  outputStream.toByteArray();
     }
 
 }

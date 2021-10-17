@@ -9,7 +9,7 @@ import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class PeerServer extends Thread{
+public class IncomingConnection extends Thread{
     private ServerSocket listening_socket;
     private Socket connection;
     private int client_id;
@@ -17,7 +17,7 @@ public class PeerServer extends Thread{
     private int server_port;
     private int peer_id;
 
-    public PeerServer(int server_port, int peer_id){
+    public IncomingConnection(int server_port, int peer_id){
         this.server_port = server_port;
         this.peer_id = peer_id;
         handShakeMessage = new HandShakeMessage(peer_id);

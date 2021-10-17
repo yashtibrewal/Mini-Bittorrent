@@ -35,5 +35,4 @@ public class ActualMessage {
         outputStream.write(this.payload);
         return  outputStream.toByteArray();
     }
-
 }

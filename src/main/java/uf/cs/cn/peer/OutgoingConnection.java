@@ -7,7 +7,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
-class PeerClient extends Thread {
+class OutgoingConnection extends Thread {
     String hostName;
     private Socket connection;
     int server_id;
@@ -16,7 +16,7 @@ class PeerClient extends Thread {
     // Handshake message will be common for client and server
     private HandShakeMessage handShakeMessage;
 
-    public PeerClient(String hostName,int server_port, int peer_id) {
+    public OutgoingConnection(String hostName, int server_port, int peer_id) {
         this.hostName = hostName;
         this.peer_id = peer_id;
         this.server_port = server_port;

@@ -47,7 +47,7 @@ class PeerClient extends Thread {
             objectInputStream = new ObjectInputStream(connection.getInputStream());
 
             // send handshake message
-            System.out.println("Writing " + handShakeMessage.getMessage() + " to client");
+            System.out.println("Writing " + handShakeMessage.getMessage() + " to server");
             objectOutputStream.write(handShakeMessage.getEncodedMessage());
             objectOutputStream.flush();
 

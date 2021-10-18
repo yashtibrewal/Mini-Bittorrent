@@ -14,7 +14,6 @@ public class IncomingConnection extends Thread{
     private ServerSocket listening_socket;
     private Socket connection;
     private int client_id;
-    private HandShakeMessage handShakeMessage;
     private int server_port;
     private int peer_id;
     private ArrayList<Integer> destination_peer_ids;
@@ -22,7 +21,6 @@ public class IncomingConnection extends Thread{
     public IncomingConnection(int server_port, int peer_id){
         this.server_port = server_port;
         this.peer_id = peer_id;
-        handShakeMessage = new HandShakeMessage(peer_id);
     }
 
     private void storePeerId(byte[] message) throws Exception {
@@ -40,49 +38,20 @@ public class IncomingConnection extends Thread{
 
 
     public void run() {
-        byte handshake_32_byte_buffer[] = new byte[32]; // handshake message reading
         listening_socket = null;
-        ObjectInputStream listening_stream = null;
-        ObjectOutputStream speaking_stream = null;
+        boolean searchForConnection = true;
         try {
             listening_socket = new ServerSocket(server_port);
-            connection = listening_socket.accept();
-            listening_stream = new ObjectInputStream(connection.getInputStream());
-            speaking_stream = new ObjectOutputStream(connection.getOutputStream());
-            // First message exchange is handshake
-            // Handle handshake message
-            listening_stream.read(handshake_32_byte_buffer);
-            System.out.println("Receiver from client " + new String(handshake_32_byte_buffer));
-            HandShakeMessageUtils.parseHandshakeMessage(handshake_32_byte_buffer);
-            // TODO: Check if its the actual peer_id
-            HandShakeMessageUtils.checkPeerId(handshake_32_byte_buffer, new byte[]{3, 1 , 2 , 5});
-
-            // Send handshake
-            speaking_stream.write(handShakeMessage.getEncodedMessage());
-            System.out.println("Writing " + handShakeMessage.getMessage() + " to client");
-            speaking_stream.flush();
-
-            // listen infinitely
-            while(true) {
-                System.out.print(listening_stream.read());
-            }
-
-            // handle common message
-        }catch (Exception e) {
-            // TODO: handle
-            e.printStackTrace();
-        } finally {
-            try {
-                if(listening_stream!=null)
-                    listening_stream.close();
-                if(speaking_stream!=null)
-                    listening_stream.close();
-                if(listening_socket!=null)
-                    listening_stream.close();
-            } catch (Exception e) {
-                System.out.println("Could not release resources due to " + e.getCause());
+            while (searchForConnection) {
+                connection = listening_socket.accept();
+                IncomingConnectionHandler connHandler = new IncomingConnectionHandler(connection, this.peer_id);
+                connHandler.start();
             }
         }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+
 
     }
 }

@@ -8,24 +8,20 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 class OutgoingConnection extends Thread {
-    String hostName;
+    private String destination_host_name;
     private Socket connection;
-    int server_id;
-    int server_port;
-    int destination_peer_id;
-    int self_peer_id;
-    // Handshake message will be common for client and server
+    private int destination_port;
+    private int destination_peer_id;
+    private int self_peer_id;
     private HandShakeMessage handShakeMessage;
 
-    public OutgoingConnection(String hostName, int server_port, int peer_id, int dest_peer_id) {
-        this.hostName = hostName;
-        this.self_peer_id = peer_id;
-        this.destination_peer_id = dest_peer_id;
-        this.server_port = server_port;
-        handShakeMessage = new HandShakeMessage(peer_id);
+    public OutgoingConnection(String destination_host_name, int destination_port, int self_peer_id, int destination_peer_id) {
+        this.destination_host_name = destination_host_name;
+        this.self_peer_id = self_peer_id;
+        this.destination_peer_id = destination_peer_id;
+        this.destination_port = destination_port;
+        handShakeMessage = new HandShakeMessage(this.self_peer_id);
     }
-
-
 
     public void run() {
         byte[] handshakeMessageBuffer = new byte[32];
@@ -33,22 +29,25 @@ class OutgoingConnection extends Thread {
         ObjectOutputStream objectOutputStream = null;
         ObjectInputStream objectInputStream = null;
         try{
-            connection = new Socket(hostName, server_port);
+            connection = new Socket(destination_host_name, destination_port);
             objectOutputStream = new ObjectOutputStream(connection.getOutputStream());
             objectInputStream = new ObjectInputStream(connection.getInputStream());
 
             // send handshake message
             System.out.println("Writing " + handShakeMessage.getMessage() + " to server");
-            objectOutputStream.write(handShakeMessage.getEncodedMessage());
+            objectOutputStream.write(handShakeMessage.getBytes());
             objectOutputStream.flush();
 
             // receive handshake message
             objectInputStream.read(handshakeMessageBuffer);
             System.out.println("Receiver from client " + new String(handshakeMessageBuffer));
-            HandShakeMessageUtils.parseHandshakeMessage(handshakeMessageBuffer);
-            // TODO: Check if its the actual peer_id
-            HandShakeMessageUtils.checkPeerId(handshakeMessageBuffer);
-
+            if(!HandShakeMessageUtils.validateHandShakeMessage(handshakeMessageBuffer)){
+                throw new Exception("Invalid Handshake Message");
+            }
+            // Check if it's the actual peer_id
+            if(!(new HandShakeMessage(handshakeMessageBuffer).checkPeerId(this.destination_peer_id))){
+                throw new Exception("Invalid Peer Id");
+            }
             // send infinitely
             while (true) {
                 objectOutputStream.write(1);

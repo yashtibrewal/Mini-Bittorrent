@@ -1,5 +1,6 @@
 package uf.cs.cn.peer;
 
+import uf.cs.cn.utils.CommonConfigFileReader;
 import uf.cs.cn.utils.PeerInfoConfigFileReader;
 
 import java.util.ArrayList;
@@ -13,44 +14,47 @@ import java.util.ArrayList;
 public class Peer extends Thread{
 
     // TODO: read the port from the file instead of harcoding here
-    private final int server_port = 3000;
     private ArrayList<Integer> neighbour_ids;
     // Handshake message will be common for client and server
-    private ArrayList<IncomingConnection> peer_server = new ArrayList<>();
+    PeerServer peer_server;
+    private int self_peer_id;
     public boolean is_server;
 
     public  Peer(boolean is_server, int self_peer_id){
         this.is_server = is_server;
+        this.self_peer_id = self_peer_id;
     }
 
     /**
      * Purpose of the function is to connect to all peers' servers
-     * @param args
      */
-    public void establishOutgoingConnections(String[] args) {
-        // TODO: Loop through all listening ports from config file and connect to peer's servers
-        // TODO: read this peer's id from  a file
-        // TODO: Add peer_id in constructor
+    public void establishOutgoingConnections() {
         // TODO: Poll this array every x mins and check the connection.
         PeerInfoConfigFileReader.getPeerInfoList();
-        int peer_id = 1000;
-        // Store the object references when looping for future use
-        OutgoingConnection outgoingConnection = new OutgoingConnection("localhost", 3000, 1000, 1001);
-        outgoingConnection.start();
-        //
+        for(PeerInfoConfigFileReader.PeerInfo peerInfo: PeerInfoConfigFileReader.getPeerInfoList()) {
+            if(peerInfo.getPeer_id() != this.self_peer_id) {
+                // Store the object references when looping for future use
+                OutgoingConnection outgoingConnection = new OutgoingConnection(
+                        peerInfo.getPeer_host_name(),
+                        peerInfo.getListening_port(),
+                        this.self_peer_id, peerInfo.getPeer_id()
+                );
+                outgoingConnection.start();
+            }
+        }
     }
 
     /**
      * Purpose of the function is to listen to all incoming peer client requests
-     * @param args
      */
-    public void runServer(String[] args) {
+    public void runServer() {
         // read peer id from file
-        int peer_id = 1000;
+        // TODO: un - hard code this peer id
+
+        int server_port = 3000;
         try{
-            //TODO: Keep one object, and not an array.
-            peer_server.add(new IncomingConnection(server_port, peer_id));
-            peer_server.get(peer_server.size()-1).start();
+            this.peer_server = new PeerServer(server_port, this.self_peer_id);
+            peer_server.start();
         } catch (Exception e) {
             // TODO: handle the exception
             e.printStackTrace();
@@ -61,9 +65,9 @@ public class Peer extends Thread{
     public void run() {
         if(is_server) {
             System.out.println("Starting server");
-            this.runServer(new String[]{});
+            this.runServer();
         } else {
-            this.establishOutgoingConnections(new String[]{});
+            this.establishOutgoingConnections();
             System.out.println("Starting client");
         }
     }

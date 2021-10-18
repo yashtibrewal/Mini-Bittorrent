@@ -9,21 +9,7 @@ public class HandShakeMessageUtils {
     // TODO: Creating a separate Exception for Handshake Message errors, If needed, create a common for all message errors
 
     // peerId is numeric
-    public static boolean checkPeerId(byte[] message) throws Exception {
-        if (message.length < 32) {
-            throw new Exception("Invalid Peer Id");
-        }
-        for (int i=message.length-5; i< message.length; i++) {
-            if (!Character.isDigit(message[i])) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-
-    // TODO: Complete the check for expected == message[:-4]
-    public static boolean checkPeerId(byte[] message, byte[] expected_byte_array) throws Exception {
+    public static boolean validatePeerId(byte[] message) throws Exception {
         if (message.length < 32) {
             throw new Exception("Invalid Peer Id");
         }
@@ -57,13 +43,18 @@ public class HandShakeMessageUtils {
         return true;
     }
 
-    public static void parseHandshakeMessage(byte[] message) throws Exception {
-        // assumption the message is 32 bytes
-        // check for message header
-        checkHandshakeHeaderMessage(message);
-        // check for 8 bytes of 0s
-        checkHandshakePaddingMessage(message);
-        // check peer ids at the last
-        checkPeerId(message);
+    public static boolean validateHandShakeMessage(byte[] message) {
+        try {
+            // assumption the message is 32 bytes
+            // check for message header
+            checkHandshakeHeaderMessage(message);
+            // check for 8 bytes of 0s
+            checkHandshakePaddingMessage(message);
+            // check peer ids at the last
+            validatePeerId(message);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 }

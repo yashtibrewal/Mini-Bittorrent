@@ -42,7 +42,7 @@ public class HandShakeMessageUtilsTest {
     @Test
     public void testcheckPeerId1 () throws Exception{
         boolean result;
-        result = HandShakeMessageUtils.checkPeerId(
+        result = HandShakeMessageUtils.validatePeerId(
                 "P2PFILESHARINGPROJ00000000001000".getBytes()
         );
         Assert.assertTrue(result);
@@ -50,7 +50,7 @@ public class HandShakeMessageUtilsTest {
     @Test
     public void testcheckPeerId2 () throws Exception{
         boolean result;
-        result = HandShakeMessageUtils.checkPeerId(
+        result = HandShakeMessageUtils.validatePeerId(
                 "P2PFILESHARINGPROJ0000000000100A".getBytes()
         );
         Assert.assertFalse(result);

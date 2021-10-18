@@ -8,6 +8,7 @@ public class Main {
         // TODO: Figure out how to run form command prompt
         args = new String[]{"1001"};
         // pass the peer_id to constructor from CLA
+
         int peer_id;
         try {
             peer_id = extractPeerId(args);

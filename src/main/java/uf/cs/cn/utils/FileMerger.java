@@ -18,7 +18,6 @@ public class FileMerger {
         byte[] buffer = new byte[CommonConfigFileReader.piece_size];
         try(FileOutputStream fileOutputStream = new FileOutputStream(new File(out_put_path));
         ) {
-
             // Total number of piece files would be
             int num_of_pieces = (int)Math.ceil(1.0*CommonConfigFileReader.file_size / CommonConfigFileReader.piece_size);
             int read_bytes;
@@ -30,9 +29,9 @@ public class FileMerger {
                 total_bytes_written += read_bytes;
                 fileOutputStream.write(buffer,0,read_bytes);
                 fileOutputStream.flush();
+                fileInputStream.close();
             }
             System.out.println("bytes written "+total_bytes_written);
-            fileInputStream.close();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -67,27 +66,19 @@ public class FileMerger {
         }
 
         String running_dir = System.getProperty("user.dir");
-        String tempFilePath = Paths.get(running_dir, "1001", "piece_1").toString();
-        deleteFile(tempFilePath);
 
-        String tempFilePath2 = Paths.get(running_dir, "1001", "piece_2").toString();
-        deleteFile(tempFilePath2);
-
-
-//        for (int i =0; i < peer_ids.length-1; i += 1) {
-//            String folderPath = Paths.get(running_dir, Integer.toString(peer_ids[i])).toString();
-//            File folder = new File(folderPath);
-//            File[] listOfFiles = folder.listFiles();
-//            for (int j = 0; j < listOfFiles.length; j++) {
-//                String tempFileName = listOfFiles[j].getName();
-//                if (tempFileName.startsWith("piece_")) {
-//                    System.out.println("Checking for file " + tempFileName);
-//                    String tempFilePath = Paths.get(folderPath, tempFileName).toString();
-//                    //File tempFile = new File(tempFilePath);
-//                    deleteFile(tempFilePath);
-//            }
-//            }
-//        }
+        for (int i =0; i < peer_ids.length-1; i += 1) {
+            String folderPath = Paths.get(running_dir, Integer.toString(peer_ids[i])).toString();
+            File folder = new File(folderPath);
+            File[] listOfFiles = folder.listFiles();
+            for (int j = 0; j < listOfFiles.length; j++) {
+                String tempFileName = listOfFiles[j].getName();
+                if (tempFileName.startsWith("piece_")) {
+                    String tempFilePath = Paths.get(folderPath, tempFileName).toString();
+                    deleteFile(tempFilePath);
+            }
+            }
+        }
     }
 
     public static void main(String[] args) {
@@ -97,11 +88,6 @@ public class FileMerger {
                 Paths.get(running_dir, peer_id).toString(),
                 Paths.get(running_dir, peer_id, "merged_file."+CommonConfigFileReader.file_extension).toString());
 
-        //deleteChunks();
-//        String tempFilePath = Paths.get(running_dir, "1001", "piece_1").toString();
-//        deleteFile(tempFilePath);
-//
-//        String tempFilePath2 = Paths.get(running_dir, "1001", "piece_2").toString();
-//        deleteFile(tempFilePath2);
+        deleteChunks();
     }
 }

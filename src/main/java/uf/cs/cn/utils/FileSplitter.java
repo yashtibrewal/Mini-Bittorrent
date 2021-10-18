@@ -9,23 +9,23 @@ import java.nio.file.Paths;
  */
 public class FileSplitter {
     public static void splitFile(String input_file_path, String out_put_path) {
-        try (
-            BufferedReader bufferedReader = new BufferedReader(new FileReader(input_file_path))){
-            char[] piece = new char[CommonConfigFileReader.piece_size];
+        try {
+            FileInputStream fileInputStream = new FileInputStream(input_file_path);
+            byte[] piece = new byte[CommonConfigFileReader.piece_size];
             int counter = 1;
             String output_file_name;
-            FileWriter fileWriter;
+            FileOutputStream fileOutputStream;
             int total_bytes_read = 0;
             while (true) {
                 output_file_name = "piece_" + counter;
-                int number_of_characters_read = bufferedReader.read(piece);
+                int number_of_characters_read = fileInputStream.read(piece);
                 total_bytes_read += number_of_characters_read;
                 if(number_of_characters_read == -1) {
                     break;
                 }
-                fileWriter = new FileWriter(Paths.get(out_put_path, output_file_name).toString());
-                fileWriter.write(piece);
-                fileWriter.close();
+                fileOutputStream = new FileOutputStream(Paths.get(out_put_path, output_file_name).toString());
+                fileOutputStream.write(piece,0,number_of_characters_read);
+                fileOutputStream.close();
                 counter++;
             }
             System.out.println(total_bytes_read);

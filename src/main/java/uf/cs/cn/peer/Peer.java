@@ -19,7 +19,7 @@ public class Peer extends Thread{
     private ArrayList<IncomingConnection> peer_server = new ArrayList<>();
     public boolean is_server;
 
-    public  Peer(boolean is_server){
+    public  Peer(boolean is_server, int self_peer_id){
         this.is_server = is_server;
     }
 

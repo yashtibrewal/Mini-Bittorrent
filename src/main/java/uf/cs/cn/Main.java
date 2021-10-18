@@ -13,9 +13,9 @@ public class Main {
             System.err.println(e.toString());
             System.exit(1);
         }
-        Peer server_instance = new Peer(true);
+        Peer server_instance = new Peer(true, peer_id);
         server_instance.start();
-        Peer client_instance = new Peer(false);
+        Peer client_instance = new Peer(false, peer_id);
         client_instance.start();
     }
 

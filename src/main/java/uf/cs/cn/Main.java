@@ -5,6 +5,8 @@ import uf.cs.cn.peer.Peer;
 public class Main {
 
     public static void main(String[] args) {
+        // TODO: Figure out how to run form command prompt
+        args = new String[]{"1001"};
         // pass the peer_id to constructor from CLA
         int peer_id;
         try {
@@ -21,7 +23,7 @@ public class Main {
     }
 
     public static int extractPeerId(String[] args) throws Exception {
-        if (args.length == 0 || args.length > 1) {
+        if (args.length != 1) {
             throw new Exception("Invalid command line arguments passed");
         }
         return Integer.parseInt(args[0]);

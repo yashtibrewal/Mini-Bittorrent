@@ -16,7 +16,7 @@ import java.util.ArrayList;
  */
 public class PeerInfoConfigFileReader {
     public static final String config_file_name = "PeerInfo.cfg";
-    public static ArrayList<PeerInfo> peerInfoLists = new ArrayList<>();
+    private static ArrayList<PeerInfo> peer_info_lists = new ArrayList<>();
     static {
         try (
                 InputStreamReader inputStreamReader = new InputStreamReader(new FileInputStream(Paths.get(System.getProperty("user.dir"), config_file_name).toString()));
@@ -29,11 +29,15 @@ public class PeerInfoConfigFileReader {
                     break;
                 }
                 words = line.split(" ");
-                peerInfoLists.add(new PeerInfo(Integer.parseInt(words[0]),words[1],Integer.parseInt(words[2]),words[3].equals("1")));
+                peer_info_lists.add(new PeerInfo(Integer.parseInt(words[0]),words[1],Integer.parseInt(words[2]),words[3].equals("1")));
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public static ArrayList<PeerInfo> getPeerInfoList() {
+        return peer_info_lists;
     }
 
     public static class PeerInfo {
@@ -70,9 +74,9 @@ public class PeerInfoConfigFileReader {
             return this.getPeer_id() + " " + this.getPeer_host_name() + " " + this.getListening_port() + " " + (this.isHas_file() ? 1 : 0);
         }
     }
-
+//    Just for testing
     public static void main(String[] args) {
-        for(PeerInfo peerInfo:PeerInfoConfigFileReader.peerInfoLists){
+        for(PeerInfo peerInfo:PeerInfoConfigFileReader.peer_info_lists){
             System.out.println(peerInfo);
         }
     }

@@ -21,6 +21,20 @@ public class HandShakeMessageUtils {
         return true;
     }
 
+
+    // TODO: Complete the check for expected == message[:-4]
+    public static boolean checkPeerId(byte[] message, byte[] expected_byte_array) throws Exception {
+        if (message.length < 32) {
+            throw new Exception("Invalid Peer Id");
+        }
+        for (int i=message.length-5; i< message.length; i++) {
+            if (!Character.isDigit(message[i])) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     public static boolean checkHandshakeHeaderMessage(byte[] message)throws Exception {
         if(message.length < 18) {
             throw new Exception("Invalid Header Message");

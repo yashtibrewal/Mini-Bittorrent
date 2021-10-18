@@ -12,29 +12,20 @@ class OutgoingConnection extends Thread {
     private Socket connection;
     int server_id;
     int server_port;
-    int peer_id;
+    int destination_peer_id;
+    int self_peer_id;
     // Handshake message will be common for client and server
     private HandShakeMessage handShakeMessage;
 
-    public OutgoingConnection(String hostName, int server_port, int peer_id) {
+    public OutgoingConnection(String hostName, int server_port, int peer_id, int dest_peer_id) {
         this.hostName = hostName;
-        this.peer_id = peer_id;
+        this.self_peer_id = peer_id;
+        this.destination_peer_id = dest_peer_id;
         this.server_port = server_port;
         handShakeMessage = new HandShakeMessage(peer_id);
     }
 
-    private void storePeerId(byte[] message) throws Exception {
-        // extracting the last 4 characters and converting to integer and storing it
-        if(message.length != 32) {
-            throw new Exception("Invalid Header Message");
-        }
-        int id = 0;
-        for(int i=28;i<32;i++) {
-            // check for 0 to 9 char range
-            id *= (message[i] - 48);
-        }
-        server_id = id;
-    }
+
 
     public void run() {
         byte[] handshakeMessageBuffer = new byte[32];
@@ -55,7 +46,8 @@ class OutgoingConnection extends Thread {
             objectInputStream.read(handshakeMessageBuffer);
             System.out.println("Receiver from client " + new String(handshakeMessageBuffer));
             HandShakeMessageUtils.parseHandshakeMessage(handshakeMessageBuffer);
-            storePeerId(handshakeMessageBuffer);
+            // TODO: Check if its the actual peer_id
+            HandShakeMessageUtils.checkPeerId(handshakeMessageBuffer);
 
             // send infinitely
             while (true) {

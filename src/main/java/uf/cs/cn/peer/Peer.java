@@ -1,5 +1,7 @@
 package uf.cs.cn.peer;
 
+import uf.cs.cn.utils.PeerInfoConfigFileReader;
+
 import java.util.ArrayList;
 
 /**
@@ -28,9 +30,12 @@ public class Peer extends Thread{
     public void establishOutgoingConnections(String[] args) {
         // TODO: Loop through all listening ports from config file and connect to peer's servers
         // TODO: read this peer's id from  a file
+        // TODO: Add peer_id in constructor
+        // TODO: Poll this array every x mins and check the connection.
+        PeerInfoConfigFileReader.getPeerInfoList();
         int peer_id = 1000;
         // Store the object references when looping for future use
-        OutgoingConnection outgoingConnection = new OutgoingConnection("localhost", 3000, 1000);
+        OutgoingConnection outgoingConnection = new OutgoingConnection("localhost", 3000, 1000, 1001);
         outgoingConnection.start();
         //
     }
@@ -43,6 +48,7 @@ public class Peer extends Thread{
         // read peer id from file
         int peer_id = 1000;
         try{
+            //TODO: Keep one object, and not an array.
             peer_server.add(new IncomingConnection(server_port, peer_id));
             peer_server.get(peer_server.size()-1).start();
         } catch (Exception e) {

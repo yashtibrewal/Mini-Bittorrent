@@ -8,6 +8,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 
 public class IncomingConnection extends Thread{
     private ServerSocket listening_socket;
@@ -16,6 +17,7 @@ public class IncomingConnection extends Thread{
     private HandShakeMessage handShakeMessage;
     private int server_port;
     private int peer_id;
+    private ArrayList<Integer> destination_peer_ids;
 
     public IncomingConnection(int server_port, int peer_id){
         this.server_port = server_port;
@@ -52,7 +54,8 @@ public class IncomingConnection extends Thread{
             listening_stream.read(handshake_32_byte_buffer);
             System.out.println("Receiver from client " + new String(handshake_32_byte_buffer));
             HandShakeMessageUtils.parseHandshakeMessage(handshake_32_byte_buffer);
-            storePeerId(handshake_32_byte_buffer);
+            // TODO: Check if its the actual peer_id
+            HandShakeMessageUtils.checkPeerId(handshake_32_byte_buffer, new byte[]{3, 1 , 2 , 5});
 
             // Send handshake
             speaking_stream.write(handShakeMessage.getEncodedMessage());

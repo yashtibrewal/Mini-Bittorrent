@@ -1,5 +1,6 @@
 package uf.cs.cn.message;
 
+//TODO : check if we can use ENUM here
 public class MessageType {
     public static final byte CHOKE = 0;
     public static final byte UN_CHOKE = 1;

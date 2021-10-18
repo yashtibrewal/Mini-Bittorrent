@@ -1,0 +1,1 @@
+Remove-Item .\1001\piece_*

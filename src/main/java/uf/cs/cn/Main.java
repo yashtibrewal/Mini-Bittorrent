@@ -9,14 +9,15 @@ public class Main {
         int peer_id;
         try {
             peer_id = extractPeerId(args);
+            Peer server_instance = new Peer(true, peer_id);
+            server_instance.start();
+            Peer client_instance = new Peer(false, peer_id);
+            client_instance.start();
         } catch (Exception e) {
             System.err.println(e.toString());
             System.exit(1);
         }
-        Peer server_instance = new Peer(true, peer_id);
-        server_instance.start();
-        Peer client_instance = new Peer(false, peer_id);
-        client_instance.start();
+
     }
 
     public static int extractPeerId(String[] args) throws Exception {

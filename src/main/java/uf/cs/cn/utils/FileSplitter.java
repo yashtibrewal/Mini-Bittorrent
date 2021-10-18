@@ -3,7 +3,6 @@ package uf.cs.cn.utils;
 import java.io.*;
 import java.nio.file.Paths;
 
-// TODO: Debug why is it creating less number of files than expected, only 22884321 bytes used out of total 24301474, any hidden concept?
 /**
  * Aim is to split a file into pieces
  */

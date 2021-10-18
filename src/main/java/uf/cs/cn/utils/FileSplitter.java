@@ -29,6 +29,7 @@ public class FileSplitter {
                 counter++;
             }
             System.out.println(total_bytes_read);
+            fileInputStream.close();
         } catch (FileNotFoundException e) {
             System.out.println(e.getMessage());
         } catch (IOException e) {

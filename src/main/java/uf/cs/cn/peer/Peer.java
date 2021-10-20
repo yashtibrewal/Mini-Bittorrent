@@ -49,11 +49,8 @@ public class Peer extends Thread{
      */
     public void runServer() {
         // read peer id from file
-        // TODO: un - hard code this peer id
-
-        int server_port = 3000;
         try{
-            this.peer_server = new PeerServer(server_port, this.self_peer_id);
+            this.peer_server = new PeerServer(PeerInfoConfigFileReader.getPortForPeerID(this.self_peer_id), this.self_peer_id);
             peer_server.start();
         } catch (Exception e) {
             // TODO: handle the exception

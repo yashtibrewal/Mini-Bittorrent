@@ -34,13 +34,13 @@ class OutgoingConnection extends Thread {
             objectInputStream = new ObjectInputStream(connection.getInputStream());
 
             // send handshake message
-            System.out.println("Writing " + handShakeMessage.getMessage() + " to server");
+            System.out.println("Writing " + handShakeMessage.getMessage() + " to server peer " + destination_peer_id);
             objectOutputStream.write(handShakeMessage.getBytes());
             objectOutputStream.flush();
 
             // receive handshake message
             objectInputStream.read(handshakeMessageBuffer);
-            System.out.println("Receiver from client " + new String(handshakeMessageBuffer));
+            System.out.println("Received " + new String(handshakeMessageBuffer) + " from server peer " + destination_peer_id);
             if(!HandShakeMessageUtils.validateHandShakeMessage(handshakeMessageBuffer)){
                 throw new Exception("Invalid Handshake Message");
             }

@@ -2,12 +2,16 @@ package uf.cs.cn;
 
 import uf.cs.cn.peer.Peer;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
 public class Main {
 
-    public static void main(String[] args) {
-        // TODO: Figure out how to run form command prompt
-        args = new String[]{"1001"};
-        // pass the peer_id to constructor from CLA
+    public static void main(String[] args) throws IOException {
+        System.out.println("Please enter the peer id");
+        args = new String[]{new BufferedReader(new InputStreamReader(System.in)).readLine()};
+        // TODO: pass the peer_id to constructor from Command Line Argument
 
         int peer_id;
         try {

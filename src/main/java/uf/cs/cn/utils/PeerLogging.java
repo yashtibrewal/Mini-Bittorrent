@@ -1,5 +1,6 @@
 package uf.cs.cn.utils;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -26,7 +27,10 @@ public class PeerLogging {
         try {
             this.dateFormat = new SimpleDateFormat("dd-MMM-yyyy hh:mm:ss a");
             this.logFileName = "log_peer_" + this.peerId + ".log";
-            this.peerLogFileHandler = new FileHandler(this.logFileName, false);
+            this.peerLogFileHandler = new FileHandler(Paths.get(System.getProperty("user.dir"),
+                    String.valueOf(this.peerId),
+                    this.logFileName).toString(),
+                    false);
             System.setProperty("java.util.logging.SimpleFormatter.format", "%5$s %n");
             this.peerLogFileHandler.setFormatter(new SimpleFormatter());
             this.peerLogger = Logger.getLogger("Peer_Logs");
@@ -71,7 +75,7 @@ public class PeerLogging {
                 + "] has the optimistically unchoked neighbour [" + peer + "].");
     }
 
-    public synchronized void unchokingNeighbourLog(String peer) {
+    public synchronized void unChokingNeighbourLog(String peer) {
         Calendar c = Calendar.getInstance();
         String currTime = this.dateFormat.format(c.getTime());
         this.peerLogger.log(Level.INFO,

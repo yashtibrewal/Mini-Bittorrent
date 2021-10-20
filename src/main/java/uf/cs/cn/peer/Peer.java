@@ -2,6 +2,7 @@ package uf.cs.cn.peer;
 
 import uf.cs.cn.utils.CommonConfigFileReader;
 import uf.cs.cn.utils.PeerInfoConfigFileReader;
+import uf.cs.cn.utils.PeerLogging;
 
 import java.util.ArrayList;
 
@@ -13,16 +14,18 @@ import java.util.ArrayList;
 
 public class Peer extends Thread{
 
-    // TODO: read the port from the file instead of harcoding here
+    // TODO: read the port from the file instead of hard coding here
     private ArrayList<Integer> neighbour_ids;
     // Handshake message will be common for client and server
     PeerServer peer_server;
     private int self_peer_id;
     public boolean is_server;
+    private PeerLogging peerLogging;
 
     public  Peer(boolean is_server, int self_peer_id){
         this.is_server = is_server;
         this.self_peer_id = self_peer_id;
+        peerLogging = new PeerLogging(String.valueOf(self_peer_id));
     }
 
     /**
@@ -33,7 +36,8 @@ public class Peer extends Thread{
         PeerInfoConfigFileReader.getPeerInfoList();
         for(PeerInfoConfigFileReader.PeerInfo peerInfo: PeerInfoConfigFileReader.getPeerInfoList()) {
             if(peerInfo.getPeer_id() != this.self_peer_id) {
-                // Store the object references when looping for future use
+                peerLogging.outgoingTCPConnectionLog(String.valueOf(peerInfo.getPeer_id()));
+                //TODO: Store the object references when looping for future use
                 OutgoingConnection outgoingConnection = new OutgoingConnection(
                         peerInfo.getPeer_host_name(),
                         peerInfo.getListening_port(),

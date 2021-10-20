@@ -65,11 +65,11 @@ public class Peer extends Thread{
     @Override
     public void run() {
         if(is_server) {
-            System.out.println("Starting server");
+            System.out.println("Starting peer " + self_peer_id + " as a server");
             this.runServer();
         } else {
             this.establishOutgoingConnections();
-            System.out.println("Starting client");
+            System.out.println("Starting peer " + self_peer_id + " as a client");
         }
     }
 

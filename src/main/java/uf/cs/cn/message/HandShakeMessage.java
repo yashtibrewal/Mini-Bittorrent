@@ -30,7 +30,6 @@ public class HandShakeMessage {
         }
         id = 0;
         for(int i=0;i<4;i++) {
-            System.out.println(id);
             id = id*10+(peer_id[i]-48);
         }
     }

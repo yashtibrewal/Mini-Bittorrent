@@ -36,7 +36,6 @@ public class IncomingConnectionHandler extends Thread {
             // First message exchange is handshake
             // Handle handshake message
             listening_stream.read(handshake_32_byte_buffer);
-            System.out.println("Received " + new String(handshake_32_byte_buffer) + " from the client peer "+this.client_peer_id);
             HandShakeMessageUtils.validateHandShakeMessage(handshake_32_byte_buffer);
             // Check if it's the actual peer_id
             HandShakeMessageUtils.validateHandShakeMessage(handshake_32_byte_buffer);
@@ -46,6 +45,7 @@ public class IncomingConnectionHandler extends Thread {
 //                throw new Exception("Invalid Peer Id");
 //            }
             this.client_peer_id = new HandShakeMessage(handshake_32_byte_buffer).getPeerId();
+            System.out.println("Received " + new String(handshake_32_byte_buffer) + " from the client peer "+this.client_peer_id);
             peerLogging.incomingTCPConnectionLog(String.valueOf(this.client_peer_id));
             // Send handshake
             speaking_stream.write(handShakeMessage.getBytes());

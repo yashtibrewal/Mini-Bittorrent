@@ -26,7 +26,6 @@ public class HandShakeMessage {
         index = 0;
         for(int i=28;i<32;i++) {
             peer_id[index] = buffer[i];
-            System.out.println(buffer[i]);
             index++;
         }
         id = 0;

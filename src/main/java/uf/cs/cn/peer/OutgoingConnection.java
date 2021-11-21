@@ -1,6 +1,8 @@
 package uf.cs.cn.peer;
 
+import uf.cs.cn.message.BitfieldMessage;
 import uf.cs.cn.message.HandShakeMessage;
+import uf.cs.cn.utils.BitFieldUtils;
 import uf.cs.cn.utils.HandShakeMessageUtils;
 
 import java.io.ObjectInputStream;
@@ -50,7 +52,19 @@ class OutgoingConnection extends Thread {
             }
             // send infinitely
             while (true) {
-                objectOutputStream.write(1);
+                int numChunks = BitFieldUtils.getNumberOfChunks(this.self_peer_id);
+                int messageLength = 0;
+
+                if (numChunks%8 == 0) {
+                    messageLength = numChunks%8;
+                } else {
+                    messageLength = numChunks%8 + 1;
+                }
+
+                BitfieldMessage bitfieldMessage = new BitfieldMessage( messageLength, (byte) 5);
+                byte payload = bitfieldMessage.generatePayload();
+
+                objectOutputStream.write(payload);
                 objectOutputStream.flush();
                 Thread.sleep(5000);
             }

@@ -22,7 +22,9 @@ public class ActualMessage {
         }
         this.message_type = num;
     }
-
+    public int getMessage_length() {
+        return this.message_length;
+    }
     public void setPayload(byte[] payload) {
         this.payload = payload;
     }

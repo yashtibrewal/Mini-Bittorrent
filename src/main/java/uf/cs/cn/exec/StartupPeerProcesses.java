@@ -1,4 +1,4 @@
-package uf.cs.cn;
+package uf.cs.cn.exec;
 
 public class StartupPeerProcesses {
     public static void main(String[] args) {

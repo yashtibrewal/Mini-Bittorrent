@@ -11,7 +11,6 @@ public class BitfieldMessage extends ActualMessage {
         int numChunks = BitFieldUtils.getNumberOfChunks(this.peer_id);
     }
 
-
     public byte generatePayload() {
         int byteVal = 0;
         int i;

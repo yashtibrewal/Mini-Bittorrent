@@ -1,6 +1,8 @@
 package uf.cs.cn.message;
 
 import uf.cs.cn.utils.BitFieldUtils;
+
+import java.io.IOException;
 import java.lang.Math.*;
 
 public class BitfieldMessage extends ActualMessage {
@@ -8,7 +10,7 @@ public class BitfieldMessage extends ActualMessage {
         super(messageLength, MessageType.BIT_FIELD);
     }
 
-    public byte[] generatePayload() {
+    public byte[] generatePayload() throws IOException {
         int byteVal = 0;
         int i;
         int j =0;
@@ -28,7 +30,9 @@ public class BitfieldMessage extends ActualMessage {
                 messageBody[++j] = (byte) byteVal;
             }
 
-        System.out.println("Message body is  " + messageBody.toString());
-        return messageBody;
+        System.out.println("Message body is  " + messageBody);
+        setPayload(messageBody);
+
+        return getEncodedMessage();
         }
     }

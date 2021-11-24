@@ -16,7 +16,6 @@ public class BitFieldUtils {
         PathMatcher pathMatcher = FileSystems.getDefault().getPathMatcher("glob:" + pattern);
 
         Stream<Path> paths = Files.find(basePath, Integer.MAX_VALUE, (path, f)->pathMatcher.matches(path));
-
         return (int) paths.count();
     }
 

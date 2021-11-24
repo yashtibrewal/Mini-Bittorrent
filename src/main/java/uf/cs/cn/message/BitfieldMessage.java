@@ -8,7 +8,7 @@ public class BitfieldMessage extends ActualMessage {
         super(messageLength, MessageType.BIT_FIELD);
     }
 
-    public byte generatePayload() {
+    public byte[] generatePayload() {
         int byteVal = 0;
         int i;
         int j =0;
@@ -28,6 +28,7 @@ public class BitfieldMessage extends ActualMessage {
                 messageBody[++j] = (byte) byteVal;
             }
 
-        return (byte) byteVal;
+        System.out.println("Message body is  " + messageBody.toString());
+        return messageBody;
         }
     }

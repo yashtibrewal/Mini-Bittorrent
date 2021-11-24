@@ -61,7 +61,7 @@ class OutgoingConnection extends Thread {
                     messageLength = numChunks%8 + 1;
                 }
 
-                BitfieldMessage bitfieldMessage = new BitfieldMessage( messageLength, (byte) 5);
+                BitfieldMessage bitfieldMessage = new BitfieldMessage( messageLength, this.self_peer_id);
                 byte payload = bitfieldMessage.generatePayload();
 
                 objectOutputStream.write(payload);

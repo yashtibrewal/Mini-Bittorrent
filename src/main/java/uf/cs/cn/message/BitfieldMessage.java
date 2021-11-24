@@ -4,11 +4,8 @@ import uf.cs.cn.utils.BitFieldUtils;
 import java.lang.Math.*;
 
 public class BitfieldMessage extends ActualMessage {
-    int peer_id;
-
-    public BitfieldMessage(int message_length, byte message_type) throws Exception {
-        super(message_length, message_type);
-        int numChunks = BitFieldUtils.getNumberOfChunks(this.peer_id);
+    public BitfieldMessage(int peer_id, int messageLength) throws Exception {
+        super(messageLength, MessageType.BIT_FIELD);
     }
 
     public byte generatePayload() {

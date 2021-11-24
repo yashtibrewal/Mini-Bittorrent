@@ -60,6 +60,13 @@ public class IncomingConnectionHandler extends Thread {
                 byte[] message_len = new byte[4];
                 listening_stream.read(message_len, 0, 4);
 
+                int message_len_val = 0;
+                message_len_val = java.nio.ByteBuffer.wrap(message_len).getInt();
+                byte[] actual_message = new byte[message_len_val];
+                while(message_len_val-- > 0){
+                    listening_stream.read();
+                }
+
 
 
             }

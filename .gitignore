@@ -2,3 +2,4 @@ piece_*
 target
 .idea
 *.log*
+*.class*

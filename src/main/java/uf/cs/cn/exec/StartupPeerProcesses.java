@@ -2,9 +2,9 @@ package uf.cs.cn.exec;
 
 public class StartupPeerProcesses {
     public static void main(String[] args) {
-        String username = "";
-        String locationAtServer = "/cise/homes/--------/-----/CN-Group29";
-        String rsaKeyLocationInLocal = "/Users/--------/cngroup29";
+        String username = "punakshi.chaand";
+        String locationAtServer = "/cise/homes/punakshi.chaand/punakshi/CN-Group29";
+        String rsaKeyLocationInLocal = "/Users/punakshi.chaand/punakshi/cngroup29";
         try {
             Runtime.getRuntime().exec("javac Main.java");
             Runtime.getRuntime().exec("ssh -i " + rsaKeyLocationInLocal + " " + username +

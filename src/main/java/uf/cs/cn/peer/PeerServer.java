@@ -1,5 +1,7 @@
 package uf.cs.cn.peer;
 
+import uf.cs.cn.utils.FileSplitter;
+
 import java.net.ServerSocket;
 
 public class PeerServer extends Thread{
@@ -17,6 +19,7 @@ public class PeerServer extends Thread{
         boolean searchForConnection = true;
         try {
             listening_socket = new ServerSocket(self_port);
+            FileSplitter.splitFile("/Users/punakshichaand/IdeaProjects/CN-Group29/pdf.pdf","/Users/punakshichaand/IdeaProjects/CN-Group29/filechunks" );
             while (searchForConnection) {
                 IncomingConnectionHandler connHandler = new IncomingConnectionHandler(listening_socket.accept(), this.self_peer_id);
                 connHandler.start();

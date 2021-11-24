@@ -5,7 +5,7 @@ import java.io.IOException;
 public class UnchokeMessage extends ActualMessage{
 
     UnchokeMessage() throws Exception {
-        super(4, (byte) 1);
+        super(4, MessageType.UN_CHOKE);
     }
 
     public byte[] getUnchokeMessageBytes(){

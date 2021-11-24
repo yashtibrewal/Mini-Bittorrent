@@ -7,7 +7,7 @@ public class RequestMessage extends ActualMessage{
     private int pieceIndex;
 
     RequestMessage(int pieceIndex) throws Exception {
-        super(4, (byte) 6);
+        super(4, MessageType.REQUEST);
         this.pieceIndex = pieceIndex;
         makeRequestMessage();
     }

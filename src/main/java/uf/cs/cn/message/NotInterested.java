@@ -5,7 +5,7 @@ import java.io.IOException;
 public class NotInterested extends ActualMessage{
 
     NotInterested() throws Exception {
-        super(4, (byte) 3);
+        super(4, MessageType.NOT_INTERESTED);
     }
 
     public byte[] getNotInterestedMessageBytes(){

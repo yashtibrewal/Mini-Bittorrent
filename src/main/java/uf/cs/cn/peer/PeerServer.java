@@ -1,8 +1,11 @@
 package uf.cs.cn.peer;
 
+import uf.cs.cn.utils.CommonConfigFileReader;
 import uf.cs.cn.utils.FileSplitter;
+import uf.cs.cn.utils.PeerInfoConfigFileReader;
 
 import java.net.ServerSocket;
+import java.nio.file.Paths;
 
 public class PeerServer extends Thread{
     private ServerSocket listening_socket;
@@ -19,7 +22,11 @@ public class PeerServer extends Thread{
         boolean searchForConnection = true;
         try {
             listening_socket = new ServerSocket(self_port);
-            FileSplitter.splitFile("/Users/punakshichaand/IdeaProjects/CN-Group29/pdf.pdf","/Users/punakshichaand/IdeaProjects/CN-Group29/filechunks" );
+            String running_dir = System.getProperty("user.dir"); // gets the base directory of the project
+            String peer_id = String.valueOf(PeerInfoConfigFileReader.getPeerInfoList().get(0).getPeer_id());
+            FileSplitter.splitFile(
+                    Paths.get(running_dir, peer_id, CommonConfigFileReader.file_name).toString(),
+                    Paths.get(running_dir, peer_id).toString());
             while (searchForConnection) {
                 IncomingConnectionHandler connHandler = new IncomingConnectionHandler(listening_socket.accept(), this.self_peer_id);
                 connHandler.start();

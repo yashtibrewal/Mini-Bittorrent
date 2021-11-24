@@ -2,6 +2,7 @@ package uf.cs.cn.peer;
 
 import uf.cs.cn.message.HandShakeMessage;
 import uf.cs.cn.utils.HandShakeMessageUtils;
+import uf.cs.cn.utils.MessageParser;
 import uf.cs.cn.utils.PeerLogging;
 
 import java.io.ObjectInputStream;
@@ -15,6 +16,7 @@ public class IncomingConnectionHandler extends Thread {
     ObjectInputStream listening_stream = null;
     ObjectOutputStream speaking_stream = null;
     private PeerLogging peerLogging;
+    private static MessageParser messageParser;
 
     private HandShakeMessage handShakeMessage;
     public IncomingConnectionHandler(Socket connection, int self_peer_id){
@@ -22,6 +24,7 @@ public class IncomingConnectionHandler extends Thread {
         this.self_peer_id = self_peer_id;
         handShakeMessage = new HandShakeMessage(self_peer_id);
         peerLogging = new PeerLogging(String.valueOf(self_peer_id));
+        messageParser = new MessageParser();
     }
 
     public void run() {
@@ -54,7 +57,11 @@ public class IncomingConnectionHandler extends Thread {
 
             // listen infinitely
             while (true) {
-                System.out.print(listening_stream.read());
+                byte[] message_len = new byte[4];
+                listening_stream.read(message_len, 0, 4);
+
+
+
             }
         }
         catch (Exception e) {

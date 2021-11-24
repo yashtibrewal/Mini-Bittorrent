@@ -50,22 +50,13 @@ class OutgoingConnection extends Thread {
             if(!(new HandShakeMessage(handshakeMessageBuffer).checkPeerId(this.destination_peer_id))){
                 throw new Exception("Invalid Peer Id");
             }
+
+
+            sendBitFieldMessage(objectOutputStream);
+
             // send infinitely
             while (true) {
-                int numChunks = BitFieldUtils.getNumberOfChunks(this.self_peer_id);
-                int messageLength = 0;
-
-                if (numChunks%8 == 0) {
-                    messageLength = numChunks%8;
-                } else {
-                    messageLength = numChunks%8 + 1;
-                }
-
-                BitfieldMessage bitfieldMessage = new BitfieldMessage( messageLength, this.self_peer_id);
-                byte payload = bitfieldMessage.generatePayload();
-
-                objectOutputStream.write(payload);
-                objectOutputStream.flush();
+                System.out.println("Have Messages");
                 Thread.sleep(5000);
             }
         } catch (Exception ex) {
@@ -86,6 +77,23 @@ class OutgoingConnection extends Thread {
                 System.out.println("Could not close connection due to " + e.getCause());
             }
         }
+    }
+
+    private void sendBitFieldMessage(ObjectOutputStream objectOutputStream) throws Exception {
+        int numChunks = BitFieldUtils.getNumberOfChunks(this.self_peer_id);
+        int messageLength = 0;
+
+        if (numChunks%8 == 0) {
+            messageLength = numChunks%8;
+        } else {
+            messageLength = numChunks%8 + 1;
+        }
+
+        BitfieldMessage bitfieldMessage = new BitfieldMessage( messageLength, this.self_peer_id);
+        byte payload = bitfieldMessage.generatePayload();
+
+        objectOutputStream.write(payload);
+        objectOutputStream.flush();
     }
 
 }

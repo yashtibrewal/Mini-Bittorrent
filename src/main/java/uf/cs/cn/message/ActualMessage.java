@@ -36,8 +36,14 @@ public class ActualMessage {
         for(int i=0;i<4;i++){
             message_length_bytes[i] = message[i];
         }
-        this.message_length = new BigInteger(message_length_bytes).intValue();
+        this.message_length = this.convertByteArrayToInt(message_length_bytes);
         this.message_type = message[4];
+        //TODO: handle message_type and payload
+    }
+
+    public ActualMessage(byte[] message_length, byte[] payload){
+        this.message_length = this.convertByteArrayToInt(message_length);
+        this.message_type = payload[0];
         //TODO: handle message_type and payload
     }
 

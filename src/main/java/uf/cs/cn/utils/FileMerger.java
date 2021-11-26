@@ -45,6 +45,7 @@ public class FileMerger {
             }
         }
     }
+
     public static void deleteFile(String fileName) {
         try {
             Files.delete(Path.of(fileName));
@@ -57,6 +58,7 @@ public class FileMerger {
             System.err.println(x);
         }
     }
+
     public static void deleteChunks() {
         int[] peer_ids = new int[PeerInfoConfigFileReader.getPeerInfoList().size()];
         int k=0;

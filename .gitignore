@@ -20,3 +20,5 @@ src/main/java/uf/cs/cn/utils/HandShakeMessageUtils.class
 src/main/java/uf/cs/cn/utils/PeerInfoConfigFileReader$PeerInfo.class
 src/main/java/uf/cs/cn/utils/PeerInfoConfigFileReader.class
 src/main/java/uf/cs/cn/utils/PeerLogging.class
+Common.cfg
+PeerInfo.cfg

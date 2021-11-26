@@ -10,6 +10,7 @@ import java.nio.file.*;
  */
 public class BitFieldUtils {
     public static int getNumberOfChunks(int peer_id) throws IOException {
+        // TODO: PLEASE CHANGE logic
         String currentDirectory = System.getProperty("user.dir");
         Path basePath = Paths.get(currentDirectory, String.valueOf(peer_id));
         Path pattern = Paths.get(String.valueOf(basePath), "piece_*");

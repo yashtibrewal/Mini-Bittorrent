@@ -17,6 +17,7 @@ public class Peer extends Thread{
     private HashMap<Integer,ArrayList<Boolean>> neighbour_file_chunks;
     private ArrayList<Boolean> self_file_chunks;
 
+    // TODO: read the port from the file instead of hard coding here
     private ArrayList<Integer> neighbour_ids;
     // Handshake message will be common for client and server
     PeerServer peer_server;
@@ -47,6 +48,10 @@ public class Peer extends Thread{
         this.self_peer_id = self_peer_id;
         peerLogging = new PeerLogging(String.valueOf(self_peer_id));
         Peer.peer = this;
+    }
+
+    public static int getPeerId(){
+        return Peer.getInstance().self_peer_id;
     }
 
     /**
@@ -100,4 +105,7 @@ public class Peer extends Thread{
         return true;
     }
 
+    public void updateNeighbourFileChunk(int neighbour_id, byte[] neighbour_chunk){
+
+    }
 }

@@ -2,6 +2,7 @@ package uf.cs.cn.peer;
 
 import uf.cs.cn.message.BitfieldMessage;
 import uf.cs.cn.message.HandShakeMessage;
+import uf.cs.cn.message.HaveMessage;
 import uf.cs.cn.utils.BitFieldUtils;
 import uf.cs.cn.utils.HandShakeMessageUtils;
 import uf.cs.cn.utils.PeerLogging;
@@ -54,7 +55,10 @@ class OutgoingConnection extends Thread {
                 peerLogging.genericErrorLog("Invalid Peer Id");
             }
 
-            sendBitFieldMessage(objectOutputStream);
+            //sendBitFieldMessage(objectOutputStream);
+
+            objectOutputStream.write(new HaveMessage(1).getEncodedMessage());
+            objectOutputStream.flush();
 
             // send infinitely
             while (true) {

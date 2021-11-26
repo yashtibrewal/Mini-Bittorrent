@@ -7,7 +7,7 @@ import uf.cs.cn.peer.Peer;
  * This class is used for checking the packet structure and raises exceptions accordingly
  */
 public class HandShakeMessageUtils {
-    static PeerLogging peerLogging = new PeerLogging(String.valueOf(Peer.getInstance().getSelf_peer_id()));
+    static PeerLogging peerLogging = new PeerLogging();
 
     // peerId is numeric
     public static boolean validatePeerId(byte[] message) throws Exception {

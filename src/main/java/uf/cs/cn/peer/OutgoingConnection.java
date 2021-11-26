@@ -26,7 +26,7 @@ class OutgoingConnection extends Thread {
         this.destination_peer_id = destination_peer_id;
         this.destination_port = destination_port;
         handShakeMessage = new HandShakeMessage(this.self_peer_id);
-        peerLogging = new PeerLogging(String.valueOf(self_peer_id));
+        peerLogging = new PeerLogging();
     }
 
     public void run() {

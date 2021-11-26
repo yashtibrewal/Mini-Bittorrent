@@ -46,7 +46,7 @@ public class Peer extends Thread{
 
     private Peer(int self_peer_id){
         this.self_peer_id = self_peer_id;
-        peerLogging = new PeerLogging(String.valueOf(self_peer_id));
+        peerLogging = new PeerLogging();
         Peer.peer = this;
     }
 

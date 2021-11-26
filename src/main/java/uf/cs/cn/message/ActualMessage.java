@@ -21,6 +21,8 @@ public class ActualMessage {
     private byte message_type;
     private byte[] payload;
 
+    public ActualMessage(){}
+
     public ActualMessage(int message_length, byte message_type) throws Exception {
         this.message_length = message_length;
         this.setMessage_type(message_type);
@@ -57,6 +59,11 @@ public class ActualMessage {
         }
         this.message_type = num;
     }
+
+    public void setMessageLength(int message_length){
+        this.message_length = message_length;
+    }
+
     public int getMessage_length() {
         return this.message_length;
     }
@@ -69,15 +76,16 @@ public class ActualMessage {
         this.payload = payload;
     }
 
+    public byte[] getPayload(){
+        return this.payload;
+    }
+
     public byte[] getEncodedMessage() throws IOException {
         // TODO: look for a better logic if any
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        this.payload = new byte[0];
         outputStream.write(ActualMessageUtils.convertIntToByteArray(this.message_length));
         outputStream.write(message_type);
         outputStream.write(payload);
         return  outputStream.toByteArray();
-    }
-    public static void main(String args[]) throws Exception {
     }
 }

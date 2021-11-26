@@ -39,8 +39,6 @@ public class FileSplitter {
         FileSplitter.splitFile(
                 Paths.get(running_dir, peer_id, CommonConfigFileReader.file_name).toString(),
                 Paths.get(running_dir, peer_id).toString());
-
-
         Thread.sleep(500000);
     }
 }

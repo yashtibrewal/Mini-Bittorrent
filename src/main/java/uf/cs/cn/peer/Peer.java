@@ -44,6 +44,10 @@ public class Peer extends Thread{
         Peer.peer = this;
     }
 
+    public static int getPeerId(){
+        return Peer.getInstance().self_peer_id;
+    }
+
     /**
      * Purpose of the function is to connect to all peers' servers
      */
@@ -89,5 +93,9 @@ public class Peer extends Thread{
     public boolean gotCompleteFile() {
         //TODO: Implement check of boolean piece array
         return true;
+    }
+
+    public void updateNeighbourFileChunk(int neighbour_id, byte[] neighbour_chunk){
+
     }
 }

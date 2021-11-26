@@ -4,6 +4,7 @@ import uf.cs.cn.message.ActualMessage;
 import uf.cs.cn.message.MessageType;
 
 public class MessageParser {
+    static PeerLogging logger = new PeerLogging();
 
     public static void parse(ActualMessage actualMessage) {
 
@@ -31,7 +32,11 @@ public class MessageParser {
                 break;
 
             case MessageType.PIECE:
+                if()
                 break;
+
+            default:
+                logger.genericErrorLog("Wrong Message Type received - Cannot parse");
         }
 
     }

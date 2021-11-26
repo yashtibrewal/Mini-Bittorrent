@@ -28,6 +28,10 @@ public class Peer extends Thread{
         peerLogging = new PeerLogging(String.valueOf(self_peer_id));
     }
 
+    Peer getInstance(int self_peer_id){
+        return this;
+    }
+
     /**
      * Purpose of the function is to connect to all peers' servers
      */

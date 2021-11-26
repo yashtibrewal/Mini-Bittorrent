@@ -41,7 +41,7 @@ public class ActualMessage {
         //TODO: handle message_type and payload
     }
 
-    public ActualMessage(byte[] message_length, byte[] payload){
+    public  ActualMessage(byte[] message_length, byte[] payload){
         this.message_length = this.convertByteArrayToInt(message_length);
         this.message_type = payload[0];
         //TODO: handle message_type and payload
@@ -60,6 +60,11 @@ public class ActualMessage {
     public int getMessage_length() {
         return this.message_length;
     }
+
+    public int getMessage_type() {
+        return this.message_type;
+    }
+
     public void setPayload(byte[] payload) {
         this.payload = payload;
     }

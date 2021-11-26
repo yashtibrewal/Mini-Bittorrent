@@ -18,7 +18,6 @@ public class IncomingConnectionHandler extends Thread {
     ObjectInputStream listening_stream = null;
     ObjectOutputStream speaking_stream = null;
     private PeerLogging peerLogging;
-    private static MessageParser messageParser;
 
     private HandShakeMessage handShakeMessage;
     public IncomingConnectionHandler(Socket connection, int self_peer_id){
@@ -26,7 +25,6 @@ public class IncomingConnectionHandler extends Thread {
         this.self_peer_id = self_peer_id;
         handShakeMessage = new HandShakeMessage(self_peer_id);
         peerLogging = new PeerLogging(String.valueOf(self_peer_id));
-        messageParser = new MessageParser();
     }
 
     public void run() {
@@ -67,9 +65,7 @@ public class IncomingConnectionHandler extends Thread {
                 byte[] actual_message_without_len = new byte[message_len_val];
                 listening_stream.read(actual_message_without_len, 0, message_len_val);
 
-                new MessageParser(new ActualMessage(message_len_arr, actual_message_without_len))
-
-
+                MessageParser.parse(new ActualMessage(message_len_arr, actual_message_without_len));
 
             }
         }

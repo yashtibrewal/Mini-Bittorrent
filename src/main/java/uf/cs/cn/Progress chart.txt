@@ -4,16 +4,16 @@ Features
 
 Write protocol
 Send and receive and parse handshake - done
-Connect to Client - demo done
-Connect to Server - demo done
-work on file division ( the piece concept )
-work on file combining
+Connect to Client - done
+Connect to Server - done
+work on file division ( the piece concept ) --------- done modular, integration left
+work on file combining --------- done modular, integration left
 Client connections management for PeerServer
 Server connections management for PeerClient
 Create Actual Messages implementation
-Run code based on config file and not hard coded files
-Send and receive actual messages
+Run code based on config file and not hard coded files  -------- done
+Send and receive actual messages  ------- in progress
 configure ssh related to make it work on UF machines -> (partially done) // feel free to change this @Punakshi
 Logging
-Testing - started
+Testing - in progress as features are getting created
 Bug fixes and feature changes if any

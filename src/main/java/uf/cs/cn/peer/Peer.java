@@ -1,10 +1,10 @@
 package uf.cs.cn.peer;
 
-import uf.cs.cn.utils.CommonConfigFileReader;
 import uf.cs.cn.utils.PeerInfoConfigFileReader;
 import uf.cs.cn.utils.PeerLogging;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Peer represents a node in the P2P connection
@@ -14,18 +14,38 @@ import java.util.ArrayList;
 
 public class Peer extends Thread{
 
+    private HashMap<Integer,ArrayList<Boolean>> neighbour_file_chunks;
+    private ArrayList<Boolean> self_file_chunks;
+
     // TODO: read the port from the file instead of hard coding here
     private ArrayList<Integer> neighbour_ids;
     // Handshake message will be common for client and server
     PeerServer peer_server;
     private int self_peer_id;
-    public boolean is_server;
     private PeerLogging peerLogging;
+    private static Peer peer;
 
-    public  Peer(boolean is_server, int self_peer_id){
-        this.is_server = is_server;
+    /**
+     * Note: If getInstance(self_peer_id) is called twice, we are losing the previous object.
+     * @return
+     */
+    public static Peer getInstance() {
+        return Peer.peer;
+    }
+
+    public static Peer getInstance(int self_peer_id) {
+        Peer.peer = new Peer(self_peer_id);
+        return Peer.peer;
+    }
+
+    private Peer(int self_peer_id){
         this.self_peer_id = self_peer_id;
         peerLogging = new PeerLogging(String.valueOf(self_peer_id));
+        Peer.peer = this;
+    }
+
+    public static int getPeerId(){
+        return Peer.getInstance().self_peer_id;
     }
 
     /**
@@ -64,13 +84,18 @@ public class Peer extends Thread{
 
     @Override
     public void run() {
-        if(is_server) {
-            System.out.println("Starting peer " + self_peer_id + " as a server");
-            this.runServer();
-        } else {
-            this.establishOutgoingConnections();
-            System.out.println("Starting peer " + self_peer_id + " as a client");
-        }
+        System.out.println("Starting peer " + self_peer_id + " as a server");
+        this.runServer();
+        System.out.println("Starting peer " + self_peer_id + " as a client");
+        this.establishOutgoingConnections();
     }
 
+    public boolean gotCompleteFile() {
+        //TODO: Implement check of boolean piece array
+        return true;
+    }
+
+    public void updateNeighbourFileChunk(int neighbour_id, byte[] neighbour_chunk){
+
+    }
 }

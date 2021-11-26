@@ -2,6 +2,9 @@ piece_*
 target
 .idea
 *.log*
+*.class*
+Common.cfg
+PeerInfo.cfg
 src/main/java/uf/cs/cn/Main.class
 src/main/java/uf/cs/cn/exceptions/InvalidMessageLengthException.class
 src/main/java/uf/cs/cn/message/ActualMessage.class

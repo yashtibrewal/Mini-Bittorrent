@@ -16,10 +16,8 @@ public class Main {
         int peer_id;
         try {
             peer_id = extractPeerId(args);
-            Peer server_instance = new Peer(true, peer_id);
-            server_instance.start();
-            Peer client_instance = new Peer(false, peer_id);
-            client_instance.start();
+            Peer peer = Peer.getInstance(peer_id);
+            peer.start();
         } catch (Exception e) {
             System.err.println(e.toString());
             System.exit(1);

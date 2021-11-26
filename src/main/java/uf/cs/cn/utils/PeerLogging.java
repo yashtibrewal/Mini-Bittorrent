@@ -18,6 +18,8 @@ public class PeerLogging {
     private SimpleDateFormat dateFormat = null;
     private Logger peerLogger;
 
+    public PeerLogging(){startLogger();};
+
     public PeerLogging(String peerId) {
         this.peerId = peerId;
         startLogger();
@@ -130,6 +132,13 @@ public class PeerLogging {
         String currTime = this.dateFormat.format(c.getTime());
         this.peerLogger.log(Level.SEVERE,
                 "[" + currTime + "]: Exception: "+ ex.getMessage()+" ,Cause:"+ ex.getCause());
+    }
+
+    public synchronized void genericErrorLog(String msg) {
+        Calendar c = Calendar.getInstance();
+        String currTime = this.dateFormat.format(c.getTime());
+        this.peerLogger.log(Level.SEVERE,
+                "[" + currTime + "]: Error Message: "+ msg);
     }
 
     public void closeLogger() {

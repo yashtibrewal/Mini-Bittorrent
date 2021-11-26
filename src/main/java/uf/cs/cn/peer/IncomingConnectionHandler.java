@@ -1,5 +1,6 @@
 package uf.cs.cn.peer;
 
+import uf.cs.cn.message.ActualMessage;
 import uf.cs.cn.message.HandShakeMessage;
 import uf.cs.cn.utils.HandShakeMessageUtils;
 import uf.cs.cn.utils.MessageParser;
@@ -7,6 +8,7 @@ import uf.cs.cn.utils.PeerLogging;
 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.math.BigInteger;
 import java.net.Socket;
 
 public class IncomingConnectionHandler extends Thread {
@@ -57,15 +59,15 @@ public class IncomingConnectionHandler extends Thread {
 
             // listen infinitely
             while (true) {
-                byte[] message_len = new byte[4];
-                listening_stream.read(message_len, 0, 4);
+                byte[] message_len_arr = new byte[4];
+                listening_stream.read(message_len_arr, 0, 4);
 
                 int message_len_val = 0;
-                message_len_val = java.nio.ByteBuffer.wrap(message_len).getInt();
-                byte[] actual_message = new byte[message_len_val];
-                while(message_len_val-- > 0){
-                    listening_stream.read();
-                }
+                message_len_val =  new BigInteger(message_len_arr).intValue();
+                byte[] actual_message_without_len = new byte[message_len_val];
+                listening_stream.read(actual_message_without_len, 0, message_len_val);
+
+                new MessageParser(new ActualMessage(message_len_arr, actual_message_without_len))
 
 
 

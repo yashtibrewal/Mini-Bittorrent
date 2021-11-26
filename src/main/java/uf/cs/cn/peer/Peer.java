@@ -35,10 +35,6 @@ public class Peer extends Thread{
         Peer.peer = this;
     }
 
-    Peer getInstance(int self_peer_id){
-        return this;
-    }
-
     /**
      * Purpose of the function is to connect to all peers' servers
      */
@@ -84,4 +80,8 @@ public class Peer extends Thread{
         }
     }
 
+    public boolean gotCompleteFile() {
+        //TODO: Implement check of boolean piece array
+        return true;
+    }
 }

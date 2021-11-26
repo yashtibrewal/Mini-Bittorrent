@@ -65,7 +65,7 @@ public class IncomingConnectionHandler extends Thread {
                 byte[] actual_message_without_len = new byte[message_len_val];
                 listening_stream.read(actual_message_without_len, 0, message_len_val);
 
-                MessageParser.parse(new ActualMessage(message_len_arr, actual_message_without_len), );
+                MessageParser.parse(new ActualMessage(message_len_arr, actual_message_without_len), Peer.getInstance());
 
             }
         }

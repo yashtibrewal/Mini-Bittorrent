@@ -5,6 +5,7 @@ import uf.cs.cn.utils.PeerInfoConfigFileReader;
 import uf.cs.cn.utils.PeerLogging;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Peer represents a node in the P2P connection
@@ -21,11 +22,17 @@ public class Peer extends Thread{
     private int self_peer_id;
     public boolean is_server;
     private PeerLogging peerLogging;
+    private static Peer peer;
+
+    public static Peer getInstance() {
+        return Peer.peer;
+    }
 
     public  Peer(boolean is_server, int self_peer_id){
         this.is_server = is_server;
         this.self_peer_id = self_peer_id;
         peerLogging = new PeerLogging(String.valueOf(self_peer_id));
+        Peer.peer = this;
     }
 
     /**

@@ -38,13 +38,13 @@ public class ActualMessage {
         }
         this.message_length = this.convertByteArrayToInt(message_length_bytes);
         this.message_type = message[4];
-        //TODO: handle message_type and payload
+        setPayload(Arrays.copyOfRange(message,5, message_length));
     }
 
     public  ActualMessage(byte[] message_length, byte[] payload){
         this.message_length = this.convertByteArrayToInt(message_length);
         this.message_type = payload[0];
-        //TODO: handle message_type and payload
+        setPayload(Arrays.copyOfRange(payload,1, this.message_length));
     }
 
     public int convertByteArrayToInt(byte[] int_chunk){

@@ -4,12 +4,14 @@ import uf.cs.cn.message.ActualMessage;
 import uf.cs.cn.message.MessageType;
 import uf.cs.cn.peer.Peer;
 
+import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.Arrays;
 
 public class MessageParser {
     static PeerLogging logger = new PeerLogging();
 
-    public static void parse(ActualMessage actualMessage, int client_peer_id) {
+    public static void parse(ActualMessage actualMessage, int client_peer_id) throws IOException {
 
         switch(actualMessage.getMessage_type())
         {
@@ -29,6 +31,7 @@ public class MessageParser {
                 break;
 
             case MessageType.BIT_FIELD:
+                System.out.println(actualMessage.getMessage_type() + " "+ Arrays.toString(actualMessage.getEncodedMessage()) + " " + client_peer_id);
                 break;
 
             case MessageType.REQUEST:

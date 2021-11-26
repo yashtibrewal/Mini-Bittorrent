@@ -9,7 +9,7 @@ import java.nio.file.Paths;
 public class MessageParser {
     static PeerLogging logger = new PeerLogging();
 
-    public static void parse(ActualMessage actualMessage, Peer peer) {
+    public static void parse(ActualMessage actualMessage, int client_peer_id) {
 
         switch(actualMessage.getMessage_type())
         {
@@ -35,12 +35,17 @@ public class MessageParser {
                 break;
 
             case MessageType.PIECE:
+
+
+
                 if(Peer.getInstance().gotCompleteFile()){
                     String running_dir = System.getProperty("user.dir"); // gets the base directory of the project
-                    String peer_id = String.valueOf(PeerInfoConfigFileReader.getPeerInfoList().get(0).getPeer_id());
+                    String peer_id = String.valueOf(Peer.getInstance().getSelf_peer_id());
                     FileMerger.mergeFile(
                             Paths.get(running_dir, peer_id, CommonConfigFileReader.file_name).toString(),
                             Paths.get(running_dir, peer_id).toString());
+
+                    logger.downloadingCompleteLog();
                 }
                 break;
 

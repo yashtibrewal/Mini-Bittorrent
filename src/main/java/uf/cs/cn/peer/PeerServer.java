@@ -23,7 +23,7 @@ public class PeerServer extends Thread{
         try {
             listening_socket = new ServerSocket(self_port);
             String running_dir = System.getProperty("user.dir"); // gets the base directory of the project
-            String peer_id = String.valueOf(PeerInfoConfigFileReader.getPeerInfoList().get(0).getPeer_id());
+            String peer_id = String.valueOf(self_peer_id);
             FileSplitter.splitFile(
                     Paths.get(running_dir, peer_id, CommonConfigFileReader.file_name).toString(),
                     Paths.get(running_dir, peer_id).toString());

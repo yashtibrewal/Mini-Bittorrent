@@ -1,5 +1,7 @@
 package uf.cs.cn.message;
+import uf.cs.cn.peer.Peer;
 import uf.cs.cn.utils.ActualMessageUtils;
+import uf.cs.cn.utils.PeerLogging;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -20,11 +22,13 @@ public class ActualMessage {
     private int message_length;
     private byte message_type;
     private byte[] payload;
+    private PeerLogging peerLogging;
 
     public ActualMessage(int message_length, byte message_type) throws Exception {
         this.message_length = message_length;
         this.setMessage_type(message_type);
         payload = new byte[message_length];
+        peerLogging = new PeerLogging(String.valueOf(Peer.getInstance().getSelf_peer_id()));
     }
 
     /**
@@ -53,7 +57,7 @@ public class ActualMessage {
 
     public void setMessage_type(byte num) throws Exception {
         if(num< 0 || num >7) {
-            throw new Exception("Invalid Message Type");
+            peerLogging.genericErrorLog("Invalid Message Type");
         }
         this.message_type = num;
     }

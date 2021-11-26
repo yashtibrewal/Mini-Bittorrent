@@ -45,7 +45,7 @@ public class IncomingConnectionHandler extends Thread {
 
             // TODO: Ask faculty/TA how can server check the peer id
 //            if(!(new HandShakeMessage(handshake_32_byte_buffer).checkPeerId(1000))){
-//                throw new Exception("Invalid Peer Id");
+//                peerLogging.genericErrorLog("Invalid Peer Id");
 //            }
             this.client_peer_id = new HandShakeMessage(handshake_32_byte_buffer).getPeerId();
             System.out.println("Received " + new String(handshake_32_byte_buffer) + " from the client peer "+this.client_peer_id);
@@ -65,7 +65,7 @@ public class IncomingConnectionHandler extends Thread {
                 byte[] actual_message_without_len = new byte[message_len_val];
                 listening_stream.read(actual_message_without_len, 0, message_len_val);
 
-                MessageParser.parse(new ActualMessage(message_len_arr, actual_message_without_len), Peer.getInstance());
+                MessageParser.parse(new ActualMessage(message_len_arr, actual_message_without_len), client_peer_id);
 
             }
         }

@@ -20,15 +20,6 @@ public class RequestMessage extends ActualMessage{
             e.printStackTrace();
         }
     }
-
-    public byte[] getRequestMessageBytes(){
-        try {
-            return getEncodedMessage();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
 //    public static void main(String[] args) throws Exception {
 //        RequestMessage rm = new RequestMessage(9);
 //        System.out.println(new String(rm.getRequestMessageBytes()));

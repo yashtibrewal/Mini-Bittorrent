@@ -28,4 +28,8 @@ public class ActualMessageUtils {
         result = ActualMessageUtils.padZeros(result, 4 - result.length);
         return result;
     }
+
+    public static void main(String[] args){
+        System.out.println(new ActualMessage().convertByteArrayToInt(ActualMessageUtils.convertIntToByteArray(10)));
+    }
 }

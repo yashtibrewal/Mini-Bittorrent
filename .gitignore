@@ -3,3 +3,5 @@ target
 .idea
 *.log*
 *.class*
+Common.cfg
+PeerInfo.cfg

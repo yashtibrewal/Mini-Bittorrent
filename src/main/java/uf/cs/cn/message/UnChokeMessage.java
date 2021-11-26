@@ -2,14 +2,15 @@ package uf.cs.cn.message;
 
 import java.io.IOException;
 
-public class UnchokeMessage extends ActualMessage{
+public class UnChokeMessage extends ActualMessage{
 
-    UnchokeMessage() throws Exception {
-        super(4, MessageType.UN_CHOKE);
+    public UnChokeMessage() throws Exception {
+        super(1, MessageType.UN_CHOKE);
     }
 
-    public byte[] getUnchokeMessageBytes(){
+    public byte[] getUnChokeMessageBytes(){
         try {
+
             return getEncodedMessage();
         } catch (IOException e) {
             e.printStackTrace();

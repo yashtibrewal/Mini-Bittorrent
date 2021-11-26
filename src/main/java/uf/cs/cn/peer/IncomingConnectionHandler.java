@@ -4,6 +4,7 @@ import uf.cs.cn.message.HandShakeMessage;
 import uf.cs.cn.utils.HandShakeMessageUtils;
 import uf.cs.cn.utils.PeerLogging;
 
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
@@ -17,7 +18,8 @@ public class IncomingConnectionHandler extends Thread {
     private PeerLogging peerLogging;
 
     private HandShakeMessage handShakeMessage;
-    public IncomingConnectionHandler(Socket connection, int self_peer_id){
+
+    public IncomingConnectionHandler(Socket connection, int self_peer_id) {
         this.connection = connection;
         this.self_peer_id = self_peer_id;
         handShakeMessage = new HandShakeMessage(self_peer_id);
@@ -45,7 +47,7 @@ public class IncomingConnectionHandler extends Thread {
 //                throw new Exception("Invalid Peer Id");
 //            }
             this.client_peer_id = new HandShakeMessage(handshake_32_byte_buffer).getPeerId();
-            System.out.println("Received " + new String(handshake_32_byte_buffer) + " from the client peer "+this.client_peer_id);
+            System.out.println("Received " + new String(handshake_32_byte_buffer) + " from the client peer " + this.client_peer_id);
             peerLogging.incomingTCPConnectionLog(String.valueOf(this.client_peer_id));
             // Send handshake
             speaking_stream.write(handShakeMessage.getBytes());
@@ -54,15 +56,15 @@ public class IncomingConnectionHandler extends Thread {
 
             // listen infinitely
             while (true) {
-                System.out.print(listening_stream.read());
+                int incomingMessage = listening_stream.read();
+                if (incomingMessage == -1) {
+                    throw new Exception();
+                }
             }
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-
+        } catch (IOException ioException) {
+            ioException.printStackTrace();
+        } catch (Exception exception) {
+            exception.printStackTrace();
         }
     }
-
-
-
 }

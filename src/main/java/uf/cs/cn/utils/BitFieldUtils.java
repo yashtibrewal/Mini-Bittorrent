@@ -11,13 +11,13 @@ import java.nio.file.*;
  */
 public class BitFieldUtils {
     public static int getNumberOfChunks(int peer_id) throws IOException {
-        String currentDirectory = System.getProperty("user.dir");
-        Path basePath = Paths.get(currentDirectory, String.valueOf(peer_id));
-        Path pattern = Paths.get(String.valueOf(basePath), "piece_*");
-        PathMatcher pathMatcher = FileSystems.getDefault().getPathMatcher("glob:" + pattern);
+        int numChunks = CommonConfigFileReader.file_size/CommonConfigFileReader.piece_size;
 
-        Stream<Path> paths = Files.find(basePath, Integer.MAX_VALUE, (path, f)->pathMatcher.matches(path));
-        return (int) paths.count();
+        if (CommonConfigFileReader.file_size%CommonConfigFileReader.piece_size == 0){
+            return numChunks;
+        } else {
+            return numChunks+1;
+        }
     }
 
     public static ArrayList<Boolean> convertToBoolArray(byte[] payload, int peer_id) throws IOException {
@@ -36,7 +36,6 @@ public class BitFieldUtils {
                     response.add(binaries[i].charAt(j)=='1');
                 }
         }
-
         return response;
     }
 

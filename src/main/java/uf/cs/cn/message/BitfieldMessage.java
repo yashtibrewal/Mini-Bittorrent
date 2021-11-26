@@ -16,13 +16,6 @@ public class BitfieldMessage extends ActualMessage {
         int i;
         int j =0;
 
-//
-//        if (numChunks%8 == 0) {
-//            messageLength = numChunks/8;
-//        } else {
-//            messageLength = numChunks/8 + 1;
-//        }
-
         byte[] messageBody = new byte[getMessage_length()];
 
         for (i=0; i<this.getMessage_length();i++) {

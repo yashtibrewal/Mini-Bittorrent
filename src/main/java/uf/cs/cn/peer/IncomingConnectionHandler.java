@@ -6,6 +6,7 @@ import uf.cs.cn.utils.HandShakeMessageUtils;
 import uf.cs.cn.utils.MessageParser;
 import uf.cs.cn.utils.PeerLogging;
 
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.math.BigInteger;
@@ -20,7 +21,8 @@ public class IncomingConnectionHandler extends Thread {
     private PeerLogging peerLogging;
 
     private HandShakeMessage handShakeMessage;
-    public IncomingConnectionHandler(Socket connection, int self_peer_id){
+
+    public IncomingConnectionHandler(Socket connection, int self_peer_id) {
         this.connection = connection;
         this.self_peer_id = self_peer_id;
         handShakeMessage = new HandShakeMessage(self_peer_id);
@@ -48,7 +50,7 @@ public class IncomingConnectionHandler extends Thread {
 //                peerLogging.genericErrorLog("Invalid Peer Id");
 //            }
             this.client_peer_id = new HandShakeMessage(handshake_32_byte_buffer).getPeerId();
-            System.out.println("Received " + new String(handshake_32_byte_buffer) + " from the client peer "+this.client_peer_id);
+            System.out.println("Received " + new String(handshake_32_byte_buffer) + " from the client peer " + this.client_peer_id);
             peerLogging.incomingTCPConnectionLog(String.valueOf(this.client_peer_id));
             // Send handshake
             speaking_stream.write(handShakeMessage.getBytes());
@@ -68,13 +70,10 @@ public class IncomingConnectionHandler extends Thread {
                 MessageParser.parse(new ActualMessage(message_len_arr, actual_message_without_len), client_peer_id);
 
             }
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-
+        } catch (IOException ioException) {
+            ioException.printStackTrace();
+        } catch (Exception exception) {
+            exception.printStackTrace();
         }
     }
-
-
-
 }

@@ -84,14 +84,15 @@ class OutgoingConnection extends Thread {
     private void sendBitFieldMessage(ObjectOutputStream objectOutputStream) throws Exception {
         int numChunks = BitFieldUtils.getNumberOfChunks(this.self_peer_id);
         int messageLength = 0;
+//
+//        if (numChunks%8 == 0) {
+//            messageLength = numChunks/8;
+//        } else {
+//            messageLength = numChunks/8 + 1;
+//        }
 
-        if (numChunks%8 == 0) {
-            messageLength = numChunks%8;
-        } else {
-            messageLength = numChunks%8 + 1;
-        }
+        BitfieldMessage bitfieldMessage = new BitfieldMessage( numChunks, this.self_peer_id);
 
-        BitfieldMessage bitfieldMessage = new BitfieldMessage( messageLength, this.self_peer_id);
         bitfieldMessage.generatePayload();
 
 

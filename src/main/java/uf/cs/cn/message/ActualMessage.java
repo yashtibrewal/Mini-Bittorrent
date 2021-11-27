@@ -39,9 +39,7 @@ public class ActualMessage {
      */
     public ActualMessage(byte[] message) {
         byte[] message_length_bytes = new byte[4];
-        for(int i=0;i<4;i++){
-            message_length_bytes[i] = message[i];
-        }
+        System.arraycopy(message, 0, message_length_bytes, 0, 4);
         this.message_length = this.convertByteArrayToInt(message_length_bytes);
         this.message_type = message[4];
         setPayload(Arrays.copyOfRange(message,5, message_length));
@@ -87,9 +85,10 @@ public class ActualMessage {
     public byte[] getEncodedMessage() throws IOException {
         // TODO: look for a better logic if any
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        outputStream.write(ActualMessageUtils.convertIntToByteArray(this.message_length));
-        outputStream.write(message_type);
-        outputStream.write(payload);
-        return  outputStream.toByteArray();
+        byte[] message = new byte[4+1+payload.length];
+        System.arraycopy(ActualMessageUtils.convertIntToByteArray(this.message_length),0,message,0,4);
+        message[4] = message_type;
+        System.arraycopy(payload,0,message,5,payload.length);
+        return message;
     }
 }

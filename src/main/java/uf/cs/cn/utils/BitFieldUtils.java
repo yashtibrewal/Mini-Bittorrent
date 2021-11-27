@@ -10,7 +10,7 @@ import java.nio.file.*;
 
  */
 public class BitFieldUtils {
-    public static int getNumberOfChunks(int peer_id) throws IOException {
+    public static int getNumberOfChunks() throws IOException {
         int numChunks = CommonConfigFileReader.file_size/CommonConfigFileReader.piece_size;
 
         if (CommonConfigFileReader.file_size%CommonConfigFileReader.piece_size == 0){

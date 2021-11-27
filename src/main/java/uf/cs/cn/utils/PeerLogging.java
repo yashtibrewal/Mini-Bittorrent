@@ -11,7 +11,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.*;
 
-
+// TODO: convert to single ton
 public class PeerLogging {
 
     private String logFileName;

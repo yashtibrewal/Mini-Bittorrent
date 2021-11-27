@@ -32,7 +32,7 @@ public class IncomingConnectionHandler extends Thread {
     public void run() {
 
         // handshake message reading
-        byte handshake_32_byte_buffer[] = new byte[32];
+        byte[] handshake_32_byte_buffer = new byte[32];
 
         try {
             listening_stream = new ObjectInputStream(connection.getInputStream());

@@ -13,6 +13,8 @@ public class MessageParser {
 
     public static void parse(ActualMessage actualMessage, int client_peer_id) throws IOException {
 
+        System.out.println("Received a message of type " + actualMessage.getMessage_type());
+
         switch(actualMessage.getMessage_type())
         {
             case MessageType.UN_CHOKE:

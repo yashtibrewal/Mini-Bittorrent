@@ -57,23 +57,32 @@ public class IncomingConnectionHandler extends Thread {
             System.out.println("Writing " + handShakeMessage.getMessage() + " to client peer " + this.client_peer_id);
             speaking_stream.flush();
 
+            int message_len_val;
+            byte[] message_len_arr;
+            byte[] actual_message_without_len;
             // listen infinitely
             while (true) {
-                byte[] message_len_arr = new byte[4];
+                // memory for reading message length header
+                message_len_arr = new byte[4];
+
+                // reading the message length header
                 listening_stream.read(message_len_arr, 0, 4);
 
-                int message_len_val = 0;
+                // converting to readable int
                 message_len_val =  new BigInteger(message_len_arr).intValue();
-                byte[] actual_message_without_len = new byte[message_len_val];
+
+                // memory declaration for reading the payload
+                actual_message_without_len = new byte[message_len_val];
+
+                // reading the payload ( with type )
                 listening_stream.read(actual_message_without_len, 0, message_len_val);
-//                MessageParser.parse(new ActualMessage(message_len_arr, actual_message_without_len), Peer.getInstance());
+
+                // parsing the payload
                 MessageParser.parse(new ActualMessage(message_len_arr, actual_message_without_len), client_peer_id);
 
             }
-        } catch (IOException ioException) {
+        } catch (Exception ioException) {
             ioException.printStackTrace();
-        } catch (Exception exception) {
-            exception.printStackTrace();
         }
     }
 }

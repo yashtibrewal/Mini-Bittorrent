@@ -55,14 +55,14 @@ class OutgoingConnection extends Thread {
                 peerLogging.genericErrorLog("Invalid Peer Id");
             }
 
-            //sendBitFieldMessage(objectOutputStream);
+            sendBitFieldMessage(objectOutputStream);
 
             objectOutputStream.write(new HaveMessage(1).getEncodedMessage());
             objectOutputStream.flush();
 
             // send infinitely
             while (true) {
-                System.out.println("Have Messages");
+                System.out.println("Sending nothing presently");
                 Thread.sleep(5000);
             }
         } catch (Exception ex) {
@@ -87,12 +87,8 @@ class OutgoingConnection extends Thread {
 
     private void sendBitFieldMessage(ObjectOutputStream objectOutputStream) throws Exception {
         int numChunks = BitFieldUtils.getNumberOfChunks();
-        int messageLength = 0;
-        BitfieldMessage bitfieldMessage = new BitfieldMessage( numChunks, this.self_peer_id);
-
-        bitfieldMessage.generatePayload();
-
-
+        BitfieldMessage bitfieldMessage = new BitfieldMessage(numChunks);
+        objectOutputStream.write(bitfieldMessage.generatePayload());
         objectOutputStream.flush();
     }
 

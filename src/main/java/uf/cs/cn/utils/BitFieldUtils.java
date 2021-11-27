@@ -20,7 +20,7 @@ public class BitFieldUtils {
         }
     }
 
-    public static ArrayList<Boolean> convertToBoolArray(byte[] payload, int peer_id) throws IOException {
+    public static ArrayList<Boolean> convertToBoolArray(byte[] payload) {
         int i;
         int j;
         ArrayList<Boolean>  response = new ArrayList<Boolean>();

@@ -17,25 +17,28 @@ import java.util.PriorityQueue;
 
 public class Peer extends Thread{
 
-    PriorityQueue<PeerConfig> priorityQueue = new PriorityQueue<>((a, b) -> b.counter - a.counter);
+    PriorityQueue<PeerConfig> priorityQueue = new PriorityQueue<>((a, b) -> b.download_bandwidth_data_counter - a.download_bandwidth_data_counter);
+
+    // to keep the references to the objects in priority queue
+    HashMap<Integer, PeerConfig> references = new HashMap<>();
 
     static class PeerConfig{
         ArrayList<Boolean> file_chunks;
         int peer_id;
-        public int getCounter() {
-            return counter;
+        public int getDownload_bandwidth_data_counter() {
+            return download_bandwidth_data_counter;
         }
-        public void setCounter(int counter) {
-            this.counter = counter;
+        public void setDownload_bandwidth_data_counter(int download_bandwidth_data_counter) {
+            this.download_bandwidth_data_counter = download_bandwidth_data_counter;
         }
-        private int counter;
+        private int download_bandwidth_data_counter;
         PeerConfig(int peer_id) throws Exception {
             this.peer_id = peer_id;
             file_chunks=new ArrayList<>(BitFieldUtils.getNumberOfChunks());
-            counter++;
+            download_bandwidth_data_counter++;
         }
         void resetCounter(){
-            this.counter = 0;
+            this.download_bandwidth_data_counter = 0;
         }
 
         void setFileChunkTrue(int index){
@@ -46,11 +49,6 @@ public class Peer extends Thread{
         }
     }
 
-    private HashMap<Integer,ArrayList<Boolean>> neighbour_file_chunks;
-    private ArrayList<Boolean> self_file_chunks;
-
-    private ArrayList<Integer> neighbour_ids;
-    // Handshake message will be common for client and server
     PeerServer peer_server;
 
     public int getSelf_peer_id() {
@@ -60,6 +58,7 @@ public class Peer extends Thread{
     private int self_peer_id;
     private PeerLogging peerLogging;
     private static Peer peer;
+    ArrayList<Boolean> self_file_chunks;
 
     /**
      * Note: If getInstance(self_peer_id) is called twice, we are losing the previous object.
@@ -136,7 +135,17 @@ public class Peer extends Thread{
         return true;
     }
 
-    public void updateNeighbourFileChunk(int neighbour_id, byte[] neighbour_chunk){
+    public void updateNeighbourFileChunk(int neighbour_id, ArrayList<Boolean> neighbour_chunk){
+        try {
 
+            if(references.containsKey(neighbour_id)){
+                references.get(neighbour_id).file_chunks = neighbour_chunk;
+            }else{
+                references.put(neighbour_id,new PeerConfig(neighbour_id));
+                references.get(neighbour_id).file_chunks = neighbour_chunk;
+            }
+        } catch (Exception e){
+            e.printStackTrace();
+        }
     }
 }

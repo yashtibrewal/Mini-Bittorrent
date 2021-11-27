@@ -6,6 +6,7 @@ import uf.cs.cn.peer.Peer;
 
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 public class MessageParser {
@@ -34,15 +35,15 @@ public class MessageParser {
 
             case MessageType.BIT_FIELD:
                 System.out.println(actualMessage.getMessage_type() + " "+ Arrays.toString(actualMessage.getEncodedMessage()) + " " + client_peer_id);
+                // convert array to boolean
+                // update peer memory
+                Peer.getInstance().updateNeighbourFileChunk(client_peer_id, BitFieldUtils.convertToBoolArray(actualMessage.getPayload()));
                 break;
 
             case MessageType.REQUEST:
                 break;
 
             case MessageType.PIECE:
-
-
-
                 if(Peer.getInstance().gotCompleteFile()){
                     String running_dir = System.getProperty("user.dir"); // gets the base directory of the project
                     String peer_id = String.valueOf(Peer.getInstance().getSelf_peer_id());

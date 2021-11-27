@@ -1,4 +1,6 @@
 package uf.cs.cn.utils;
+import uf.cs.cn.peer.Peer;
+
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
@@ -9,7 +11,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.*;
 
-
+// TODO: convert to single ton
 public class PeerLogging {
 
     private String logFileName;
@@ -18,10 +20,8 @@ public class PeerLogging {
     private SimpleDateFormat dateFormat = null;
     private Logger peerLogger;
 
-    public PeerLogging(){startLogger();};
-
-    public PeerLogging(String peerId) {
-        this.peerId = peerId;
+    public PeerLogging() {
+        this.peerId = Peer.getPeerId() + "";
         startLogger();
     }
 

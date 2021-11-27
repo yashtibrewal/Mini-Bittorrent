@@ -1,16 +1,18 @@
 package uf.cs.cn.utils;
 
 import uf.cs.cn.exceptions.InvalidMessageLengthException;
+import uf.cs.cn.peer.Peer;
 
 /**
  * This class is used for checking the packet structure and raises exceptions accordingly
  */
 public class HandShakeMessageUtils {
+    static PeerLogging peerLogging = new PeerLogging();
 
     // peerId is numeric
     public static boolean validatePeerId(byte[] message) throws Exception {
         if (message.length < 32) {
-            throw new Exception("Invalid Peer Id");
+            peerLogging.genericErrorLog("Invalid Peer Id");
 
 
         }

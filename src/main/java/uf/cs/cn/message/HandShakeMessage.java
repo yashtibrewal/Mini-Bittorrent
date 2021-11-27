@@ -1,16 +1,21 @@
 package uf.cs.cn.message;
 
+import uf.cs.cn.peer.Peer;
+import uf.cs.cn.utils.PeerLogging;
+
 public class HandShakeMessage {
 
     private byte[] header;
     private byte[] zero_bits;
     private byte[] peer_id; // 4 bytes
     private int id;
+    private PeerLogging peerLogging;
 
     // Byte implementation, takes in 32 byte buffer
     public HandShakeMessage(byte[] buffer)throws Exception {
+        peerLogging = new PeerLogging();
         if(buffer.length != 32){
-            throw new Exception("Invalid Length of Buffer");
+            peerLogging.genericErrorLog("Invalid Length of Buffer");
         }
         header = new byte[18];
         zero_bits = new byte[10];

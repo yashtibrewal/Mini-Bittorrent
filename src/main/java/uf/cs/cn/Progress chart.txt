@@ -6,8 +6,8 @@ Write protocol
 Send and receive and parse handshake - done
 Connect to Client - done
 Connect to Server - done
-work on file division ( the piece concept ) --------- done modular, integration left
-work on file combining --------- done modular, integration left
+work on file division ( the piece concept ) --------- done modular, integration done
+work on file combining --------- done modular, integration done
 Client connections management for PeerServer
 Server connections management for PeerClient
 Create Actual Messages implementation

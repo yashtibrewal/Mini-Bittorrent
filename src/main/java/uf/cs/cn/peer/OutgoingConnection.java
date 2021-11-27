@@ -4,6 +4,7 @@ import uf.cs.cn.message.BitfieldMessage;
 import uf.cs.cn.message.HandShakeMessage;
 import uf.cs.cn.utils.BitFieldUtils;
 import uf.cs.cn.utils.HandShakeMessageUtils;
+import uf.cs.cn.utils.PeerLogging;
 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -16,6 +17,7 @@ class OutgoingConnection extends Thread {
     private int destination_peer_id;
     private int self_peer_id;
     private HandShakeMessage handShakeMessage;
+    private PeerLogging peerLogging;
 
     public OutgoingConnection(String destination_host_name, int destination_port, int self_peer_id, int destination_peer_id) {
         this.destination_host_name = destination_host_name;
@@ -23,6 +25,7 @@ class OutgoingConnection extends Thread {
         this.destination_peer_id = destination_peer_id;
         this.destination_port = destination_port;
         handShakeMessage = new HandShakeMessage(this.self_peer_id);
+        peerLogging = new PeerLogging(String.valueOf(self_peer_id));
     }
 
     public void run() {
@@ -44,11 +47,11 @@ class OutgoingConnection extends Thread {
             objectInputStream.read(handshakeMessageBuffer);
             System.out.println("Received " + new String(handshakeMessageBuffer) + " from server peer " + destination_peer_id);
             if(!HandShakeMessageUtils.validateHandShakeMessage(handshakeMessageBuffer)){
-                throw new Exception("Invalid Handshake Message");
+                peerLogging.genericErrorLog("Invalid Handshake Message");
             }
             // Check if it's the actual peer_id
             if(!(new HandShakeMessage(handshakeMessageBuffer).checkPeerId(this.destination_peer_id))){
-                throw new Exception("Invalid Peer Id");
+                peerLogging.genericErrorLog("Invalid Peer Id");
             }
 
             sendBitFieldMessage(objectOutputStream);

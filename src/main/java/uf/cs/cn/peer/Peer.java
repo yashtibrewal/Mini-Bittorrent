@@ -17,10 +17,14 @@ public class Peer extends Thread{
     private HashMap<Integer,ArrayList<Boolean>> neighbour_file_chunks;
     private ArrayList<Boolean> self_file_chunks;
 
-    // TODO: read the port from the file instead of hard coding here
     private ArrayList<Integer> neighbour_ids;
     // Handshake message will be common for client and server
     PeerServer peer_server;
+
+    public int getSelf_peer_id() {
+        return self_peer_id;
+    }
+
     private int self_peer_id;
     private PeerLogging peerLogging;
     private static Peer peer;
@@ -34,6 +38,7 @@ public class Peer extends Thread{
     }
 
     public static Peer getInstance(int self_peer_id) {
+        //TODO: Throw exception if object already exists
         Peer.peer = new Peer(self_peer_id);
         return Peer.peer;
     }
@@ -92,6 +97,10 @@ public class Peer extends Thread{
 
     public boolean gotCompleteFile() {
         //TODO: Implement check of boolean piece array
+
+        for(boolean piece: self_file_chunks){
+            if(!piece) return false;
+        }
         return true;
     }
 

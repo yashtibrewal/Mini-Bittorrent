@@ -30,7 +30,7 @@ public class ActualMessage {
         this.message_length = message_length;
         this.setMessage_type(message_type);
         payload = new byte[message_length];
-        peerLogging = new PeerLogging(String.valueOf(Peer.getInstance().getSelf_peer_id()));
+        peerLogging = new PeerLogging();
     }
 
     /**

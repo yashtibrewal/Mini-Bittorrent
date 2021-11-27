@@ -26,7 +26,7 @@ public class IncomingConnectionHandler extends Thread {
         this.connection = connection;
         this.self_peer_id = self_peer_id;
         handShakeMessage = new HandShakeMessage(self_peer_id);
-        peerLogging = new PeerLogging(String.valueOf(self_peer_id));
+        peerLogging = new PeerLogging();
     }
 
     public void run() {

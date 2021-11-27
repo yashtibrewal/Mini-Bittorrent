@@ -28,7 +28,7 @@ public class BitFieldUtils {
         String[] binaries = new String[payload.length];
 
         for (i=0; i < payload.length; i++) {
-            binaries[i] = Integer.toBinaryString(payload[i]);
+            binaries[i] = Integer.toBinaryString(payload[i]& 0xff);
         }
 
         for (i=0; i< binaries.length ; i++ ){

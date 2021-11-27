@@ -1,10 +1,13 @@
 package uf.cs.cn.peer;
 
+import uf.cs.cn.utils.BitFieldUtils;
 import uf.cs.cn.utils.PeerInfoConfigFileReader;
 import uf.cs.cn.utils.PeerLogging;
+import uf.cs.cn.utils.PeerUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.PriorityQueue;
 
 /**
  * Peer represents a node in the P2P connection
@@ -13,6 +16,35 @@ import java.util.HashMap;
  */
 
 public class Peer extends Thread{
+
+    PriorityQueue<PeerConfig> priorityQueue = new PriorityQueue<>((a, b) -> b.counter - a.counter);
+
+    static class PeerConfig{
+        ArrayList<Boolean> file_chunks;
+        int peer_id;
+        public int getCounter() {
+            return counter;
+        }
+        public void setCounter(int counter) {
+            this.counter = counter;
+        }
+        private int counter;
+        PeerConfig(int peer_id) throws Exception {
+            this.peer_id = peer_id;
+            file_chunks=new ArrayList<>(BitFieldUtils.getNumberOfChunks());
+            counter++;
+        }
+        void resetCounter(){
+            this.counter = 0;
+        }
+
+        void setFileChunkTrue(int index){
+            file_chunks.set(index-1,true);
+        }
+        boolean hasAllChunks() {
+            return PeerUtils.gotCompleteFile(this.file_chunks);
+        }
+    }
 
     private HashMap<Integer,ArrayList<Boolean>> neighbour_file_chunks;
     private ArrayList<Boolean> self_file_chunks;

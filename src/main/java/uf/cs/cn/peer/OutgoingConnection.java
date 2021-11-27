@@ -86,7 +86,7 @@ class OutgoingConnection extends Thread {
     }
 
     private void sendBitFieldMessage(ObjectOutputStream objectOutputStream) throws Exception {
-        int numChunks = BitFieldUtils.getNumberOfChunks(this.self_peer_id);
+        int numChunks = BitFieldUtils.getNumberOfChunks();
         int messageLength = 0;
 //
 //        if (numChunks%8 == 0) {

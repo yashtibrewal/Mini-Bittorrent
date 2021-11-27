@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class BitfieldMessage extends ActualMessage {
     public BitfieldMessage(int messageLength) throws Exception {
-        super(messageLength, MessageType.BIT_FIELD);
+        super(messageLength+1, MessageType.BIT_FIELD);
     }
     public byte[] generatePayload() throws IOException {
         int byteVal = 0;

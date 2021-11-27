@@ -81,9 +81,10 @@ class OutgoingConnection extends Thread {
 
     private void sendBitFieldMessage(ObjectOutputStream objectOutputStream) throws Exception {
         int numChunks = BitFieldUtils.getNumberOfChunks();
-        BitfieldMessage bitfieldMessage = new BitfieldMessage(numChunks);
+        int bitFieldSize = BitFieldUtils.getPayloadDataSize(numChunks);
+        BitfieldMessage bitfieldMessage = new BitfieldMessage(bitFieldSize);
         byte[] output = bitfieldMessage.generatePayload();
-        System.out.println(Arrays.toString(output));
+        System.out.println("I am sending " + Arrays.toString(output));
         objectOutputStream.write(output);
         objectOutputStream.flush();
     }

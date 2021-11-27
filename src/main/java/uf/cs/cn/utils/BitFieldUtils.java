@@ -2,22 +2,24 @@
 package uf.cs.cn.utils;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.stream.*;
-import java.nio.file.*;
 
 /*
     This class is used for providing methods to generate BitField messages
 
  */
-public class BitFieldUtils {
-    public static int getNumberOfChunks() throws IOException {
-        int numChunks = CommonConfigFileReader.file_size/CommonConfigFileReader.piece_size;
 
-        if (CommonConfigFileReader.file_size%CommonConfigFileReader.piece_size == 0){
-            return numChunks;
-        } else {
-            return numChunks+1;
-        }
+public class BitFieldUtils {
+
+    public static int isDivsible(int a, int b) {
+        return (a%b == 0 ? a/b: (a/b)+1);
+    }
+
+    public static int getNumberOfChunks() {
+        return isDivsible(CommonConfigFileReader.file_size, CommonConfigFileReader.piece_size);
+    }
+
+    public static int getPayloadDataSize(int numChunks) {
+        return isDivsible(numChunks, 8);
     }
 
     public static ArrayList<Boolean> convertToBoolArray(byte[] payload) {

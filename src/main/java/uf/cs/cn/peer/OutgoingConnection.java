@@ -2,14 +2,13 @@ package uf.cs.cn.peer;
 
 import uf.cs.cn.message.BitfieldMessage;
 import uf.cs.cn.message.HandShakeMessage;
-import uf.cs.cn.message.HaveMessage;
 import uf.cs.cn.utils.BitFieldUtils;
 import uf.cs.cn.utils.HandShakeMessageUtils;
 import uf.cs.cn.utils.PeerLogging;
-
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.Arrays;
 
 class OutgoingConnection extends Thread {
     private String destination_host_name;
@@ -54,12 +53,7 @@ class OutgoingConnection extends Thread {
             if(!(new HandShakeMessage(handshakeMessageBuffer).checkPeerId(this.destination_peer_id))){
                 peerLogging.genericErrorLog("Invalid Peer Id");
             }
-
             sendBitFieldMessage(objectOutputStream);
-
-            objectOutputStream.write(new HaveMessage(1).getEncodedMessage());
-            objectOutputStream.flush();
-
             // send infinitely
             while (true) {
                 System.out.println("Sending nothing presently");
@@ -88,7 +82,9 @@ class OutgoingConnection extends Thread {
     private void sendBitFieldMessage(ObjectOutputStream objectOutputStream) throws Exception {
         int numChunks = BitFieldUtils.getNumberOfChunks();
         BitfieldMessage bitfieldMessage = new BitfieldMessage(numChunks);
-        objectOutputStream.write(bitfieldMessage.generatePayload());
+        byte[] output = bitfieldMessage.generatePayload();
+        System.out.println(Arrays.toString(output));
+        objectOutputStream.write(output);
         objectOutputStream.flush();
     }
 

@@ -1,27 +1,29 @@
 package uf.cs.cn.message;
-import uf.cs.cn.peer.Peer;
+
 import uf.cs.cn.utils.ActualMessageUtils;
 import uf.cs.cn.utils.PeerLogging;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.lang.instrument.Instrumentation;
-import java.lang.reflect.Array;
 import java.math.BigInteger;
-import java.nio.ByteBuffer;
-import java.util.ArrayList;
 import java.util.Arrays;
 
-/**
- * message_length: It will be of size 4 bytes, and contain the size of the packet without including message length bytes.
- * Note: To transmit in the network, it used BigInteger implementation to byte array and vice versa.
- *
- *
- */
 public class ActualMessage {
+    /**
+     * Size: 4 bytes.
+     * Contains the value of the number of bytes of the payload, for example, if your message length is 5 bytes,
+     * a stream reader will expect 5 bytes of data apart from the message_length's 4 bytes.
+     */
     private int message_length;
+    /**
+     * Size: 1 byte.
+     * Represents the type of message being sent, refer Message_Type enum.
+     */
     private byte message_type;
+    /**
+     * Size: variable, the value of this size is given in message_length.
+     */
     private byte[] payload;
+
     private PeerLogging peerLogging;
 
     public ActualMessage(){}

@@ -2,10 +2,7 @@ package uf.cs.cn.peer;
 
 import uf.cs.cn.utils.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.PriorityQueue;
+import java.util.*;
 
 /**
  * Peer represents a node in the P2P connection
@@ -17,7 +14,7 @@ public class Peer extends Thread {
 
     private static Peer peer;
     private static PeerConfig peerConfig;
-    private static HashSet<Integer> unchokedList = new HashSet<>();
+    //private static HashSet<Integer> unchokedList = new HashSet<>();
     private static HashSet<Integer> preferredNeighborsList = new HashSet<>();
     private static HashSet<Integer> interestedList = new HashSet<>();
     private final int self_peer_id;
@@ -80,13 +77,13 @@ public class Peer extends Thread {
         this.interestedList = interestedList;
     }
 
-    public HashSet<Integer> getUnchokedList() {
+    /*public HashSet<Integer> getUnchokedList() {
         return unchokedList;
     }
 
     public void setUnchokedList(HashSet<Integer> unchokedList) {
         this.unchokedList = unchokedList;
-    }
+    }*/
 
     public HashSet<Integer> getPreferredNeighborsList() {
         return preferredNeighborsList;
@@ -162,6 +159,7 @@ public class Peer extends Thread {
             } else {
                 references.put(neighbour_id, new PeerConfig(neighbour_id));
                 references.get(neighbour_id).file_chunks = neighbour_chunk;
+                if(references.get(neighbour_id).is_interested)
                 priorityQueue.offer(references.get(neighbour_id));
             }
         } catch (Exception e) {
@@ -177,15 +175,29 @@ public class Peer extends Thread {
         return preferredNeighborsList.contains(neighbor_peer_id);
     }
 
-    public boolean isUnChokedNeighbour(int neighbor_peer_id) {
+    /*public boolean isUnChokedNeighbour(int neighbor_peer_id) {
         return unchokedList.contains(neighbor_peer_id);
-    }
+    }*/
 
     public void calculatePreferredNeighbours() {
         preferredNeighborsList.clear();
         for (int i = 0; i < CommonConfigFileReader.number_of_preferred_neighbours; i++) {
             PeerConfig config = priorityQueue.poll();
             preferredNeighborsList.add(config.peer_id);
+        }
+
+        int num = (int) ((Math.random() * (interestedList.size()-1 - CommonConfigFileReader.number_of_preferred_neighbours)) + CommonConfigFileReader.number_of_preferred_neighbours);
+        int ctr = 0;
+        Iterator<Integer> it = interestedList.iterator();
+        while (it.hasNext()) {
+            int it_value = it.next();
+            if (!preferredNeighborsList.contains(it_value)) {
+                ctr++;
+            }
+            if (ctr == num) {
+                preferredNeighborsList.add(it_value);
+                break;
+            }
         }
     }
 
@@ -203,6 +215,7 @@ public class Peer extends Thread {
 
     public synchronized void resetDownloadCounters() {
         for (PeerConfig pc : references.values()) pc.resetCounter();
+        priorityQueue.clear();
     }
 
     public void incrementDownloadCount(int client_peer_id) {
@@ -213,6 +226,17 @@ public class Peer extends Thread {
         ArrayList<Boolean> file_chunks;
         int peer_id;
         private int download_bandwidth_data_counter;
+
+        public boolean isIs_interested() {
+            return is_interested;
+        }
+
+        public void setIs_interested(boolean is_interested) {
+            this.is_interested = is_interested;
+        }
+
+        boolean is_interested;
+        boolean is_unchoked;
 
         PeerConfig(int peer_id) throws Exception {
             this.peer_id = peer_id;

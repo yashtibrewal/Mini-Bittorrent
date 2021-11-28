@@ -24,19 +24,13 @@ public class ChokeHandler extends Thread {
     public void run() {
         Peer.getInstance().calculatePreferredNeighbours();
         Peer.getInstance().resetDownloadCounters();
-        Peer.getInstance().getUnchokedList().clear();
-        AtomicInteger count = new AtomicInteger();
         Peer.getInstance().getPreferredNeighborsList().forEach((pN -> {
             Peer.getInstance().outgoingConnections.forEach((outgoingConnection -> {
-
                 if (outgoingConnection.getDestination_peer_id() == pN) {
-                    if (Peer.getInstance().getPreferredNeighborsList().contains(pN) && count.get() < CommonConfigFileReader.number_of_preferred_neighbours) {
+                    if (Peer.getInstance().getPreferredNeighborsList().contains(pN)) {
                         outgoingConnection.sendUnChokeMessages();
-                        Peer.getInstance().getUnchokedList().add(pN);
-                        count.getAndIncrement();
-                    } else {
+                    }else if(!Peer.getInstance().getPreferredNeighborsList().contains(pN))
                         outgoingConnection.sendChokeMessages();
-                    }
                 }
             }));
         }));

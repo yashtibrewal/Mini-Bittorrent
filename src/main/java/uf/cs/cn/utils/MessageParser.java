@@ -2,6 +2,7 @@ package uf.cs.cn.utils;
 
 import uf.cs.cn.message.ActualMessage;
 import uf.cs.cn.message.MessageType;
+import uf.cs.cn.message.PieceMessage;
 import uf.cs.cn.peer.Peer;
 
 import java.io.IOException;
@@ -46,8 +47,9 @@ public class MessageParser {
                 break;
 
             case MessageType.PIECE:
-
+                new PieceMessage(actualMessage.getEncodedMessage());
                 Peer.getInstance().updateSelfFileChunk(actualMessage.convertByteArrayToInt(Arrays.copyOfRange(actualMessage.getPayload(), 0, 4)));
+                //TODO: send Have
                 Peer.getInstance().incrementDownloadCount(client_peer_id);
                 if (Peer.getInstance().gotCompleteFile()) {
                     String running_dir = System.getProperty("user.dir"); // gets the base directory of the project

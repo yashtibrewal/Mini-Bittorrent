@@ -192,7 +192,7 @@ public class Peer extends Thread {
         ArrayList<Boolean> other_end = references.get(neighbor_peer_id).file_chunks;
 
         for (int i = 0; i < other_end.size() && i < BitFieldUtils.getNumberOfChunks(); i++) {
-            if (other_end.get(i) == true && self_file_chunks.get(i) == false) {
+            if (other_end.get(i)  && !self_file_chunks.get(i)) {
                 interestedList.add(neighbor_peer_id);
                 return true;
             }

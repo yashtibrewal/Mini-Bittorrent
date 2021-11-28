@@ -25,7 +25,8 @@ public class FileSplitter {
                     break;
                 }
                 try (FileOutputStream fileOutputStream = new FileOutputStream(Paths.get(out_put_path, output_file_name).toString());) {
-                    fileOutputStream.write(piece, 0, number_of_characters_read);
+                    fileOutputStream.write(piece);
+                    fileOutputStream.flush();
                 }
                 counter++;
             }

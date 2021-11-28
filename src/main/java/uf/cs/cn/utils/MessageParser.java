@@ -46,6 +46,7 @@ public class MessageParser {
                 break;
 
             case MessageType.PIECE:
+                Peer.getInstance().incrementDownloadCount(client_peer_id);
                 if(Peer.getInstance().gotCompleteFile()){
                     String running_dir = System.getProperty("user.dir"); // gets the base directory of the project
                     String peer_id = String.valueOf(Peer.getInstance().getSelf_peer_id());

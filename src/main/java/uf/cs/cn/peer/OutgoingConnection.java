@@ -1,10 +1,7 @@
 package uf.cs.cn.peer;
 
 import uf.cs.cn.listeners.BitFieldEventListener;
-import uf.cs.cn.message.BitfieldMessage;
-import uf.cs.cn.message.HandShakeMessage;
-import uf.cs.cn.message.InterestedMessage;
-import uf.cs.cn.message.NotInterestedMessage;
+import uf.cs.cn.message.*;
 import uf.cs.cn.utils.BitFieldUtils;
 import uf.cs.cn.utils.HandShakeMessageUtils;
 
@@ -118,5 +115,20 @@ class OutgoingConnection extends Thread implements BitFieldEventListener {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void sendUnChokeMessages(){
+        try {
+            byte[] output = new UnChokeMessage().getEncodedMessage();
+            System.out.println("I am sending " + Arrays.toString(output));
+            objectOutputStream.write(output);
+            objectOutputStream.flush();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void sendChokeMessages(){
+
     }
 }

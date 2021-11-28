@@ -2,10 +2,7 @@ package uf.cs.cn.peer;
 
 import uf.cs.cn.utils.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.PriorityQueue;
+import java.util.*;
 
 /**
  * Peer represents a node in the P2P connection
@@ -176,13 +173,12 @@ public class Peer extends Thread {
         return unchokedList.contains(neighbor_peer_id);
     }
 
-    public ArrayList<Integer> calculatePreferredNeighbour(int neighbor_peer_id) {
-        ArrayList<Integer> pPeers = new ArrayList<>();
+    public void calculatePreferredNeighbours() {
+        preferredNeighborsList.clear();
         for (int i = 0; i < CommonConfigFileReader.number_of_preferred_neighbours; i++) {
             PeerConfig config = priorityQueue.poll();
-            pPeers.add(config.peer_id);
+            preferredNeighborsList.add(config.peer_id);
         }
-        return pPeers;
     }
 
     public synchronized boolean checkIfInterested(int neighbor_peer_id) {
@@ -195,6 +191,14 @@ public class Peer extends Thread {
             }
         }
         return false;
+    }
+
+    public synchronized void resetDownloadCounters(){
+        for (PeerConfig pc : references.values()) pc.resetCounter();
+    }
+
+    public void incrementDownloadCount(int client_peer_id) {
+        references.get(client_peer_id).setDownload_bandwidth_data_counter(references.get(client_peer_id).download_bandwidth_data_counter+1);
     }
 
     static class PeerConfig {

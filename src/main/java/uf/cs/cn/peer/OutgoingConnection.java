@@ -4,6 +4,7 @@ import uf.cs.cn.listeners.BitFieldEventListener;
 import uf.cs.cn.message.*;
 import uf.cs.cn.utils.BitFieldUtils;
 import uf.cs.cn.utils.HandShakeMessageUtils;
+import uf.cs.cn.utils.PeerLogging;
 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -11,7 +12,7 @@ import java.net.Socket;
 import java.util.Arrays;
 
 class OutgoingConnection extends Thread implements BitFieldEventListener {
-    //    private PeerLogging peerLogging;
+    private PeerLogging peerLogging;
     ObjectOutputStream objectOutputStream;
     ObjectInputStream objectInputStream;
     private String destination_host_name;
@@ -26,7 +27,7 @@ class OutgoingConnection extends Thread implements BitFieldEventListener {
         this.destination_peer_id = destination_peer_id;
         this.destination_port = destination_port;
         handShakeMessage = new HandShakeMessage(this.self_peer_id);
-//        peerLogging = PeerLogging.getInstance();
+        peerLogging = PeerLogging.getInstance();
     }
 
     public int getDestination_peer_id() {
@@ -50,11 +51,11 @@ class OutgoingConnection extends Thread implements BitFieldEventListener {
             objectInputStream.read(handshakeMessageBuffer);
             System.out.println("Received " + new String(handshakeMessageBuffer) + " from server peer " + destination_peer_id);
             if (!HandShakeMessageUtils.validateHandShakeMessage(handshakeMessageBuffer)) {
-//                peerLogging.genericErrorLog("Invalid Handshake Message");
+                peerLogging.genericErrorLog("Invalid Handshake Message");
             }
             // Check if it's the actual peer_id
             if (!(new HandShakeMessage(handshakeMessageBuffer).checkPeerId(this.destination_peer_id))) {
-//                peerLogging.genericErrorLog("Invalid Peer Id");
+                peerLogging.genericErrorLog("Invalid Peer Id");
             }
             sendBitFieldMessage(objectOutputStream);
             // send infinitely

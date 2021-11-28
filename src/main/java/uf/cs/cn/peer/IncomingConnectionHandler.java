@@ -4,6 +4,7 @@ import uf.cs.cn.message.ActualMessage;
 import uf.cs.cn.message.HandShakeMessage;
 import uf.cs.cn.utils.HandShakeMessageUtils;
 import uf.cs.cn.utils.MessageParser;
+import uf.cs.cn.utils.PeerLogging;
 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -16,7 +17,7 @@ public class IncomingConnectionHandler extends Thread {
     int client_peer_id;
     ObjectInputStream listening_stream = null;
     ObjectOutputStream speaking_stream = null;
-//    private PeerLogging peerLogging;
+    private PeerLogging peerLogging;
 
     private HandShakeMessage handShakeMessage;
 
@@ -24,7 +25,7 @@ public class IncomingConnectionHandler extends Thread {
         this.connection = connection;
         this.self_peer_id = self_peer_id;
         handShakeMessage = new HandShakeMessage(self_peer_id);
-//        peerLogging = PeerLogging.getInstance();
+        peerLogging = PeerLogging.getInstance();
     }
 
     public void run() {
@@ -45,7 +46,7 @@ public class IncomingConnectionHandler extends Thread {
 
             // TODO: Ask faculty/TA how can server check the peer id
 //            if(!(new HandShakeMessage(handshake_32_byte_buffer).checkPeerId(1000))){
-//                peerLogging.genericErrorLog("Invalid Peer Id");
+                peerLogging.genericErrorLog("Invalid Peer Id");
 //            }
             this.client_peer_id = new HandShakeMessage(handshake_32_byte_buffer).getPeerId();
             System.out.println("Received " + new String(handshake_32_byte_buffer) + " from the client peer " + this.client_peer_id);

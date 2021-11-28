@@ -53,6 +53,10 @@ public class PieceMessage extends ActualMessage {
     public byte[] getFileChunk() {
         return Arrays.copyOfRange(getPayload(), 4, getPayload().length);
     }
+
+    public void processPieceMessage(){
+        //TODO: process
+    }
 //    public static void main(String[] args) throws Exception {
 //        Peer peer = Peer.getInstance(1001);
 //        PieceMessage pieceMessage = new PieceMessage(1);

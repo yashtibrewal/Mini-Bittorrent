@@ -6,12 +6,12 @@ import uf.cs.cn.exceptions.InvalidMessageLengthException;
  * This class is used for checking the packet structure and raises exceptions accordingly
  */
 public class HandShakeMessageUtils {
-//    static PeerLogging peerLogging = PeerLogging.getInstance();
+    static PeerLogging peerLogging = PeerLogging.getInstance();
 
     // peerId is numeric
     public static boolean validatePeerId(byte[] message) throws Exception {
 //        if (message.length < 32) {
-//            peerLogging.genericErrorLog("Invalid Peer Id");
+            peerLogging.genericErrorLog("Invalid Peer Id");
 //
 //
 //        }

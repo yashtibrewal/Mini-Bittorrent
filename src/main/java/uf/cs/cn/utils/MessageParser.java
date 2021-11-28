@@ -9,7 +9,7 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 
 public class MessageParser {
-//    static PeerLogging logger = new PeerLogging();
+    static PeerLogging logger = PeerLogging.getInstance();
 
     public static void parse(ActualMessage actualMessage, int client_peer_id) throws IOException {
 
@@ -44,6 +44,8 @@ public class MessageParser {
                 break;
 
             case MessageType.PIECE:
+
+                Peer.getInstance().updateSelfFileChunk(actualMessage.convertByteArrayToInt(Arrays.copyOfRange(actualMessage.getPayload(), 0, 4)));
                 Peer.getInstance().incrementDownloadCount(client_peer_id);
                 if (Peer.getInstance().gotCompleteFile()) {
                     String running_dir = System.getProperty("user.dir"); // gets the base directory of the project
@@ -52,12 +54,12 @@ public class MessageParser {
                             Paths.get(running_dir, peer_id, CommonConfigFileReader.file_name).toString(),
                             Paths.get(running_dir, peer_id).toString());
 
-//                    logger.downloadingCompleteLog();
+                    logger.downloadingCompleteLog();
                 }
                 break;
 
             default:
-//                logger.genericErrorLog("Wrong Message Type received - Cannot parse");
+                logger.genericErrorLog("Wrong Message Type received - Cannot parse");
                 System.out.println("Some other type of message is coming");
         }
 

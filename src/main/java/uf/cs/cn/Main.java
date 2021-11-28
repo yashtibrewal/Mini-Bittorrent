@@ -8,8 +8,6 @@ import java.io.InputStreamReader;
 
 public class Main {
 
-    //static PeerLogging peerLogging = new PeerLogging(String.valueOf(Peer.getInstance().getSelf_peer_id()));
-
     public static void main(String[] args) throws IOException {
         System.out.println("Please enter the peer id");
         args = new String[]{new BufferedReader(new InputStreamReader(System.in)).readLine()};

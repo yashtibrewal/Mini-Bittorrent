@@ -32,7 +32,7 @@ public class Peer extends Thread {
     private Peer(int self_peer_id) {
         this.self_peer_id = self_peer_id;
         Peer.peer = this;
-//        peerLogging = PeerLogging.getInstance();
+        peerLogging = PeerLogging.getInstance();
     }
 
     public static void sendInterested(int client_peer_id) {
@@ -108,7 +108,7 @@ public class Peer extends Thread {
         PeerInfoConfigFileReader.getPeerInfoList();
         for (PeerInfoConfigFileReader.PeerInfo peerInfo : PeerInfoConfigFileReader.getPeerInfoList()) {
             if (peerInfo.getPeer_id() != this.self_peer_id) {
-//                peerLogging.outgoingTCPConnectionLog(String.valueOf(peerInfo.getPeer_id()));
+                peerLogging.outgoingTCPConnectionLog(String.valueOf(peerInfo.getPeer_id()));
                 //TODO: Store the object references when looping for future use
                 OutgoingConnection outgoingConnection = new OutgoingConnection(
                         peerInfo.getPeer_host_name(),
@@ -166,6 +166,10 @@ public class Peer extends Thread {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void updateSelfFileChunk(int piece_id) {
+        self_file_chunks.set(piece_id, true);
     }
 
     public boolean isPreferredNeighbour(int neighbor_peer_id) {

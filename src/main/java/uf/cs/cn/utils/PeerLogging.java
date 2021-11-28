@@ -28,7 +28,7 @@ public class PeerLogging {
 
     public static PeerLogging getInstance() {
         if (PeerLogging.peerLogging == null) {
-            peerLogging = PeerLogging.getInstance();
+            peerLogging = new PeerLogging();
         }
         return peerLogging;
     }

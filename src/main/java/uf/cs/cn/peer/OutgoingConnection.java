@@ -128,6 +128,13 @@ class OutgoingConnection extends Thread implements BitFieldEventListener {
     }
 
     public void sendChokeMessages() {
-
+        try {
+            byte[] output = new ChokeMessage().getEncodedMessage();
+            System.out.println("I am sending " + Arrays.toString(output));
+            objectOutputStream.write(output);
+            objectOutputStream.flush();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

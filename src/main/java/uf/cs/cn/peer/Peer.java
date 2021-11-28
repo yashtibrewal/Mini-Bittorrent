@@ -5,9 +5,7 @@ import uf.cs.cn.utils.PeerInfoConfigFileReader;
 import uf.cs.cn.utils.PeerLogging;
 import uf.cs.cn.utils.PeerUtils;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.PriorityQueue;
+import java.util.*;
 
 /**
  * Peer represents a node in the P2P connection
@@ -21,6 +19,15 @@ public class Peer extends Thread{
 
     // to keep the references to the objects in priority queue
     HashMap<Integer, PeerConfig> references = new HashMap<>();
+
+    public static void sendInterested(int client_peer_id) {
+        // TODO: make it efficient by adding a break in a manual loop.
+        Peer.getInstance().outgoingConnections.forEach((outgoingConnection -> {
+            if(outgoingConnection.getDestination_peer_id() == client_peer_id) {
+                outgoingConnection.sendInterestedMessages();
+            }
+        }));
+    }
 
     static class PeerConfig{
         ArrayList<Boolean> file_chunks;
@@ -48,6 +55,8 @@ public class Peer extends Thread{
             return PeerUtils.gotCompleteFile(this.file_chunks);
         }
     }
+
+    ArrayList<OutgoingConnection> outgoingConnections = new ArrayList<>();
 
     PeerServer peer_server;
 
@@ -99,6 +108,7 @@ public class Peer extends Thread{
                         peerInfo.getListening_port(),
                         this.self_peer_id, peerInfo.getPeer_id()
                 );
+                outgoingConnections.add(outgoingConnection);
                 outgoingConnection.start();
             }
         }

@@ -35,9 +35,10 @@ public class MessageParser {
 
             case MessageType.BIT_FIELD:
                 System.out.println(actualMessage.getMessage_type() + " "+ Arrays.toString(actualMessage.getEncodedMessage()) + " " + client_peer_id);
-                // convert array to boolean
                 // update peer memory
                 Peer.getInstance().updateNeighbourFileChunk(client_peer_id, BitFieldUtils.convertToBoolArray(actualMessage.getPayload()));
+                // trigger sending the interested message event
+                Peer.sendInterested(client_peer_id);
                 break;
 
             case MessageType.REQUEST:

@@ -70,9 +70,20 @@ public class PeerInfoConfigFileReader {
             return has_file;
         }
 
+
+
         public String toString() {
             return this.getPeer_id() + " " + this.getPeer_host_name() + " " + this.getListening_port() + " " + (this.isHas_file() ? 1 : 0);
         }
+    }
+
+    public static boolean isPeerServer(int peer_id) {
+        for(PeerInfo peerInfo: peer_info_lists) {
+            if (peerInfo.getPeer_id() == peer_id) {
+                return peerInfo.has_file;
+            }
+        }
+        return false;
     }
 
     public static int getPortForPeerID(int peer_id) {

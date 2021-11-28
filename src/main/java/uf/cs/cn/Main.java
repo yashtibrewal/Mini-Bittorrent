@@ -1,7 +1,6 @@
 package uf.cs.cn;
 
 import uf.cs.cn.peer.Peer;
-import uf.cs.cn.utils.PeerLogging;
 
 import java.io.BufferedReader;
 import java.io.IOException;

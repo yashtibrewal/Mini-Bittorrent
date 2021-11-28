@@ -1,4 +1,5 @@
 package uf.cs.cn.utils;
+
 import uf.cs.cn.peer.Peer;
 
 import java.io.IOException;
@@ -6,10 +7,10 @@ import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
+import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.logging.*;
+import java.util.logging.SimpleFormatter;
 
 // TODO: convert to single ton
 public class PeerLogging {
@@ -26,7 +27,7 @@ public class PeerLogging {
     }
 
     public static PeerLogging getInstance() {
-        if(PeerLogging.peerLogging == null) {
+        if (PeerLogging.peerLogging == null) {
             peerLogging = PeerLogging.getInstance();
         }
         return peerLogging;
@@ -45,8 +46,7 @@ public class PeerLogging {
             this.peerLogger = Logger.getLogger("Peer_Logs");
             this.peerLogger.setUseParentHandlers(false);
             this.peerLogger.addHandler(this.peerLogFileHandler);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
@@ -138,14 +138,14 @@ public class PeerLogging {
         Calendar c = Calendar.getInstance();
         String currTime = this.dateFormat.format(c.getTime());
         this.peerLogger.log(Level.SEVERE,
-                "[" + currTime + "]: Exception: "+ ex.getMessage()+" ,Cause:"+ ex.getCause());
+                "[" + currTime + "]: Exception: " + ex.getMessage() + " ,Cause:" + ex.getCause());
     }
 
     public synchronized void genericErrorLog(String msg) {
         Calendar c = Calendar.getInstance();
         String currTime = this.dateFormat.format(c.getTime());
         this.peerLogger.log(Level.SEVERE,
-                "[" + currTime + "]: Error Message: "+ msg);
+                "[" + currTime + "]: Error Message: " + msg);
     }
 
     public void closeLogger() {
@@ -153,8 +153,7 @@ public class PeerLogging {
             if (this.peerLogFileHandler != null) {
                 this.peerLogFileHandler.close();
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             System.out.println("Failed to close peer logger");
             e.printStackTrace();
         }

@@ -2,6 +2,7 @@ package uf.cs.cn.message;
 
 import uf.cs.cn.utils.ActualMessageUtils;
 import uf.cs.cn.utils.PeerLogging;
+
 import java.io.IOException;
 import java.math.BigInteger;
 import java.util.Arrays;
@@ -25,7 +26,8 @@ public class ActualMessage {
 
     private PeerLogging peerLogging;
 
-    public ActualMessage(){}
+    public ActualMessage() {
+    }
 
     public ActualMessage(int message_length, byte message_type) throws Exception {
         this.message_length = message_length;
@@ -34,24 +36,17 @@ public class ActualMessage {
 //        peerLogging = PeerLogging.getInstance();
     }
 
-    public  ActualMessage(byte[] message_length, byte[] payload){
+    public ActualMessage(byte[] message_length, byte[] payload) {
         this.message_length = this.convertByteArrayToInt(message_length);
         this.message_type = payload[0];
-        setPayload(Arrays.copyOfRange(payload,1, this.message_length));
+        setPayload(Arrays.copyOfRange(payload, 1, this.message_length));
     }
 
-    public int convertByteArrayToInt(byte[] int_chunk){
+    public int convertByteArrayToInt(byte[] int_chunk) {
         return new BigInteger(int_chunk).intValue();
     }
 
-    public void setMessage_type(byte num) throws Exception {
-        if(num< 0 || num >7) {
-            peerLogging.genericErrorLog("Invalid Message Type");
-        }
-        this.message_type = num;
-    }
-
-    public void setMessageLength(int message_length){
+    public void setMessageLength(int message_length) {
         this.message_length = message_length;
     }
 
@@ -63,20 +58,27 @@ public class ActualMessage {
         return this.message_type;
     }
 
+    public void setMessage_type(byte num) throws Exception {
+        if (num < 0 || num > 7) {
+            peerLogging.genericErrorLog("Invalid Message Type");
+        }
+        this.message_type = num;
+    }
+
+    public byte[] getPayload() {
+        return this.payload;
+    }
+
     public void setPayload(byte[] payload) {
         this.payload = payload;
     }
 
-    public byte[] getPayload(){
-        return this.payload;
-    }
-
     public byte[] getEncodedMessage() throws IOException {
         // TODO: look for a better logic if any
-        byte[] message = new byte[4+1+payload.length];
-        System.arraycopy(ActualMessageUtils.convertIntToByteArray(this.message_length),0,message,0,4);
+        byte[] message = new byte[4 + 1 + payload.length];
+        System.arraycopy(ActualMessageUtils.convertIntToByteArray(this.message_length), 0, message, 0, 4);
         message[4] = message_type;
-        System.arraycopy(payload,0,message,5,payload.length);
+        System.arraycopy(payload, 0, message, 5, payload.length);
         return message;
     }
 }

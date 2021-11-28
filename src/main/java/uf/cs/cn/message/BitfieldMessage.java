@@ -2,7 +2,6 @@ package uf.cs.cn.message;
 
 import uf.cs.cn.peer.Peer;
 import uf.cs.cn.utils.BitFieldUtils;
-import uf.cs.cn.utils.CommonConfigFileReader;
 import uf.cs.cn.utils.PeerInfoConfigFileReader;
 
 import java.io.IOException;

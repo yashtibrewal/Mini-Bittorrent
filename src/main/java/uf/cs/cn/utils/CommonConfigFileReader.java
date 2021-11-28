@@ -1,6 +1,9 @@
 package uf.cs.cn.utils;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStreamReader;
 import java.nio.file.Paths;
 
 
@@ -20,11 +23,18 @@ public class CommonConfigFileReader {
     public static final String config_file_name = "Common.cfg";
 
     public static String file_name; // include full path
+    public static int number_of_preferred_neighbours;
+    public static int un_chocking_interval;
+    public static int optimistic_un_choking_interval;
+    public static int file_size;
+    public static int piece_size;
+    public static String file_extension;
+
     static {
         try (
-            InputStreamReader inputStreamReader = new InputStreamReader(new FileInputStream(Paths.get(System.getProperty("user.dir"), config_file_name).toString()));
-            BufferedReader bufferedReader = new BufferedReader(inputStreamReader)
-            ){
+                InputStreamReader inputStreamReader = new InputStreamReader(new FileInputStream(Paths.get(System.getProperty("user.dir"), config_file_name).toString()));
+                BufferedReader bufferedReader = new BufferedReader(inputStreamReader)
+        ) {
             number_of_preferred_neighbours = Integer.parseInt(bufferedReader.readLine().split(" ")[1]);
             un_chocking_interval = Integer.parseInt(bufferedReader.readLine().split(" ")[1]);
             optimistic_un_choking_interval = Integer.parseInt(bufferedReader.readLine().split(" ")[1]);
@@ -32,7 +42,7 @@ public class CommonConfigFileReader {
             file_size = Integer.parseInt(bufferedReader.readLine().split(" ")[1]);
             piece_size = Integer.parseInt(bufferedReader.readLine().split(" ")[1]);
             String[] fileNamesSplitted = file_name.split("\\.");
-            file_extension = fileNamesSplitted[fileNamesSplitted.length-1];
+            file_extension = fileNamesSplitted[fileNamesSplitted.length - 1];
 
         } catch (FileNotFoundException e) {
             System.out.println("Please check if the file exists");
@@ -40,12 +50,5 @@ public class CommonConfigFileReader {
             e.printStackTrace();
         }
     }
-
-    public static int number_of_preferred_neighbours;
-    public static int un_chocking_interval;
-    public static int optimistic_un_choking_interval;
-    public static int file_size;
-    public static int piece_size;
-    public static String file_extension;
 
 }

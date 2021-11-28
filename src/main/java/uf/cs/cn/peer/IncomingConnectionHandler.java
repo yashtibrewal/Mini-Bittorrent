@@ -4,9 +4,7 @@ import uf.cs.cn.message.ActualMessage;
 import uf.cs.cn.message.HandShakeMessage;
 import uf.cs.cn.utils.HandShakeMessageUtils;
 import uf.cs.cn.utils.MessageParser;
-import uf.cs.cn.utils.PeerLogging;
 
-import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.math.BigInteger;
@@ -69,7 +67,7 @@ public class IncomingConnectionHandler extends Thread {
                 listening_stream.read(message_len_arr, 0, 4);
 
                 // converting to readable int
-                message_len_val =  new BigInteger(message_len_arr).intValue();
+                message_len_val = new BigInteger(message_len_arr).intValue();
 
                 // memory declaration for reading the payload
                 actual_message_without_len = new byte[message_len_val];

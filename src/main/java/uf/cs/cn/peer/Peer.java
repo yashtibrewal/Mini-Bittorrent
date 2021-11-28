@@ -2,7 +2,10 @@ package uf.cs.cn.peer;
 
 import uf.cs.cn.utils.*;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.PriorityQueue;
 
 /**
  * Peer represents a node in the P2P connection
@@ -14,13 +17,13 @@ public class Peer extends Thread {
 
     private static Peer peer;
     private static PeerConfig peerConfig;
+    private static HashSet<Integer> unchokedList = new HashSet<>();
+    private static HashSet<Integer> preferredNeighborsList = new HashSet<>();
+    private static HashSet<Integer> interestedList = new HashSet<>();
     private final int self_peer_id;
     PriorityQueue<PeerConfig> priorityQueue = new PriorityQueue<>((a, b) -> b.download_bandwidth_data_counter - a.download_bandwidth_data_counter);
     // to keep the references to the objects in priority queue
     HashMap<Integer, PeerConfig> references = new HashMap<>();
-    private static HashSet<Integer> unchokedList = new HashSet<>();
-    private static HashSet<Integer> preferredNeighborsList = new HashSet<>();
-    private static HashSet<Integer> interestedList = new HashSet<>();
     ArrayList<OutgoingConnection> outgoingConnections = new ArrayList<>();
     PeerServer peer_server;
     ArrayList<Boolean> self_file_chunks;
@@ -44,7 +47,7 @@ public class Peer extends Thread {
     public static void sendNotInterested(int client_peer_id) {
         Peer.getInstance().outgoingConnections.forEach((outgoingConnection -> {
             if (outgoingConnection.getDestination_peer_id() == client_peer_id) {
-                if(interestedList.contains(client_peer_id)) interestedList.remove(client_peer_id);
+                if (interestedList.contains(client_peer_id)) interestedList.remove(client_peer_id);
                 outgoingConnection.sendNotInterestedMessages();
             }
         }));
@@ -193,12 +196,12 @@ public class Peer extends Thread {
         return false;
     }
 
-    public synchronized void resetDownloadCounters(){
+    public synchronized void resetDownloadCounters() {
         for (PeerConfig pc : references.values()) pc.resetCounter();
     }
 
     public void incrementDownloadCount(int client_peer_id) {
-        references.get(client_peer_id).setDownload_bandwidth_data_counter(references.get(client_peer_id).download_bandwidth_data_counter+1);
+        references.get(client_peer_id).setDownload_bandwidth_data_counter(references.get(client_peer_id).download_bandwidth_data_counter + 1);
     }
 
     static class PeerConfig {

@@ -1,2 +1,4 @@
-package uf.cs.cn.utils;public class TestClientSocket {
+package uf.cs.cn.utils;
+
+public class TestClientSocket {
 }

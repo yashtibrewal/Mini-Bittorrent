@@ -6,7 +6,6 @@ import uf.cs.cn.peer.Peer;
 
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Arrays;
 
 public class MessageParser {
@@ -16,8 +15,7 @@ public class MessageParser {
 
         System.out.println("Received a message of type " + actualMessage.getMessage_type());
 
-        switch(actualMessage.getMessage_type())
-        {
+        switch (actualMessage.getMessage_type()) {
             case MessageType.UN_CHOKE:
                 break;
 
@@ -34,11 +32,11 @@ public class MessageParser {
                 break;
 
             case MessageType.BIT_FIELD:
-                System.out.println(actualMessage.getMessage_type() + " "+ Arrays.toString(actualMessage.getEncodedMessage()) + " " + client_peer_id);
+                System.out.println(actualMessage.getMessage_type() + " " + Arrays.toString(actualMessage.getEncodedMessage()) + " " + client_peer_id);
                 // update peer memory
                 Peer.getInstance().updateNeighbourFileChunk(client_peer_id, BitFieldUtils.convertToBoolArray(actualMessage.getPayload()));
                 // trigger sending the interested message event
-                if(Peer.getInstance().checkIfInterested(client_peer_id)) Peer.sendInterested(client_peer_id);
+                if (Peer.getInstance().checkIfInterested(client_peer_id)) Peer.sendInterested(client_peer_id);
                 else Peer.sendNotInterested(client_peer_id);
                 break;
 
@@ -47,7 +45,7 @@ public class MessageParser {
 
             case MessageType.PIECE:
                 Peer.getInstance().incrementDownloadCount(client_peer_id);
-                if(Peer.getInstance().gotCompleteFile()){
+                if (Peer.getInstance().gotCompleteFile()) {
                     String running_dir = System.getProperty("user.dir"); // gets the base directory of the project
                     String peer_id = String.valueOf(Peer.getInstance().getSelf_peer_id());
                     FileMerger.mergeFile(

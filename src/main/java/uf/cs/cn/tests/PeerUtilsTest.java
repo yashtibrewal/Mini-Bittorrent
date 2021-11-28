@@ -22,10 +22,10 @@ public class PeerUtilsTest {
         list2.add(false);
         list2.add(true);
         list2.add(true);
-        Assert.assertEquals(0,PeerUtils.pickRandomIndex(list1,list2));
+        Assert.assertEquals(0, PeerUtils.pickRandomIndex(list1, list2));
     }
 
-    public boolean inRange(int value, int min, int max){
+    public boolean inRange(int value, int min, int max) {
         return value >= min && (value <= max);
     }
 
@@ -39,6 +39,6 @@ public class PeerUtilsTest {
         list2.add(false);
         list2.add(false);
         list2.add(false);
-        Assert.assertTrue(inRange(PeerUtils.pickRandomIndex(list1,list2),0,2));
+        Assert.assertTrue(inRange(PeerUtils.pickRandomIndex(list1, list2), 0, 2));
     }
 }

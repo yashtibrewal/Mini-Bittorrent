@@ -1,9 +1,8 @@
 package uf.cs.cn.message;
 
-import java.io.IOException;
 import java.nio.ByteBuffer;
 
-public class RequestMessage extends ActualMessage{
+public class RequestMessage extends ActualMessage {
     private int pieceIndex;
 
     public RequestMessage(int pieceIndex) throws Exception {
@@ -15,8 +14,7 @@ public class RequestMessage extends ActualMessage{
     public void makeRequestMessage() {
         try {
             setPayload(ByteBuffer.allocate(4).putInt(pieceIndex).array());
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

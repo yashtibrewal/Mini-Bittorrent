@@ -8,11 +8,11 @@ import uf.cs.cn.message.RequestMessage;
 public class RequestedMessageTest {
 
     @Test
-    public void testMessageLengthAndMessageType () throws Exception{
-        RequestMessage requestedMessage  = new RequestMessage(100);
+    public void testMessageLengthAndMessageType() throws Exception {
+        RequestMessage requestedMessage = new RequestMessage(100);
         byte[] message = requestedMessage.getEncodedMessage();
-        Assert.assertTrue(5<=message.length);
-        Assert.assertEquals(MessageType.REQUEST,message[4]);
+        Assert.assertTrue(5 <= message.length);
+        Assert.assertEquals(MessageType.REQUEST, message[4]);
     }
 
     //TODO: Test for checking the payload content if its creating correctly

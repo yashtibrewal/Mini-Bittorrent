@@ -2,17 +2,16 @@ package uf.cs.cn.peer;
 
 import uf.cs.cn.utils.CommonConfigFileReader;
 import uf.cs.cn.utils.FileSplitter;
-import uf.cs.cn.utils.PeerInfoConfigFileReader;
 
 import java.net.ServerSocket;
 import java.nio.file.Paths;
 
-public class PeerServer extends Thread{
+public class PeerServer extends Thread {
     private ServerSocket listening_socket;
     private int self_port;
     private int self_peer_id;
 
-    public PeerServer(int self_port, int self_peer_id){
+    public PeerServer(int self_port, int self_peer_id) {
         this.self_port = self_port;
         this.self_peer_id = self_peer_id;
     }
@@ -31,8 +30,7 @@ public class PeerServer extends Thread{
                 IncomingConnectionHandler connHandler = new IncomingConnectionHandler(listening_socket.accept(), this.self_peer_id);
                 connHandler.start();
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             // TODO: handle exception here
             e.printStackTrace();
         }

@@ -35,6 +35,7 @@ public class Peer extends Thread {
 
     private Peer(int self_peer_id) {
         this.self_peer_id = self_peer_id;
+        self_file_chunks = new ArrayList<>(BitFieldUtils.getNumberOfChunks());
         Peer.peer = this;
         peerLogging = PeerLogging.getInstance();
     }

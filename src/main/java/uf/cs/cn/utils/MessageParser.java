@@ -15,27 +15,37 @@ public class MessageParser {
     public static void parse(ActualMessage actualMessage, int client_peer_id) throws IOException {
 
         System.out.println("Received a message of type " + actualMessage.getMessage_type());
-
+        int chunk_id;
         switch (actualMessage.getMessage_type()) {
             case MessageType.UN_CHOKE:
+                // send request message
+                Peer.getInstance().markHasUnChokedMe(client_peer_id);
+                Peer.getInstance().sendRequestMessage(client_peer_id);
                 break;
 
             case MessageType.CHOKE:
+                Peer.getInstance().markHasChokedMe(client_peer_id);
                 break;
 
             case MessageType.INTERESTED:
-                // add client to a list
-                //Peer.addToInterestedPeersList(client_peer_id);
+                // add to the interested list
+                Peer.getInstance().addClientToInterestedMessage(client_peer_id);
                 break;
 
             case MessageType.NOT_INTERESTED:
+                // remove from the interested
+                Peer.getInstance().updateNotInterested(client_peer_id);
                 break;
 
             case MessageType.HAVE:
+                // update the memory state of that particular client in our memory
+                Peer.getInstance().updateNeighbourFileChunk(client_peer_id,actualMessage.convertByteArrayToInt(Arrays.copyOfRange(actualMessage.getPayload(),0,4)));
+                // send if interested
+                if (Peer.getInstance().checkIfInterested(client_peer_id)) Peer.sendInterested(client_peer_id);
+                else Peer.sendNotInterested(client_peer_id);
                 break;
 
             case MessageType.BIT_FIELD:
-                System.out.println(actualMessage.getMessage_type() + " " + Arrays.toString(actualMessage.getEncodedMessage()) + " " + client_peer_id);
                 // update peer memory
                 Peer.getInstance().updateNeighbourFileChunk(client_peer_id, BitFieldUtils.convertToBoolArray(actualMessage.getPayload()));
                 // trigger sending the interested message event
@@ -44,20 +54,27 @@ public class MessageParser {
                 break;
 
             case MessageType.REQUEST:
+                // send a piece
+                chunk_id = actualMessage.convertByteArrayToInt(Arrays.copyOfRange(actualMessage.getPayload(),0,4));
+                Peer.getInstance().sendPieceMessage(client_peer_id,chunk_id);
                 break;
 
             case MessageType.PIECE:
-                new PieceMessage(actualMessage.getEncodedMessage());
+//                new PieceMessage(actualMessage.getEncodedMessage());
                 Peer.getInstance().updateSelfFileChunk(actualMessage.convertByteArrayToInt(Arrays.copyOfRange(actualMessage.getPayload(), 0, 4)));
-                //TODO: send Have
+                chunk_id = actualMessage.convertByteArrayToInt(Arrays.copyOfRange(actualMessage.getPayload(), 0, 4));
+                Peer.getInstance().updateSelfFileChunk(chunk_id);
                 Peer.getInstance().incrementDownloadCount(client_peer_id);
+                // send have messages
+                Peer.getInstance().sendHaveMessages(chunk_id);
+                // update not interested states and send if necessary
+                Peer.getInstance().checkAndSendNotInterestedForAllPeers();
                 if (Peer.getInstance().gotCompleteFile()) {
                     String running_dir = System.getProperty("user.dir"); // gets the base directory of the project
                     String peer_id = String.valueOf(Peer.getInstance().getSelf_peer_id());
                     FileMerger.mergeFile(
                             Paths.get(running_dir, peer_id, CommonConfigFileReader.file_name).toString(),
                             Paths.get(running_dir, peer_id).toString());
-
                     logger.downloadingCompleteLog();
                 }
                 break;

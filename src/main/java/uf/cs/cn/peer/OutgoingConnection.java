@@ -44,6 +44,7 @@ class OutgoingConnection extends Thread implements BitFieldEventListener {
             objectOutputStream = new ObjectOutputStream(connection.getOutputStream());
             objectInputStream = new ObjectInputStream(connection.getInputStream());
             Thread.sleep(1000);
+
             // send handshake message
             System.out.println("Writing " + handShakeMessage.getMessage() + " to server peer " + destination_peer_id);
             objectOutputStream.write(handShakeMessage.getBytes());
@@ -60,6 +61,7 @@ class OutgoingConnection extends Thread implements BitFieldEventListener {
                 peerLogging.genericErrorLog("Invalid Peer Id");
             }
             sendBitFieldMessage(objectOutputStream);
+            new ChokeHandler().startJob();
             // send infinitely
             while (true) {
                 if(Calendar.getInstance().getTimeInMillis() % CommonConfigFileReader.un_chocking_interval == 0) {

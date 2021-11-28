@@ -1,5 +1,8 @@
 package uf.cs.cn.peer;
 
+import uf.cs.cn.message.HaveMessage;
+import uf.cs.cn.message.PieceMessage;
+import uf.cs.cn.message.RequestMessage;
 import uf.cs.cn.utils.*;
 
 import java.util.*;
@@ -13,9 +16,13 @@ import java.util.*;
 public class Peer extends Thread {
 
     private static Peer peer;
-    private static PeerConfig peerConfig;
-    //private static HashSet<Integer> unchokedList = new HashSet<>();
+    /**
+     * List of neighbours I am interested in.
+     */
     private static HashSet<Integer> preferredNeighborsList = new HashSet<>();
+    /**
+     * List of neighbours who are interested in me.
+     */
     private static HashSet<Integer> interestedList = new HashSet<>();
     private final int self_peer_id;
     PriorityQueue<PeerConfig> priorityQueue = new PriorityQueue<>((a, b) -> b.download_bandwidth_data_counter - a.download_bandwidth_data_counter);
@@ -65,6 +72,10 @@ public class Peer extends Thread {
         return Peer.peer;
     }
 
+    public void addToInterested(int client_id){
+        interestedList.add(client_id);
+    }
+
     public static int getPeerId() {
         return Peer.getInstance().self_peer_id;
     }
@@ -76,14 +87,6 @@ public class Peer extends Thread {
     public void setInterestedList(HashSet<Integer> interestedList) {
         this.interestedList = interestedList;
     }
-
-    /*public HashSet<Integer> getUnchokedList() {
-        return unchokedList;
-    }
-
-    public void setUnchokedList(HashSet<Integer> unchokedList) {
-        this.unchokedList = unchokedList;
-    }*/
 
     public HashSet<Integer> getPreferredNeighborsList() {
         return preferredNeighborsList;
@@ -139,7 +142,6 @@ public class Peer extends Thread {
         System.out.println("Starting peer " + self_peer_id + " as a client");
         this.establishOutgoingConnections();
 
-        new ChokeHandler().startJob();
     }
 
     /**
@@ -167,6 +169,14 @@ public class Peer extends Thread {
         }
     }
 
+    public void updateNeighbourFileChunk(int neighbour_id, int file_chunk_number) {
+        try {
+            references.get(neighbour_id).file_chunks.set(file_chunk_number-1,true);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public void updateSelfFileChunk(int piece_id) {
         self_file_chunks.set(piece_id, true);
     }
@@ -174,10 +184,6 @@ public class Peer extends Thread {
     public boolean isPreferredNeighbour(int neighbor_peer_id) {
         return preferredNeighborsList.contains(neighbor_peer_id);
     }
-
-    /*public boolean isUnChokedNeighbour(int neighbor_peer_id) {
-        return unchokedList.contains(neighbor_peer_id);
-    }*/
 
     public void calculatePreferredNeighbours() {
         preferredNeighborsList.clear();
@@ -222,10 +228,82 @@ public class Peer extends Thread {
         references.get(client_peer_id).setDownload_bandwidth_data_counter(references.get(client_peer_id).download_bandwidth_data_counter + 1);
     }
 
+    public void sendHaveMessages(int chunk_id) {
+        // for every outgoing connection, send a have message.
+        for (OutgoingConnection outgoingConnection : outgoingConnections) {
+            try {
+                outgoingConnection.objectOutputStream.write(new HaveMessage(chunk_id).getEncodedMessage());
+                outgoingConnection.objectOutputStream.flush();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void checkAndSendNotInterestedForAllPeers() {
+        for(PeerInfoConfigFileReader.PeerInfo peerInfo: PeerInfoConfigFileReader.getPeerInfoList()) {
+            if (!Peer.getInstance().checkIfInterested(peerInfo.getPeer_id())){
+                Peer.sendNotInterested(peerInfo.getPeer_id());
+            }
+        }
+    }
+
+    /**
+     * Sends a request message to the client by selecting a RANDOM file chunk which the neighbour has, and I don't
+     * @param client_peer_id
+     */
+    public void sendRequestMessage(int client_peer_id) {
+        try {
+            // since array was 0 indexed, and files pieces are 1 indexed, we are added 1 to get the correct file piece number
+            int chunk_id = PeerUtils.pickRandomIndex(self_file_chunks,references.get(client_peer_id).file_chunks)+1;
+            RequestMessage requestMessage = new RequestMessage(chunk_id);
+            for(OutgoingConnection outgoingConnection: outgoingConnections) {
+                if(outgoingConnection.getDestination_peer_id() == client_peer_id){
+                    outgoingConnection.objectOutputStream.write(requestMessage.getEncodedMessage());
+                    outgoingConnection.objectOutputStream.flush();
+                    break;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void addClientToInterestedMessage(int client_peer_id) {
+        Peer.getInstance().addToInterested(client_peer_id);
+    }
+
+    public void markHasChokedMe(int client_peer_id) {
+        references.get(client_peer_id).setHas_choked_me(true);
+    }
+
+    public void markHasUnChokedMe(int client_peer_id) {
+        references.get(client_peer_id).setHas_choked_me(false);
+    }
+
+    public void updateNotInterested(int client_peer_id) {
+        interestedList.remove(client_peer_id);
+    }
+
+    public void sendPieceMessage(int client_peer_id, int chunk_id) {
+        for(OutgoingConnection outgoingConnection: outgoingConnections) {
+            if(outgoingConnection.getDestination_peer_id() == client_peer_id) {
+                try {
+                    outgoingConnection.objectOutputStream.write(new PieceMessage(chunk_id).getEncodedMessage());
+                    outgoingConnection.objectOutputStream.flush();
+                    break;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
     static class PeerConfig {
         ArrayList<Boolean> file_chunks;
         int peer_id;
         private int download_bandwidth_data_counter;
+        private boolean has_choked_me;
 
         public boolean isIs_interested() {
             return is_interested;
@@ -262,6 +340,14 @@ public class Peer extends Thread {
 
         boolean hasAllChunks() {
             return PeerUtils.gotCompleteFile(this.file_chunks);
+        }
+
+        public boolean isHas_choked_me() {
+            return has_choked_me;
+        }
+
+        public void setHas_choked_me(boolean has_choked_me) {
+            this.has_choked_me = has_choked_me;
         }
     }
 }

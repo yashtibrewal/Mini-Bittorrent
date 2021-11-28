@@ -2,6 +2,7 @@ package uf.cs.cn.peer;
 
 import uf.cs.cn.message.ActualMessage;
 import uf.cs.cn.message.HandShakeMessage;
+import uf.cs.cn.utils.ActualMessageUtils;
 import uf.cs.cn.utils.HandShakeMessageUtils;
 import uf.cs.cn.utils.MessageParser;
 import uf.cs.cn.utils.PeerLogging;
@@ -40,10 +41,8 @@ public class IncomingConnectionHandler extends Thread {
             // First message exchange is handshake
             // Handle handshake message
             listening_stream.read(handshake_32_byte_buffer);
-            HandShakeMessageUtils.validateHandShakeMessage(handshake_32_byte_buffer);
             // Check if it's the actual peer_id
             HandShakeMessageUtils.validateHandShakeMessage(handshake_32_byte_buffer);
-
             // TODO: Ask faculty/TA how can server check the peer id
 //            if(!(new HandShakeMessage(handshake_32_byte_buffer).checkPeerId(1000))){
                 peerLogging.genericErrorLog("Invalid Peer Id");
@@ -65,7 +64,7 @@ public class IncomingConnectionHandler extends Thread {
                 message_len_arr = new byte[4];
 
                 // reading the message length header
-                listening_stream.read(message_len_arr, 0, 4);
+                listening_stream.read(message_len_arr);
 
                 // converting to readable int
                 message_len_val = new BigInteger(message_len_arr).intValue();
@@ -74,7 +73,7 @@ public class IncomingConnectionHandler extends Thread {
                 actual_message_without_len = new byte[message_len_val];
 
                 // reading the payload ( with type )
-                listening_stream.read(actual_message_without_len, 0, message_len_val);
+                listening_stream.read(actual_message_without_len);
 
                 // parsing the payload
                 MessageParser.parse(new ActualMessage(message_len_arr, actual_message_without_len), client_peer_id);

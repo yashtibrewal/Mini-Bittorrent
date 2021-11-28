@@ -3,6 +3,7 @@ package uf.cs.cn.peer;
 import uf.cs.cn.listeners.BitFieldEventListener;
 import uf.cs.cn.message.*;
 import uf.cs.cn.utils.BitFieldUtils;
+import uf.cs.cn.utils.CommonConfigFileReader;
 import uf.cs.cn.utils.HandShakeMessageUtils;
 import uf.cs.cn.utils.PeerLogging;
 
@@ -10,6 +11,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.Arrays;
+import java.util.Calendar;
 
 class OutgoingConnection extends Thread implements BitFieldEventListener {
     private PeerLogging peerLogging;
@@ -60,8 +62,13 @@ class OutgoingConnection extends Thread implements BitFieldEventListener {
             sendBitFieldMessage(objectOutputStream);
             // send infinitely
             while (true) {
-                System.out.println("Sending nothing presently");
-                Thread.sleep(5000);
+                if(Calendar.getInstance().getTimeInMillis() % CommonConfigFileReader.un_chocking_interval == 0) {
+                    // update preferred neighbours
+                    // select one optimistically neighbour
+                    // send un choke message
+                    System.out.println("Sending nothing presently");
+                    Thread.sleep(5000);
+                }
             }
         } catch (Exception ex) {
             System.err.println(ex.getCause() + " -Error encountered when sending data to remote server.");

@@ -145,9 +145,10 @@ public class Peer extends Thread {
         new ChokeHandler().startJob();
     }
 
+    /**
+        gotCompleteFile returns true if all pieces exists, if even one piece is missing, it returns false.
+     */
     public boolean gotCompleteFile() {
-        //TODO: Implement check of boolean piece array
-
         for (boolean piece : self_file_chunks) {
             if (!piece) return false;
         }

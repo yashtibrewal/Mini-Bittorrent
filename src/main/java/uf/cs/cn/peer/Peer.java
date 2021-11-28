@@ -143,6 +143,7 @@ public class Peer extends Thread{
             }else{
                 references.put(neighbour_id,new PeerConfig(neighbour_id));
                 references.get(neighbour_id).file_chunks = neighbour_chunk;
+                priorityQueue.add(references.get(neighbour_id));
             }
         } catch (Exception e){
             e.printStackTrace();

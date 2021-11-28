@@ -86,7 +86,6 @@ public class ActualMessage {
 
     public byte[] getEncodedMessage() throws IOException {
         // TODO: look for a better logic if any
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         byte[] message = new byte[4+1+payload.length];
         System.arraycopy(ActualMessageUtils.convertIntToByteArray(this.message_length),0,message,0,4);
         message[4] = message_type;

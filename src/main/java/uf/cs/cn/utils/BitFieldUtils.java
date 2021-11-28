@@ -34,7 +34,7 @@ public class BitFieldUtils {
         }
 
         for (i=0; i< binaries.length ; i++ ){
-            for (j=0; i< binaries[i].length(); j++ ){
+            for (j=0; j< binaries[i].length(); j++ ){
                     response.add(binaries[i].charAt(j)=='1');
                 }
         }

@@ -1,4 +1,6 @@
 package uf.cs.cn.message;
+import uf.cs.cn.utils.BitFieldUtils;
+
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -11,7 +13,7 @@ public class BitfieldMessage extends ActualMessage {
         int i;
 
         ArrayList<Byte> messageBody = new ArrayList<>();
-        for (i=0; i<this.getMessage_length();i++) {
+        for (i=0; i< BitFieldUtils.getNumberOfChunks(); i++) {
             if (i!=0 && i%8 == 0) {
                 messageBody.add((byte)byteVal);
                 byteVal = 0;
@@ -27,7 +29,7 @@ public class BitfieldMessage extends ActualMessage {
 
         byte[] result = new byte[messageBody.size()];
         for(i = 0; i < messageBody.size(); i++) {
-            result[i] = messageBody.get(i).byteValue();
+            result[i] = messageBody.get(i);
         }
 
         setPayload(result);

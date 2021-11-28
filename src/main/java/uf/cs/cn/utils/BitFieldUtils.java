@@ -37,7 +37,7 @@ public class BitFieldUtils {
 
         for (i=0; i< binaries.length ; i++ ){
             for (j=0; j< binaries[i].length(); j++ ){
-                    if (ctr == numChunks-1) {
+                    if (ctr == numChunks) {
                         break;
                     }
                     response.add(binaries[i].charAt(j)=='1');

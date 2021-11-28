@@ -4,9 +4,10 @@ import uf.cs.cn.listeners.BitFieldEventListener;
 import uf.cs.cn.message.BitfieldMessage;
 import uf.cs.cn.message.HandShakeMessage;
 import uf.cs.cn.message.InterestedMessage;
+import uf.cs.cn.message.NotInterestedMessage;
 import uf.cs.cn.utils.BitFieldUtils;
 import uf.cs.cn.utils.HandShakeMessageUtils;
-import uf.cs.cn.utils.PeerLogging;
+
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
@@ -99,6 +100,18 @@ class OutgoingConnection extends Thread implements BitFieldEventListener {
     public void sendInterestedMessages() {
         try {
             byte[] output = new InterestedMessage().getEncodedMessage();
+            System.out.println("I am sending " + Arrays.toString(output));
+            objectOutputStream.write(output);
+            objectOutputStream.flush();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void sendNotInterestedMessages() {
+        try {
+            byte[] output = new NotInterestedMessage().getEncodedMessage();
             System.out.println("I am sending " + Arrays.toString(output));
             objectOutputStream.write(output);
             objectOutputStream.flush();

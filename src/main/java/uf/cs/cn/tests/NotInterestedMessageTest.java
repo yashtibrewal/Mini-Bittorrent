@@ -3,12 +3,12 @@ package uf.cs.cn.tests;
 import org.junit.Assert;
 import org.junit.Test;
 import uf.cs.cn.message.MessageType;
-import uf.cs.cn.message.NotInterested;
+import uf.cs.cn.message.NotInterestedMessage;
 
 public class NotInterestedMessageTest {
     @Test
     public void testMessageLengthAndMessageType () throws Exception{
-        NotInterested notInterested = new NotInterested();
+        NotInterestedMessage notInterested = new NotInterestedMessage();
         byte[] message = notInterested.getEncodedMessage();
         Assert.assertEquals(5,message.length);
         Assert.assertEquals(0,message[0]);

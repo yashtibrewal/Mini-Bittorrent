@@ -19,6 +19,7 @@ public class Peer extends Thread{
 
     // to keep the references to the objects in priority queue
     HashMap<Integer, PeerConfig> references = new HashMap<>();
+    public HashSet<Integer> interestedPeers = new HashSet<>();
 
     public static void sendInterested(int client_peer_id) {
         // TODO: make it efficient by adding a break in a manual loop.
@@ -29,9 +30,18 @@ public class Peer extends Thread{
         }));
     }
 
+    public static void addToInterestedPeersList(int client_peer_id) {
+        Peer.getInstance().interestedPeers.add(client_peer_id);
+    }
+
     static class PeerConfig{
         ArrayList<Boolean> file_chunks;
         int peer_id;
+        boolean choked;
+
+        // TODO: implement outgoing connection here
+        OutgoingConnection outgoingConnection;
+
         public int getDownload_bandwidth_data_counter() {
             return download_bandwidth_data_counter;
         }

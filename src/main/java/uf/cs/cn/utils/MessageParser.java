@@ -14,7 +14,7 @@ public class MessageParser {
 
     public static void parse(ActualMessage actualMessage, int client_peer_id) throws IOException {
 
-        System.out.println("Received a message of type " + actualMessage.getMessage_type());
+        System.out.println("Received the array "+Arrays.toString(actualMessage.getEncodedMessage()));
         int chunk_id;
         switch (actualMessage.getMessage_type()) {
             case MessageType.UN_CHOKE:

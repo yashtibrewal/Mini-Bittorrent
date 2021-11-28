@@ -1,9 +1,6 @@
 package uf.cs.cn.peer;
 
-import uf.cs.cn.utils.BitFieldUtils;
-import uf.cs.cn.utils.PeerInfoConfigFileReader;
-import uf.cs.cn.utils.PeerLogging;
-import uf.cs.cn.utils.PeerUtils;
+import uf.cs.cn.utils.*;
 
 import java.util.*;
 
@@ -68,6 +65,7 @@ public class Peer extends Thread{
     private PeerLogging peerLogging;
     private static Peer peer;
     ArrayList<Boolean> self_file_chunks;
+    private static PeerConfig peerConfig;
 
     /**
      * Note: If getInstance(self_peer_id) is called twice, we are losing the previous object.
@@ -86,7 +84,7 @@ public class Peer extends Thread{
     private Peer(int self_peer_id){
         this.self_peer_id = self_peer_id;
         Peer.peer = this;
-//        peerLogging = new PeerLogging();
+//        peerLogging = PeerLogging.getInstance();
     }
 
     public static int getPeerId(){
@@ -147,16 +145,38 @@ public class Peer extends Thread{
 
     public void updateNeighbourFileChunk(int neighbour_id, ArrayList<Boolean> neighbour_chunk){
         try {
-
             if(references.containsKey(neighbour_id)){
                 references.get(neighbour_id).file_chunks = neighbour_chunk;
             }else{
                 references.put(neighbour_id,new PeerConfig(neighbour_id));
                 references.get(neighbour_id).file_chunks = neighbour_chunk;
-                priorityQueue.add(references.get(neighbour_id));
+                priorityQueue.offer(references.get(neighbour_id));
             }
         } catch (Exception e){
             e.printStackTrace();
         }
+    }
+
+    public boolean isAPreferredNeighbour(int neighbor_peer_id){
+        boolean result = false;
+        ArrayList<PeerConfig> list = new ArrayList<>();
+        for(int i= 0; i < CommonConfigFileReader.number_of_preferred_neighbours; i++){
+            PeerConfig config = priorityQueue.poll();
+            if(config.peer_id == neighbor_peer_id) result = true;
+            list.add(config);
+        }
+        priorityQueue.addAll(list);
+        return result;
+    }
+
+    public synchronized boolean checkIfInterested(int neighbor_peer_id) {
+        ArrayList<Boolean> other_end = references.get(neighbor_peer_id).file_chunks;
+
+        for (int i = 0; i < other_end.size() && i < BitFieldUtils.getNumberOfChunks(); i++) {
+            if (other_end.get(i) == true && self_file_chunks.get(i) == false) {
+                return true;
+            }
+        }
+        return false;
     }
 }

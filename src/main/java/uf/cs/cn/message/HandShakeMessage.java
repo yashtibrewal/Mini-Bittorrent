@@ -13,7 +13,7 @@ public class HandShakeMessage {
 
     // Byte implementation, takes in 32 byte buffer
     public HandShakeMessage(byte[] buffer)throws Exception {
-//        peerLogging = new PeerLogging();
+//        peerLogging = PeerLogging.getInstance();
 //        if(buffer.length != 32){
 //            peerLogging.genericErrorLog("Invalid Length of Buffer");
 //        }

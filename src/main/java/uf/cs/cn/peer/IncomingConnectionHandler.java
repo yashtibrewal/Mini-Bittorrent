@@ -11,6 +11,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.math.BigInteger;
 import java.net.Socket;
+import java.util.Arrays;
 
 public class IncomingConnectionHandler extends Thread {
     private static Socket connection;
@@ -48,7 +49,7 @@ public class IncomingConnectionHandler extends Thread {
                 peerLogging.genericErrorLog("Invalid Peer Id");
 //            }
             this.client_peer_id = new HandShakeMessage(handshake_32_byte_buffer).getPeerId();
-            System.out.println("Received " + new String(handshake_32_byte_buffer) + " from the client peer " + this.client_peer_id);
+            System.out.println("Received " + Arrays.toString(handshake_32_byte_buffer) + " from the client peer " + this.client_peer_id);
 //            peerLogging.incomingTCPConnectionLog(String.valueOf(this.client_peer_id));
             // Send handshake
             speaking_stream.write(handShakeMessage.getBytes());

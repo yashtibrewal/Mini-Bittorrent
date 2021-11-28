@@ -38,12 +38,4 @@ public class FileSplitter {
         }
     }
 
-    public static void main(String[] args) throws InterruptedException {
-        String running_dir = System.getProperty("user.dir"); // gets the base directory of the project
-        String peer_id = String.valueOf(PeerInfoConfigFileReader.getPeerInfoList().get(0).getPeer_id());
-        FileSplitter.splitFile(
-                Paths.get(running_dir, peer_id, CommonConfigFileReader.file_name).toString(),
-                Paths.get(running_dir, peer_id).toString());
-        Thread.sleep(500000);
-    }
 }

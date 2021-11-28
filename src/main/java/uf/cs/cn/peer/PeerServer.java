@@ -2,6 +2,7 @@ package uf.cs.cn.peer;
 
 import uf.cs.cn.utils.CommonConfigFileReader;
 import uf.cs.cn.utils.FileSplitter;
+import uf.cs.cn.utils.PeerInfoConfigFileReader;
 
 import java.net.ServerSocket;
 import java.nio.file.Paths;
@@ -21,11 +22,19 @@ public class PeerServer extends Thread {
         boolean searchForConnection = true;
         try {
             listening_socket = new ServerSocket(self_port);
-            String running_dir = System.getProperty("user.dir"); // gets the base directory of the project
-            String peer_id = String.valueOf(self_peer_id);
-            FileSplitter.splitFile(
-                    Paths.get(running_dir, peer_id, CommonConfigFileReader.file_name).toString(),
-                    Paths.get(running_dir, peer_id).toString());
+            boolean is_server = false;
+            for(PeerInfoConfigFileReader.PeerInfo peerInfo: PeerInfoConfigFileReader.getPeerInfoList()){
+                if(Peer.getPeerId() == peerInfo.getPeer_id() && peerInfo.isHas_file()){
+                    is_server = true;
+                }
+            }
+            if(is_server) {
+                String running_dir = System.getProperty("user.dir"); // gets the base directory of the project
+                String peer_id = String.valueOf(self_peer_id);
+                FileSplitter.splitFile(
+                        Paths.get(running_dir, peer_id, CommonConfigFileReader.file_name).toString(),
+                        Paths.get(running_dir, peer_id).toString());
+            }
             while (searchForConnection) {
                 IncomingConnectionHandler connHandler = new IncomingConnectionHandler(listening_socket.accept(), this.self_peer_id);
                 connHandler.start();

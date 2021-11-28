@@ -24,7 +24,7 @@ class OutgoingConnection extends Thread implements BitFieldEventListener {
     private int destination_peer_id;
     private int self_peer_id;
     private HandShakeMessage handShakeMessage;
-    private PeerLogging peerLogging;
+//    private PeerLogging peerLogging;
     ObjectOutputStream objectOutputStream;
     ObjectInputStream objectInputStream;
     public OutgoingConnection(String destination_host_name, int destination_port, int self_peer_id, int destination_peer_id) {
@@ -33,7 +33,7 @@ class OutgoingConnection extends Thread implements BitFieldEventListener {
         this.destination_peer_id = destination_peer_id;
         this.destination_port = destination_port;
         handShakeMessage = new HandShakeMessage(this.self_peer_id);
-        peerLogging = new PeerLogging();
+//        peerLogging = new PeerLogging();
     }
 
     public void run() {
@@ -43,7 +43,7 @@ class OutgoingConnection extends Thread implements BitFieldEventListener {
             connection = new Socket(destination_host_name, destination_port);
             objectOutputStream = new ObjectOutputStream(connection.getOutputStream());
             objectInputStream = new ObjectInputStream(connection.getInputStream());
-
+            Thread.sleep(1000);
             // send handshake message
             System.out.println("Writing " + handShakeMessage.getMessage() + " to server peer " + destination_peer_id);
             objectOutputStream.write(handShakeMessage.getBytes());
@@ -53,11 +53,11 @@ class OutgoingConnection extends Thread implements BitFieldEventListener {
             objectInputStream.read(handshakeMessageBuffer);
             System.out.println("Received " + new String(handshakeMessageBuffer) + " from server peer " + destination_peer_id);
             if(!HandShakeMessageUtils.validateHandShakeMessage(handshakeMessageBuffer)){
-                peerLogging.genericErrorLog("Invalid Handshake Message");
+//                peerLogging.genericErrorLog("Invalid Handshake Message");
             }
             // Check if it's the actual peer_id
             if(!(new HandShakeMessage(handshakeMessageBuffer).checkPeerId(this.destination_peer_id))){
-                peerLogging.genericErrorLog("Invalid Peer Id");
+//                peerLogging.genericErrorLog("Invalid Peer Id");
             }
             sendBitFieldMessage(objectOutputStream);
             // send infinitely
@@ -98,7 +98,9 @@ class OutgoingConnection extends Thread implements BitFieldEventListener {
     @Override
     public void sendInterestedMessages() {
         try {
-            objectOutputStream.write(new InterestedMessage().getEncodedMessage());
+            byte[] output = new InterestedMessage().getEncodedMessage();
+            System.out.println("I am sending " + Arrays.toString(output));
+            objectOutputStream.write(output);
             objectOutputStream.flush();
         } catch (Exception e) {
             e.printStackTrace();

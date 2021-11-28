@@ -86,7 +86,7 @@ public class Peer extends Thread{
     private Peer(int self_peer_id){
         this.self_peer_id = self_peer_id;
         Peer.peer = this;
-        peerLogging = new PeerLogging();
+//        peerLogging = new PeerLogging();
     }
 
     public static int getPeerId(){
@@ -101,7 +101,7 @@ public class Peer extends Thread{
         PeerInfoConfigFileReader.getPeerInfoList();
         for(PeerInfoConfigFileReader.PeerInfo peerInfo: PeerInfoConfigFileReader.getPeerInfoList()) {
             if(peerInfo.getPeer_id() != this.self_peer_id) {
-                peerLogging.outgoingTCPConnectionLog(String.valueOf(peerInfo.getPeer_id()));
+//                peerLogging.outgoingTCPConnectionLog(String.valueOf(peerInfo.getPeer_id()));
                 //TODO: Store the object references when looping for future use
                 OutgoingConnection outgoingConnection = new OutgoingConnection(
                         peerInfo.getPeer_host_name(),

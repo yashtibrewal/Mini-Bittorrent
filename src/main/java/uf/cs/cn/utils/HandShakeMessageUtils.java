@@ -7,15 +7,15 @@ import uf.cs.cn.peer.Peer;
  * This class is used for checking the packet structure and raises exceptions accordingly
  */
 public class HandShakeMessageUtils {
-    static PeerLogging peerLogging = new PeerLogging();
+//    static PeerLogging peerLogging = new PeerLogging();
 
     // peerId is numeric
     public static boolean validatePeerId(byte[] message) throws Exception {
-        if (message.length < 32) {
-            peerLogging.genericErrorLog("Invalid Peer Id");
-
-
-        }
+//        if (message.length < 32) {
+//            peerLogging.genericErrorLog("Invalid Peer Id");
+//
+//
+//        }
         for (int i=message.length-5; i< message.length; i++) {
             if (!Character.isDigit(message[i])) {
                 return false;

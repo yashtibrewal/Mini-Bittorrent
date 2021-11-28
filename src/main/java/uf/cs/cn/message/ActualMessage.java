@@ -2,7 +2,6 @@ package uf.cs.cn.message;
 
 import uf.cs.cn.utils.ActualMessageUtils;
 import uf.cs.cn.utils.PeerLogging;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.util.Arrays;
@@ -31,20 +30,8 @@ public class ActualMessage {
     public ActualMessage(int message_length, byte message_type) throws Exception {
         this.message_length = message_length;
         this.setMessage_type(message_type);
-        payload = new byte[message_length];
-        peerLogging = new PeerLogging();
-    }
-
-    /**
-     * Converts back from message stream to normal stream
-     * @param message
-     */
-    public ActualMessage(byte[] message) {
-        byte[] message_length_bytes = new byte[4];
-        System.arraycopy(message, 0, message_length_bytes, 0, 4);
-        this.message_length = this.convertByteArrayToInt(message_length_bytes);
-        this.message_type = message[4];
-        setPayload(Arrays.copyOfRange(message,5, message_length));
+        this.payload = new byte[0];
+//        peerLogging = new PeerLogging();
     }
 
     public  ActualMessage(byte[] message_length, byte[] payload){

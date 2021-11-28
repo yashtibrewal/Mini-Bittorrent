@@ -13,16 +13,23 @@ import java.util.logging.*;
 
 // TODO: convert to single ton
 public class PeerLogging {
-
+    private static PeerLogging peerLogging;
     private String logFileName;
     private String peerId;
     private FileHandler peerLogFileHandler;
     private SimpleDateFormat dateFormat = null;
     private Logger peerLogger;
 
-    public PeerLogging() {
+    private PeerLogging() {
         this.peerId = Peer.getPeerId() + "";
         startLogger();
+    }
+
+    public static PeerLogging getInstance() {
+        if(PeerLogging.peerLogging == null) {
+            peerLogging = new PeerLogging();
+        }
+        return peerLogging;
     }
 
     public void startLogger() {

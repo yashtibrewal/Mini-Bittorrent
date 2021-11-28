@@ -9,14 +9,14 @@ public class HandShakeMessage {
     private byte[] zero_bits;
     private byte[] peer_id; // 4 bytes
     private int id;
-    private PeerLogging peerLogging;
+//    private PeerLogging peerLogging;
 
     // Byte implementation, takes in 32 byte buffer
     public HandShakeMessage(byte[] buffer)throws Exception {
-        peerLogging = new PeerLogging();
-        if(buffer.length != 32){
-            peerLogging.genericErrorLog("Invalid Length of Buffer");
-        }
+//        peerLogging = new PeerLogging();
+//        if(buffer.length != 32){
+//            peerLogging.genericErrorLog("Invalid Length of Buffer");
+//        }
         header = new byte[18];
         zero_bits = new byte[10];
         peer_id = new byte[4];

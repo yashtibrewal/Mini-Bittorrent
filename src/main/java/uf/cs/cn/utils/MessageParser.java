@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class MessageParser {
-    static PeerLogging logger = new PeerLogging();
+//    static PeerLogging logger = new PeerLogging();
 
     public static void parse(ActualMessage actualMessage, int client_peer_id) throws IOException {
 
@@ -52,12 +52,13 @@ public class MessageParser {
                             Paths.get(running_dir, peer_id, CommonConfigFileReader.file_name).toString(),
                             Paths.get(running_dir, peer_id).toString());
 
-                    logger.downloadingCompleteLog();
+//                    logger.downloadingCompleteLog();
                 }
                 break;
 
             default:
-                logger.genericErrorLog("Wrong Message Type received - Cannot parse");
+//                logger.genericErrorLog("Wrong Message Type received - Cannot parse");
+                System.out.println("Some other type of message is coming");
         }
 
     }

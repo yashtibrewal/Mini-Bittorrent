@@ -18,7 +18,7 @@ public class IncomingConnectionHandler extends Thread {
     int client_peer_id;
     ObjectInputStream listening_stream = null;
     ObjectOutputStream speaking_stream = null;
-    private PeerLogging peerLogging;
+//    private PeerLogging peerLogging;
 
     private HandShakeMessage handShakeMessage;
 
@@ -26,7 +26,7 @@ public class IncomingConnectionHandler extends Thread {
         this.connection = connection;
         this.self_peer_id = self_peer_id;
         handShakeMessage = new HandShakeMessage(self_peer_id);
-        peerLogging = new PeerLogging();
+//        peerLogging = new PeerLogging();
     }
 
     public void run() {
@@ -37,7 +37,7 @@ public class IncomingConnectionHandler extends Thread {
         try {
             listening_stream = new ObjectInputStream(connection.getInputStream());
             speaking_stream = new ObjectOutputStream(connection.getOutputStream());
-
+            Thread.sleep(1000);
             // First message exchange is handshake
             // Handle handshake message
             listening_stream.read(handshake_32_byte_buffer);
@@ -51,7 +51,7 @@ public class IncomingConnectionHandler extends Thread {
 //            }
             this.client_peer_id = new HandShakeMessage(handshake_32_byte_buffer).getPeerId();
             System.out.println("Received " + new String(handshake_32_byte_buffer) + " from the client peer " + this.client_peer_id);
-            peerLogging.incomingTCPConnectionLog(String.valueOf(this.client_peer_id));
+//            peerLogging.incomingTCPConnectionLog(String.valueOf(this.client_peer_id));
             // Send handshake
             speaking_stream.write(handShakeMessage.getBytes());
             System.out.println("Writing " + handShakeMessage.getMessage() + " to client peer " + this.client_peer_id);

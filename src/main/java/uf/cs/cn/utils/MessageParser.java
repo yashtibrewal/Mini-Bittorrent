@@ -24,7 +24,7 @@ public class MessageParser {
 
             case MessageType.INTERESTED:
                 // add client to a list
-                Peer.addToInterestedPeersList(client_peer_id);
+                //Peer.addToInterestedPeersList(client_peer_id);
                 break;
 
             case MessageType.NOT_INTERESTED:

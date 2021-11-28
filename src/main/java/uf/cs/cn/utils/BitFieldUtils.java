@@ -29,13 +29,19 @@ public class BitFieldUtils {
 
         String[] binaries = new String[payload.length];
 
+        int numChunks = getNumberOfChunks();
+        int ctr = 0;
         for (i=0; i < payload.length; i++) {
             binaries[i] = Integer.toBinaryString(payload[i]& 0xff);
         }
 
         for (i=0; i< binaries.length ; i++ ){
             for (j=0; j< binaries[i].length(); j++ ){
+                    if (ctr == numChunks-1) {
+                        break;
+                    }
                     response.add(binaries[i].charAt(j)=='1');
+                    ctr++;
                 }
         }
         return response;

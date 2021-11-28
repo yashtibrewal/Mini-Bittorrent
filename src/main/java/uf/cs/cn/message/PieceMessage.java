@@ -83,15 +83,4 @@ public class PieceMessage extends ActualMessage {
             e.printStackTrace();
         }
     }
-
-
-//    public static void main(String[] args) throws Exception {
-//        Peer peer = Peer.getInstance(1001);
-//        PieceMessage pieceMessage = new PieceMessage(1);
-//        System.out.println(pieceMessage.getPayload().length);
-//        System.out.println(pieceMessage.getEncodedMessage().length);
-//        System.out.println(Arrays.toString(new PieceMessage(Arrays.copyOfRange(pieceMessage.getEncodedMessage(), 0, 4),
-//                Arrays.copyOfRange(pieceMessage.getEncodedMessage(), 4, pieceMessage.getEncodedMessage().length)
-//        ).getEncodedMessage()));
-//    }
 }

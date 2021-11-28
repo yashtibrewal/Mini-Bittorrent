@@ -14,7 +14,8 @@ public class BitFieldUtils {
     }
 
     public static int getNumberOfChunks() {
-        return isDivsible(CommonConfigFileReader.file_size, CommonConfigFileReader.piece_size);
+        int size = isDivsible(CommonConfigFileReader.file_size, CommonConfigFileReader.piece_size);
+        return size;
     }
 
     public static int getPayloadDataSize(int numChunks) {

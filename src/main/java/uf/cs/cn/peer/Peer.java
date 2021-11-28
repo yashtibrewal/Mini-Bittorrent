@@ -30,13 +30,16 @@ public class Peer extends Thread {
     HashMap<Integer, PeerConfig> references = new HashMap<>();
     ArrayList<OutgoingConnection> outgoingConnections = new ArrayList<>();
     PeerServer peer_server;
-    ArrayList<Boolean> self_file_chunks;
+    ArrayList<Boolean> self_file_chunks ;
     private PeerLogging peerLogging;
 
     private Peer(int self_peer_id) {
         this.self_peer_id = self_peer_id;
-        self_file_chunks = new ArrayList<>(BitFieldUtils.getNumberOfChunks());
         Peer.peer = this;
+        self_file_chunks = new ArrayList<>();
+        for(int i=0;i<BitFieldUtils.getNumberOfChunks();i++) {
+            self_file_chunks.add(false);
+        }
         peerLogging = PeerLogging.getInstance();
     }
 
@@ -319,7 +322,10 @@ public class Peer extends Thread {
 
         PeerConfig(int peer_id) throws Exception {
             this.peer_id = peer_id;
-            file_chunks = new ArrayList<>(BitFieldUtils.getNumberOfChunks());
+            file_chunks = new ArrayList<>();
+            for(int i=0;i<BitFieldUtils.getNumberOfChunks();i++) {
+                file_chunks.add(false);
+            }
             download_bandwidth_data_counter++;
         }
 

@@ -53,7 +53,7 @@ public class IncomingConnectionHandler extends Thread {
 //            peerLogging.incomingTCPConnectionLog(String.valueOf(this.client_peer_id));
             // Send handshake
             speaking_stream.write(handShakeMessage.getBytes());
-            System.out.println("Writing " + handShakeMessage.getMessage() + " to client peer " + this.client_peer_id);
+            System.out.println("Writing " + Arrays.toString(handShakeMessage.getBytes()) + " to client peer " + this.client_peer_id);
             speaking_stream.flush();
 
             int message_len_val;

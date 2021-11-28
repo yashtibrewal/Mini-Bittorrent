@@ -46,13 +46,14 @@ class OutgoingConnection extends Thread implements BitFieldEventListener {
             Thread.sleep(1000);
 
             // send handshake message
-            System.out.println("Writing " + handShakeMessage.getMessage() + " to server peer " + destination_peer_id);
+            System.out.println("Sending handshake message which is "+Arrays.toString(handShakeMessage.getBytes()));
+            System.out.println("The destination pee is "+ destination_peer_id);
             objectOutputStream.write(handShakeMessage.getBytes());
             objectOutputStream.flush();
 
             // receive handshake message
             objectInputStream.read(handshakeMessageBuffer);
-            System.out.println("Received " + new String(handshakeMessageBuffer) + " from server peer " + destination_peer_id);
+            System.out.println("Received " + Arrays.toString(handshakeMessageBuffer) + " from server peer " + destination_peer_id);
             if (!HandShakeMessageUtils.validateHandShakeMessage(handshakeMessageBuffer)) {
                 peerLogging.genericErrorLog("Invalid Handshake Message");
             }

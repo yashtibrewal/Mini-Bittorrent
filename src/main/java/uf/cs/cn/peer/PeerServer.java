@@ -35,9 +35,14 @@ public class PeerServer extends Thread {
                         Paths.get(running_dir, peer_id, CommonConfigFileReader.file_name).toString(),
                         Paths.get(running_dir, peer_id).toString());
             }
+            int counter = 0;
             while (searchForConnection) {
+                if(counter == PeerInfoConfigFileReader.getPeerInfoList().size()-1){
+                    break;
+                }
                 IncomingConnectionHandler connHandler = new IncomingConnectionHandler(listening_socket.accept(), this.self_peer_id);
                 connHandler.start();
+                counter++;
             }
         } catch (Exception e) {
             // TODO: handle exception here

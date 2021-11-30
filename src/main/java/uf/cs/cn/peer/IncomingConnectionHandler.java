@@ -40,14 +40,17 @@ public class IncomingConnectionHandler extends Thread {
         // reading the message length header
         bytes_read_from_stream = listening_stream.read(message_len_arr);
         System.out.println("Bytes read from the stream : "+ bytes_read_from_stream);
+        System.out.println(Arrays.toString(message_len_arr));
 
         // converting to readable int
         message_len_val = new BigInteger(message_len_arr).intValue();
         System.out.println("Will read these many bytes more : "+ message_len_val);
 
+
         // memory declaration for reading the payload
         actual_message_without_len = new byte[message_len_val];
 
+        System.out.println(Arrays.toString(actual_message_without_len));
         // reading the payload ( with type )
         bytes_read_from_stream = listening_stream.read(actual_message_without_len);
         System.out.println("Bytes read from the stream : "+ bytes_read_from_stream);
@@ -61,35 +64,33 @@ public class IncomingConnectionHandler extends Thread {
     public void run() {
 
         // handshake message reading
-        byte[] handshake_32_byte_buffer = new byte[32];
 
         try {
             listening_stream = new ObjectInputStream(connection.getInputStream());
             speaking_stream = new ObjectOutputStream(connection.getOutputStream());
             Thread.sleep(1000);
-            // First message exchange is handshake
-            // Handle handshake message
-            listening_stream.read(handshake_32_byte_buffer);
             // Check if it's the actual peer_id
-            HandShakeMessageUtils.validateHandShakeMessage(handshake_32_byte_buffer);
             // TODO: Ask faculty/TA how can server check the peer id
 //            if(!(new HandShakeMessage(handshake_32_byte_buffer).checkPeerId(1000))){
 //                peerLogging.genericErrorLog("Invalid Peer Id");
 //            }
-            this.client_peer_id = new HandShakeMessage(handshake_32_byte_buffer).getPeerId();
-            System.out.println("Received " + Arrays.toString(handshake_32_byte_buffer) + " from the client peer " + this.client_peer_id);
-//            peerLogging.incomingTCPConnectionLog(String.valueOf(this.client_peer_id));
-            // Send handshake
-            speaking_stream.write(handShakeMessage.getBytes());
-            System.out.println("Writing " + Arrays.toString(handShakeMessage.getBytes()) + " to client peer " + this.client_peer_id);
-            speaking_stream.flush();
+
+            //recv handshake
+            this.client_peer_id = HandShakeMessageUtils.receiveHandshake(listening_stream);
+            //sending handshake
+            HandShakeMessageUtils.sendHandshake(speaking_stream, handShakeMessage);
+
+
+            while(HandShakeMessageUtils.recvCounter !=2 && HandShakeMessageUtils.sendCounter!=2) Thread.sleep(10);
 
             //listen to bitfield message first
             listenMessage();
+
             // listen infinitely
             while (!Peer.isClose_connection()) {
                 listenMessage();
             }
+
             ChokeHandler.cancelJob();
             listening_stream.close();
             speaking_stream.close();

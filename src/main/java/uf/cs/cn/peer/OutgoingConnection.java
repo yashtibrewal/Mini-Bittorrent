@@ -7,6 +7,7 @@ import uf.cs.cn.utils.CommonConfigFileReader;
 import uf.cs.cn.utils.HandShakeMessageUtils;
 import uf.cs.cn.utils.PeerLogging;
 
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
@@ -37,6 +38,13 @@ class OutgoingConnection extends Thread implements BitFieldEventListener {
     }
 
     public void sendChokesAndUnChokes() {
+
+
+        System.out.println("Calculating preferred neighbours");
+        Peer.getInstance().calculatePreferredNeighbours();
+        System.out.println("Resetting download counters");
+        Peer.getInstance().resetDownloadCounters();
+
         Peer.getInstance().getPreferredNeighborsList().forEach((pN -> {
             Peer.getInstance().outgoingConnections.forEach((outgoingConnection -> {
                 if (outgoingConnection.getDestination_peer_id() == pN) {
@@ -49,8 +57,18 @@ class OutgoingConnection extends Thread implements BitFieldEventListener {
         }));
     }
 
+    public void triggerPeriodicMessaging() throws InterruptedException {
+        // update preferred neighbours
+        // select one optimistically neighbour
+        // send un choke message
+        Peer.updateCloseConnection();
+        System.out.println("Sending nothing presently");
+        Thread.sleep(CommonConfigFileReader.un_chocking_interval* 1000L);
+        sendChokesAndUnChokes();
+    }
+
+
     public void run() {
-        byte[] handshakeMessageBuffer = new byte[32];
         connection = null;
         try {
             connection = new Socket(destination_host_name, destination_port);
@@ -58,37 +76,23 @@ class OutgoingConnection extends Thread implements BitFieldEventListener {
             objectInputStream = new ObjectInputStream(connection.getInputStream());
             Thread.sleep(1000);
 
-            // send handshake message
-            System.out.println("Sending handshake message which is "+Arrays.toString(handShakeMessage.getBytes()));
-            System.out.println("The destination pee is "+ destination_peer_id);
-            objectOutputStream.write(handShakeMessage.getBytes());
-            objectOutputStream.flush();
-
-            // receive handshake message
-            objectInputStream.read(handshakeMessageBuffer);
-            System.out.println("Received " + Arrays.toString(handshakeMessageBuffer) + " from server peer " + destination_peer_id);
-            if (!HandShakeMessageUtils.validateHandShakeMessage(handshakeMessageBuffer)) {
-                peerLogging.genericErrorLog("Invalid Handshake Message");
-            }
-            // Check if it's the actual peer_id
-            if (!(new HandShakeMessage(handshakeMessageBuffer).checkPeerId(this.destination_peer_id))) {
-                peerLogging.genericErrorLog("Invalid Peer Id");
-            }
+            HandShakeMessageUtils.sendHandshake(objectOutputStream, handShakeMessage);
+            HandShakeMessageUtils.receiveHandshake(objectInputStream);
             sendBitFieldMessage(objectOutputStream);
 
+
+            while(HandShakeMessageUtils.recvCounter !=2 && HandShakeMessageUtils.sendCounter!=2) Thread.sleep(10);
             // starting the chokehandler
 //            BUG: chokehandler does not work
 //            ChokeHandler.getInstance();
+
+
             // send infinitely
             while (!Peer.isClose_connection()) {
-                // update preferred neighbours
-                // select one optimistically neighbour
-                // send un choke message
-                Peer.updateCloseConnection();
-                System.out.println("Sending nothing presently");
-                Thread.sleep(CommonConfigFileReader.un_chocking_interval* 1000L);
-                sendChokesAndUnChokes();
+                triggerPeriodicMessaging();
             }
+
+
             objectOutputStream.close();
             objectInputStream.close();
             connection.close();

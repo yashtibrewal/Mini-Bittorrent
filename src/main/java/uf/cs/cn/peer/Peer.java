@@ -1,10 +1,14 @@
 package uf.cs.cn.peer;
 
+import uf.cs.cn.message.HandShakeMessage;
 import uf.cs.cn.message.HaveMessage;
 import uf.cs.cn.message.PieceMessage;
 import uf.cs.cn.message.RequestMessage;
 import uf.cs.cn.utils.*;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.*;
 
 /**
@@ -192,6 +196,7 @@ public class Peer extends Thread {
     public boolean isPreferredNeighbour(int neighbor_peer_id) {
         return preferredNeighborsList.contains(neighbor_peer_id);
     }
+
 
     public void calculatePreferredNeighbours() {
         preferredNeighborsList.clear();

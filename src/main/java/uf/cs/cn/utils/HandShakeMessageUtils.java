@@ -75,7 +75,7 @@ public class HandShakeMessageUtils {
 
         int destination_peer_id = new HandShakeMessage(handshakeMessageBuffer).getPeerId();
         System.out.println("Received " + Arrays.toString(handshakeMessageBuffer) + " from server peer " + destination_peer_id);
-        recvCounter++;
+        setRecvCounter(getRecvCounter()+1);
 //        if (!HandShakeMessageUtils.validateHandShakeMessage(handshakeMessageBuffer)) {
 //            peerLogging.genericErrorLog("Invalid Handshake Message");
 //        }
@@ -105,6 +105,7 @@ public class HandShakeMessageUtils {
         oos.write(handShakeMessage.getBytes());
         oos.flush();
         sendCounter++;
+        setSendCounter(getSendCounter()+1);
     }
 
     public static boolean checkHandshakePaddingMessage(byte[] message) throws Exception {

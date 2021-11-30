@@ -6,6 +6,7 @@ import uf.cs.cn.utils.HandShakeMessageUtils;
 import uf.cs.cn.utils.MessageParser;
 import uf.cs.cn.utils.PeerLogging;
 
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.math.BigInteger;
@@ -20,6 +21,9 @@ public class IncomingConnectionHandler extends Thread {
     ObjectOutputStream speaking_stream;
     private final PeerLogging peerLogging;
 
+    int message_len_val, bytes_read_from_stream;
+    byte[] message_len_arr;
+    byte[] actual_message_without_len;
     private final HandShakeMessage handShakeMessage;
 
     public IncomingConnectionHandler(Socket connection, int self_peer_id) {
@@ -27,6 +31,31 @@ public class IncomingConnectionHandler extends Thread {
         this.self_peer_id = self_peer_id;
         handShakeMessage = new HandShakeMessage(self_peer_id);
         peerLogging = PeerLogging.getInstance();
+    }
+
+    public void listenMessage() throws IOException {
+        // memory for reading message length header
+        message_len_arr = new byte[4];
+
+        // reading the message length header
+        bytes_read_from_stream = listening_stream.read(message_len_arr);
+        System.out.println("Bytes read from the stream : "+ bytes_read_from_stream);
+
+        // converting to readable int
+        message_len_val = new BigInteger(message_len_arr).intValue();
+        System.out.println("Will read these many bytes more : "+ message_len_val);
+
+        // memory declaration for reading the payload
+        actual_message_without_len = new byte[message_len_val];
+
+        // reading the payload ( with type )
+        bytes_read_from_stream = listening_stream.read(actual_message_without_len);
+        System.out.println("Bytes read from the stream : "+ bytes_read_from_stream);
+
+        // parsing the payload
+        MessageParser.parse(new ActualMessage(message_len_arr, actual_message_without_len), client_peer_id);
+
+
     }
 
     public void run() {
@@ -55,32 +84,11 @@ public class IncomingConnectionHandler extends Thread {
             System.out.println("Writing " + Arrays.toString(handShakeMessage.getBytes()) + " to client peer " + this.client_peer_id);
             speaking_stream.flush();
 
-            int message_len_val, bytes_read_from_stream;
-            byte[] message_len_arr;
-            byte[] actual_message_without_len;
+            //listen to bitfield message first
+            listenMessage();
             // listen infinitely
             while (!Peer.isClose_connection()) {
-                // memory for reading message length header
-                message_len_arr = new byte[4];
-
-                // reading the message length header
-                bytes_read_from_stream = listening_stream.read(message_len_arr);
-                System.out.println("Bytes read from the stream : "+ bytes_read_from_stream);
-
-                // converting to readable int
-                message_len_val = new BigInteger(message_len_arr).intValue();
-                System.out.println("Will read these many bytes more : "+ message_len_val);
-
-                // memory declaration for reading the payload
-                actual_message_without_len = new byte[message_len_val];
-
-                // reading the payload ( with type )
-                bytes_read_from_stream = listening_stream.read(actual_message_without_len);
-                System.out.println("Bytes read from the stream : "+ bytes_read_from_stream);
-
-                // parsing the payload
-                MessageParser.parse(new ActualMessage(message_len_arr, actual_message_without_len), client_peer_id);
-
+                listenMessage();
             }
             ChokeHandler.cancelJob();
             listening_stream.close();

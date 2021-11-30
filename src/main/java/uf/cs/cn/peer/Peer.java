@@ -318,6 +318,7 @@ public class Peer extends Thread {
                 return;
             }
         }
+        if(!PeerUtils.gotCompleteFile(getInstance().self_file_chunks))return;
         Peer.close_connection = true;
     }
 

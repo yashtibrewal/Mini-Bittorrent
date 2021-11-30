@@ -118,7 +118,6 @@ class OutgoingConnection extends Thread implements BitFieldEventListener {
     }
 
     private void sendBitFieldMessage(ObjectOutputStream objectOutputStream) throws Exception {
-        HandShakeMessageUtils.outgoingBitfields+=1;
         int numChunks = BitFieldUtils.getNumberOfChunks();
         int bitFieldSize = BitFieldUtils.getPayloadDataSize(numChunks);
         BitfieldMessage bitfieldMessage = new BitfieldMessage(bitFieldSize);
@@ -126,6 +125,7 @@ class OutgoingConnection extends Thread implements BitFieldEventListener {
         System.out.println("I am sending " + Arrays.toString(output));
         objectOutputStream.write(output);
         objectOutputStream.flush();
+        HandShakeMessageUtils.outgoingBitfields+=1;
     }
 
     @Override

@@ -291,6 +291,9 @@ public class Peer extends Thread {
         try {
             // since array was 0 indexed, and files pieces are 1 indexed, we are added 1 to get the correct file piece number
             int chunk_id = PeerUtils.pickRandomIndex(self_file_chunks,references.get(client_peer_id).file_chunks)+1;
+            if(chunk_id == -1) {
+                return;
+            }
             RequestMessage requestMessage = new RequestMessage(chunk_id);
             for(OutgoingConnection outgoingConnection: outgoingConnections) {
                 if(outgoingConnection.getDestination_peer_id() == client_peer_id){

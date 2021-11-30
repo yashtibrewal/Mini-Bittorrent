@@ -24,6 +24,9 @@ public class PeerUtils {
                 bag.add(i);
             }
         }
+        if(bag.size() == 0){
+            return -1;
+        }
         System.out.println("BAG IS " + bag);
         int random = (int) (Math.random() * bag.size());
         System.out.println("Random selected is " + random);

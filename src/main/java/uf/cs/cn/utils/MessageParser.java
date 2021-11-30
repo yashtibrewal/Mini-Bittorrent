@@ -2,7 +2,6 @@ package uf.cs.cn.utils;
 
 import uf.cs.cn.message.ActualMessage;
 import uf.cs.cn.message.MessageType;
-import uf.cs.cn.message.PieceMessage;
 import uf.cs.cn.peer.Peer;
 
 import java.io.IOException;
@@ -47,12 +46,14 @@ public class MessageParser {
 
             case MessageType.BIT_FIELD:
                 // update peer memory
-                HandShakeMessageUtils.bitfieldCounter+=1;
                 Peer.getInstance().updateNeighbourFileChunk(client_peer_id, BitFieldUtils.convertToBoolArray(actualMessage.getPayload()));
                 // trigger sending the interested message event
                 if (Peer.getInstance().checkIfInterested(client_peer_id)) Peer.sendInterested(client_peer_id);
                 else Peer.sendNotInterested(client_peer_id);
+
+                HandShakeMessageUtils.incomingBitFieldCounter +=1;
                 break;
+
 
             case MessageType.REQUEST:
                 // send a piece

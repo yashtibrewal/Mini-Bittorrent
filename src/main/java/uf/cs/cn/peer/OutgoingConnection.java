@@ -4,12 +4,10 @@ import uf.cs.cn.listeners.BitFieldEventListener;
 import uf.cs.cn.message.*;
 import uf.cs.cn.utils.*;
 
-import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.Arrays;
-import java.util.Calendar;
 
 class OutgoingConnection extends Thread implements BitFieldEventListener {
     private PeerLogging peerLogging;
@@ -82,7 +80,7 @@ class OutgoingConnection extends Thread implements BitFieldEventListener {
             sendBitFieldMessage(objectOutputStream);
 
             while(HandShakeMessageUtils.outgoingBitfields != PeerInfoConfigFileReader.numberOfPeers-1
-            && HandShakeMessageUtils.bitfieldCounter != PeerInfoConfigFileReader.numberOfPeers-1) Thread.sleep(10);
+            && HandShakeMessageUtils.incomingBitFieldCounter != PeerInfoConfigFileReader.numberOfPeers-1) Thread.sleep(10);
 
 
             // starting the chokehandler

@@ -36,6 +36,19 @@ class OutgoingConnection extends Thread implements BitFieldEventListener {
         return destination_peer_id;
     }
 
+    public void sendChokesAndUnChokes() {
+        Peer.getInstance().getPreferredNeighborsList().forEach((pN -> {
+            Peer.getInstance().outgoingConnections.forEach((outgoingConnection -> {
+                if (outgoingConnection.getDestination_peer_id() == pN) {
+                    if (Peer.getInstance().getPreferredNeighborsList().contains(pN)) {
+                        outgoingConnection.sendUnChokeMessages();
+                    }else if(!Peer.getInstance().getPreferredNeighborsList().contains(pN))
+                        outgoingConnection.sendChokeMessages();
+                }
+            }));
+        }));
+    }
+
     public void run() {
         byte[] handshakeMessageBuffer = new byte[32];
         connection = null;
@@ -64,7 +77,8 @@ class OutgoingConnection extends Thread implements BitFieldEventListener {
             sendBitFieldMessage(objectOutputStream);
 
             // starting the chokehandler
-            ChokeHandler.getInstance();
+//            BUG: chokehandler does not work
+//            ChokeHandler.getInstance();
             // send infinitely
             while (!Peer.isClose_connection()) {
                 // update preferred neighbours
@@ -73,6 +87,7 @@ class OutgoingConnection extends Thread implements BitFieldEventListener {
                 Peer.updateCloseConnection();
                 System.out.println("Sending nothing presently");
                 Thread.sleep(CommonConfigFileReader.un_chocking_interval* 1000L);
+                sendChokesAndUnChokes();
             }
             objectOutputStream.close();
             objectInputStream.close();

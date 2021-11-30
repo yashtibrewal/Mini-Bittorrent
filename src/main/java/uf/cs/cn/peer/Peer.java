@@ -202,8 +202,7 @@ public class Peer extends Thread {
 
     public void rebuildHeap() {
         for (Integer i: preferredNeighborsList) {
-            if (references.get(i).is_interested)
-                priorityQueue.add(references.get(i));
+            addToPriorityQueueIfInterested(i);
         }
 
         preferredNeighborsList.clear();

@@ -51,7 +51,6 @@ public class IncomingConnectionHandler extends Thread {
         // memory declaration for reading the payload
         actual_message_without_len = new byte[message_len_val];
 
-        System.out.println(Arrays.toString(actual_message_without_len));
         // reading the payload ( with type )
         //bytes_read_from_stream = listening_stream.read(actual_message_without_len);
 

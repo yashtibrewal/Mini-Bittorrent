@@ -13,8 +13,10 @@ public class MessageParser {
     static PeerLogging logger = PeerLogging.getInstance();
 
     public static void parse(ActualMessage actualMessage, int client_peer_id) throws IOException {
-
-        System.out.println("Received the array "+Arrays.toString(actualMessage.getEncodedMessage()));
+        if(actualMessage.getMessage_type()!=MessageType.PIECE)
+            System.out.println("Received the array "+Arrays.toString(actualMessage.getEncodedMessage()));
+        else
+            System.out.println("got piece");
         int chunk_id;
         switch (actualMessage.getMessage_type()) {
             case MessageType.UN_CHOKE:

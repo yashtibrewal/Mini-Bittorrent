@@ -30,7 +30,7 @@ public class PieceMessage extends ActualMessage {
         byte[] payload = new byte[0];
         try (
                 FileInputStream fileInputStream = new FileInputStream(
-                        Paths.get(System.getProperty("user.dir"), Peer.getPeerId() + "", "piece_1").toString())
+                        Paths.get(System.getProperty("user.dir"), Peer.getPeerId() + "", "piece_" + piece_id).toString())
         ) {
             file_chunk = fileInputStream.readAllBytes();
             System.out.println("File size " + file_chunk.length);

@@ -1,14 +1,9 @@
 package uf.cs.cn.peer;
 
-import uf.cs.cn.message.HandShakeMessage;
 import uf.cs.cn.message.HaveMessage;
 import uf.cs.cn.message.PieceMessage;
 import uf.cs.cn.message.RequestMessage;
 import uf.cs.cn.utils.*;
-
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.*;
 
 /**
@@ -83,7 +78,8 @@ public class Peer extends Thread {
 
     public void addToPriorityQueueIfInterested(int client_id) {
 
-        if (!priorityQueue.contains(references.get(client_id))) priorityQueue.add(references.get(client_id));
+        if (!priorityQueue.contains(references.get(client_id))
+        && references.get(client_id).is_interested) priorityQueue.add(references.get(client_id));
     }
 
     public void addToInterested(int client_id){
@@ -229,9 +225,7 @@ public class Peer extends Thread {
 
         int num = (int) ((Math.random() * ( totalInterestedPeers()-1 - getMaxPossiblePreferredNeighbors())) + getMaxPossiblePreferredNeighbors());
         int ctr = 0;
-        Iterator<Integer> it = preferredNeighborsList.iterator();
-        while (it.hasNext()) {
-            int it_value = it.next();
+        for (int it_value : preferredNeighborsList) {
             if (!preferredNeighborsList.contains(it_value)) {
                 ctr++;
             }

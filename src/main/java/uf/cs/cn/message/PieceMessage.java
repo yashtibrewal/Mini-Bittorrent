@@ -33,7 +33,6 @@ public class PieceMessage extends ActualMessage {
                         Paths.get(System.getProperty("user.dir"), Peer.getPeerId() + "", "piece_" + piece_id).toString())
         ) {
             file_chunk = fileInputStream.readAllBytes();
-            System.out.println("File size " + file_chunk.length);
             piece_index = ActualMessageUtils.convertIntToByteArray(piece_id);
             payload = new byte[4 + file_chunk.length];
             System.arraycopy(piece_index, 0, payload, 0, 4);

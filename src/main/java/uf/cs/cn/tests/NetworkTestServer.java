@@ -13,7 +13,6 @@ public class NetworkTestServer {
         ObjectInputStream inputStream = new ObjectInputStream(connection.getInputStream());
         byte[] b = new byte[5];
         int bytes_read = inputStream.read(b);
-        System.out.println(bytes_read + " bytes read are "+ Arrays.toString(b));
         inputStream.close();
         serverSocket.close();
     }

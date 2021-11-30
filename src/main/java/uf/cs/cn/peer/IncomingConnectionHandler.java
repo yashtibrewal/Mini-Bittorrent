@@ -40,25 +40,15 @@ public class IncomingConnectionHandler extends Thread {
 
         // reading the message length header
         bytes_read_from_stream = listening_stream.read(message_len_arr);
-        System.out.println("Bytes read from the stream : "+ bytes_read_from_stream);
-        System.out.println(Arrays.toString(message_len_arr));
-
         // converting to readable int
         message_len_val = new BigInteger(message_len_arr).intValue();
-        System.out.println("Will read these many bytes more : "+ message_len_val);
-
 
         // memory declaration for reading the payload
         actual_message_without_len = new byte[message_len_val];
 
-        // reading the payload ( with type )
-        //bytes_read_from_stream = listening_stream.read(actual_message_without_len);
-
         for(int i=0;i<actual_message_without_len.length;i++){
             actual_message_without_len[i]=listening_stream.readByte();
         }
-
-        System.out.println("Bytes read from the stream : "+ actual_message_without_len.length);
 
         // parsing the payload
         MessageParser.parse(new ActualMessage(message_len_arr, actual_message_without_len), client_peer_id);
@@ -99,7 +89,6 @@ public class IncomingConnectionHandler extends Thread {
                 listenMessage();
             }
 
-            ChokeHandler.cancelJob();
             listening_stream.close();
             speaking_stream.close();
             connection.close();

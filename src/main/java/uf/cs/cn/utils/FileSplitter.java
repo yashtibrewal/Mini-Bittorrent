@@ -30,7 +30,7 @@ public class FileSplitter {
                 }
                 counter++;
             }
-            System.out.println(total_bytes_read);
+            System.out.println("----FILE SPLITTER "+total_bytes_read);
         } catch (FileNotFoundException e) {
             System.out.println(e.getMessage());
         } catch (IOException e) {

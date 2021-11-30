@@ -14,9 +14,9 @@ public class MessageParser {
 
     public static void parse(ActualMessage actualMessage, int client_peer_id) throws IOException {
         if(actualMessage.getMessage_type()!=MessageType.PIECE)
-            System.out.println("Received the array "+Arrays.toString(actualMessage.getEncodedMessage()));
+            System.out.println("MESSAGE TYPE "+actualMessage.getMessage_type()+" ARRAY "+Arrays.toString(actualMessage.getEncodedMessage()));
         else
-            System.out.println("got piece");
+            System.out.println("got piece " + actualMessage.convertByteArrayToInt(Arrays.copyOfRange(actualMessage.getPayload(),5,8)));
         int chunk_id;
         switch (actualMessage.getMessage_type()) {
             case MessageType.UN_CHOKE:

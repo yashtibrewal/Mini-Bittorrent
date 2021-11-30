@@ -9,21 +9,35 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class ChokeHandler extends Thread {
-    private ScheduledFuture<?> job;
-    private ScheduledExecutorService scheduler;
 
-    public ChokeHandler() {
+    private static ChokeHandler chokeHandler;
+    private final ScheduledExecutorService scheduler;
+
+    public static ChokeHandler getInstance() {
+        if(chokeHandler == null) {
+            chokeHandler = new ChokeHandler();
+        }
+        return chokeHandler;
+    }
+
+    private ChokeHandler() {
         this.scheduler = Executors.newScheduledThreadPool(1);
     }
 
     public void startJob() {
-        this.job = this.scheduler.scheduleAtFixedRate(this, 10, CommonConfigFileReader.un_chocking_interval, TimeUnit.SECONDS);
+        System.out.println("Start job has been called");
+        this.scheduler.scheduleAtFixedRate(this, 10, CommonConfigFileReader.un_chocking_interval, TimeUnit.SECONDS);
     }
 
     @Override
     public void run() {
+        System.out.println("Calculating preferred neighbours");
         Peer.getInstance().calculatePreferredNeighbours();
+        System.out.println("Resetting download counters");
         Peer.getInstance().resetDownloadCounters();
+
+        // Sending un choke messages
+        // TODO: Need some documentation for this logic.
         Peer.getInstance().getPreferredNeighborsList().forEach((pN -> {
             Peer.getInstance().outgoingConnections.forEach((outgoingConnection -> {
                 if (outgoingConnection.getDestination_peer_id() == pN) {
@@ -36,7 +50,7 @@ public class ChokeHandler extends Thread {
         }));
     }
 
-    public void cancelJob() {
-        this.scheduler.shutdownNow();
+    public static void cancelJob() {
+        getInstance().scheduler.shutdownNow();
     }
 }

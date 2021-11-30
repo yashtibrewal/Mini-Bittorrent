@@ -6,6 +6,7 @@ import uf.cs.cn.utils.PeerInfoConfigFileReader;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class BitfieldMessage extends ActualMessage {
     public BitfieldMessage(int messageLength) throws Exception {
@@ -13,7 +14,7 @@ public class BitfieldMessage extends ActualMessage {
     }
 
     public byte[] generatePayload() throws IOException {
-        int byteVal = 0;
+        byte byteVal = 0;
         int i;
         boolean isServer = PeerInfoConfigFileReader.isPeerServer(Peer.getPeerId());
 
@@ -24,7 +25,7 @@ public class BitfieldMessage extends ActualMessage {
                 if (!isServer) {
                     messageBody.add((byte) 0);
                 } else {
-                    messageBody.add((byte) byteVal);
+                    messageBody.add(byteVal);
                 }
                 byteVal = 0;
             }
@@ -37,7 +38,7 @@ public class BitfieldMessage extends ActualMessage {
             if (!isServer) {
                 messageBody.add((byte) 0);
             } else {
-                messageBody.add((byte) byteVal);
+                messageBody.add(byteVal);
             }
         }
 

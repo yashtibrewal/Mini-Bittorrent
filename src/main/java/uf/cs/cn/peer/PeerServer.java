@@ -19,7 +19,6 @@ public class PeerServer extends Thread {
 
     public void run() {
         listening_socket = null;
-        boolean searchForConnection = true;
         try {
             listening_socket = new ServerSocket(self_port);
             boolean is_server = false;
@@ -36,10 +35,7 @@ public class PeerServer extends Thread {
                         Paths.get(running_dir, peer_id).toString());
             }
             int counter = 0;
-            while (searchForConnection) {
-                if(counter == PeerInfoConfigFileReader.getPeerInfoList().size()-1){
-                    break;
-                }
+            while (counter != PeerInfoConfigFileReader.getPeerInfoList().size() - 1) {
                 IncomingConnectionHandler connHandler = new IncomingConnectionHandler(listening_socket.accept(), this.self_peer_id);
                 connHandler.start();
                 counter++;

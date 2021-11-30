@@ -62,17 +62,22 @@ class OutgoingConnection extends Thread implements BitFieldEventListener {
                 peerLogging.genericErrorLog("Invalid Peer Id");
             }
             sendBitFieldMessage(objectOutputStream);
-            new ChokeHandler().startJob();
+
+            // starting the chokehandler
+            ChokeHandler.getInstance();
             // send infinitely
-            while (true) {
+            while (!Peer.isClose_connection()) {
                 if(Calendar.getInstance().getTimeInMillis() % CommonConfigFileReader.un_chocking_interval == 0) {
                     // update preferred neighbours
                     // select one optimistically neighbour
                     // send un choke message
+                    Peer.updateCloseConnection();
                     System.out.println("Sending nothing presently");
-                    Thread.sleep(5000);
                 }
             }
+            objectOutputStream.close();
+            objectInputStream.close();
+            connection.close();
         } catch (Exception ex) {
             System.err.println(ex.getCause() + " -Error encountered when sending data to remote server.");
             ex.printStackTrace();

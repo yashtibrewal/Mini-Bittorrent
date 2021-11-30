@@ -31,7 +31,8 @@ public class Peer extends Thread {
     ArrayList<OutgoingConnection> outgoingConnections = new ArrayList<>();
     PeerServer peer_server;
     ArrayList<Boolean> self_file_chunks ;
-    private PeerLogging peerLogging;
+    private final PeerLogging peerLogging;
+    private static boolean close_connection = false;
 
     private Peer(int self_peer_id) {
         this.self_peer_id = self_peer_id;
@@ -81,6 +82,9 @@ public class Peer extends Thread {
     }
 
     public static int getPeerId() {
+        if(Peer.getInstance() == null) {
+            return 0;
+        }
         return Peer.getInstance().self_peer_id;
     }
 
@@ -301,6 +305,20 @@ public class Peer extends Thread {
                 }
             }
         }
+    }
+
+    public static boolean isClose_connection() {
+        return close_connection;
+    }
+
+    public static void updateCloseConnection() {
+        // if all peers have all the files, close the connection.
+        for(Integer i:Peer.getInstance().references.keySet()){
+            if(!PeerUtils.gotCompleteFile(Peer.getInstance().references.get(i).file_chunks)){
+                break;
+            }
+        }
+        Peer.close_connection = true;
     }
 
     static class PeerConfig {

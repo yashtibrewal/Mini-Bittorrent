@@ -37,6 +37,7 @@ public class PeerLogging {
         try {
             this.dateFormat = new SimpleDateFormat("dd-MMM-yyyy hh:mm:ss a");
             this.logFileName = "log_peer_" + this.peerId + ".log";
+            // TODO: if folder path does not exists, create it.
             this.peerLogFileHandler = new FileHandler(Paths.get(System.getProperty("user.dir"),
                     String.valueOf(this.peerId),
                     this.logFileName).toString(),
@@ -47,7 +48,7 @@ public class PeerLogging {
             this.peerLogger.setUseParentHandlers(false);
             this.peerLogger.addHandler(this.peerLogFileHandler);
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
     }
 
@@ -144,6 +145,7 @@ public class PeerLogging {
     public synchronized void genericErrorLog(String msg) {
         Calendar c = Calendar.getInstance();
         String currTime = this.dateFormat.format(c.getTime());
+        if(this.peerLogger!=null)
         this.peerLogger.log(Level.SEVERE,
                 "[" + currTime + "]: Error Message: " + msg);
     }

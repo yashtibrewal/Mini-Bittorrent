@@ -49,12 +49,12 @@ public class PieceMessage extends ActualMessage {
 
     public PieceMessage(byte[] message_length, byte[] payload) {
         super(message_length, payload);
-        this.piece_index = convertByteArrayToInt(Arrays.copyOfRange(payload, 0, 4));
+        this.piece_index = convertByteArrayToInt(Arrays.copyOfRange(payload, 1, 5));
     }
 
     public PieceMessage(byte[] actualMessage){
         this(Arrays.copyOfRange(actualMessage, 0, 4),Arrays.copyOfRange(actualMessage, 4, actualMessage.length));
-        this.piece_bytes = Arrays.copyOfRange(actualMessage, 4, actualMessage.length);
+        this.piece_bytes = Arrays.copyOfRange(actualMessage, 4+1+4, actualMessage.length);
         processPieceMessage();
     }
 
@@ -70,10 +70,6 @@ public class PieceMessage extends ActualMessage {
 
         String running_dir = System.getProperty("user.dir"); // gets the base directory of the project
         String peer_id = String.valueOf(Peer.getInstance().getSelf_peer_id());
-
-        FileMerger.mergeFile(
-                Paths.get(running_dir, peer_id).toString(),
-                Paths.get(running_dir, peer_id, "merged_file." + CommonConfigFileReader.file_extension).toString());
 
         try (FileOutputStream fos = new FileOutputStream(Paths.get(running_dir, peer_id + "/piece_"+ this.piece_index ).toString())) {
             fos.write(this.piece_bytes);

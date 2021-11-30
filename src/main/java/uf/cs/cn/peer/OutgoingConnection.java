@@ -34,12 +34,12 @@ class OutgoingConnection extends Thread implements BitFieldEventListener {
 
     public void sendChokesAndUnChokes() {
 
-
         System.out.println("Calculating preferred neighbours");
         Peer.getInstance().calculatePreferredNeighbours();
+        System.out.println("Preferred neighbors are - " + Peer.preferredNeighborsList);
         System.out.println("Resetting download counters");
         Peer.getInstance().resetDownloadCounters();
-
+        System.out.println("Preiority queue is - " + Peer.getInstance().priorityQueue);
         Peer.getInstance().getPreferredNeighborsList().forEach((pN -> {
             Peer.getInstance().outgoingConnections.forEach((outgoingConnection -> {
                 if (outgoingConnection.getDestination_peer_id() == pN) {
@@ -78,6 +78,7 @@ class OutgoingConnection extends Thread implements BitFieldEventListener {
             Thread.sleep(5000);
 //            while(HandShakeMessageUtils.getRecvCounter() != PeerInfoConfigFileReader.numberOfPeers-1
 //                    && HandShakeMessageUtils.getSendCounter()!= PeerInfoConfigFileReader.numberOfPeers-1) Thread.sleep(10);
+
 
 
             sendBitFieldMessage(objectOutputStream);

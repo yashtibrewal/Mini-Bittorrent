@@ -67,7 +67,7 @@ class OutgoingConnection extends Thread implements BitFieldEventListener {
             ChokeHandler.getInstance();
             // send infinitely
             while (!Peer.isClose_connection()) {
-                if(Calendar.getInstance().getTimeInMillis() % CommonConfigFileReader.un_chocking_interval == 0) {
+                if(Calendar.getInstance().getTimeInMillis() % CommonConfigFileReader.un_chocking_interval*1000 == 0) {
                     // update preferred neighbours
                     // select one optimistically neighbour
                     // send un choke message

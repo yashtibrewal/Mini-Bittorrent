@@ -27,7 +27,7 @@ public class Peer extends Thread {
     /**
      * List of neighbours who are interested in me.
      */
-    private static HashSet<Integer> interestedList = new HashSet<>();
+//    private static HashSet<Integer> interestedList = new HashSet<>();
     private final int self_peer_id;
     PriorityQueue<PeerConfig> priorityQueue = new PriorityQueue<>((a, b) -> b.download_bandwidth_data_counter - a.download_bandwidth_data_counter);
     // to keep the references to the objects in priority queue
@@ -60,7 +60,7 @@ public class Peer extends Thread {
     public static void sendNotInterested(int client_peer_id) {
         Peer.getInstance().outgoingConnections.forEach((outgoingConnection -> {
             if (outgoingConnection.getDestination_peer_id() == client_peer_id) {
-                if (interestedList.contains(client_peer_id)) interestedList.remove(client_peer_id);
+                Peer.getInstance().references.get(client_peer_id).is_interested = !Peer.getInstance().references.get(client_peer_id).is_interested && Peer.getInstance().references.get(client_peer_id).is_interested;
                 outgoingConnection.sendNotInterestedMessages();
             }
         }));
@@ -82,7 +82,7 @@ public class Peer extends Thread {
     }
 
     public void addToInterested(int client_id){
-        interestedList.add(client_id);
+        Peer.getInstance().references.get(client_id).is_interested = true;
     }
 
     public static int getPeerId() {
@@ -90,14 +90,6 @@ public class Peer extends Thread {
             return 0;
         }
         return Peer.getInstance().self_peer_id;
-    }
-
-    public HashSet<Integer> getInterestedList() {
-        return interestedList;
-    }
-
-    public void setInterestedList(HashSet<Integer> interestedList) {
-        this.interestedList = interestedList;
     }
 
     public HashSet<Integer> getPreferredNeighborsList() {
@@ -200,21 +192,37 @@ public class Peer extends Thread {
         return Math.min(CommonConfigFileReader.number_of_preferred_neighbours, PeerInfoConfigFileReader.numberOfPeers-1);
     }
 
-    public void calculatePreferredNeighbours() {
+    public void rebuildHeap() {
+        for (Integer i: preferredNeighborsList) {
+            if (references.get(i).is_interested)
+                priorityQueue.offer(references.get(i));
+        }
+
         preferredNeighborsList.clear();
+
+    }
+
+    public int totalInterestedPeers() {
+        return preferredNeighborsList.size() + priorityQueue.size();
+    }
+
+    public void calculatePreferredNeighbours() {
+
+        rebuildHeap();
         for (int i = 0; i < getMaxPossiblePreferredNeighbors(); i++) {
             PeerConfig config = priorityQueue.poll();
             preferredNeighborsList.add(config.peer_id);
         }
 
-        int num = (int) ((Math.random() * (interestedList.size()-1 - getMaxPossiblePreferredNeighbors())) + getMaxPossiblePreferredNeighbors());
+        int num = (int) ((Math.random() * ( totalInterestedPeers()-1 - getMaxPossiblePreferredNeighbors())) + getMaxPossiblePreferredNeighbors());
         int ctr = 0;
-        Iterator<Integer> it = interestedList.iterator();
+        Iterator<Integer> it = preferredNeighborsList.iterator();
         while (it.hasNext()) {
             int it_value = it.next();
             if (!preferredNeighborsList.contains(it_value)) {
                 ctr++;
             }
+
             if (ctr == num) {
                 preferredNeighborsList.add(it_value);
                 break;
@@ -227,7 +235,8 @@ public class Peer extends Thread {
 
         for (int i = 0; i < other_end.size() && i < BitFieldUtils.getNumberOfChunks(); i++) {
             if (other_end.get(i)  && !self_file_chunks.get(i)) {
-                interestedList.add(neighbor_peer_id);
+
+                Peer.getInstance().references.get(neighbor_peer_id).is_interested = true;
                 return true;
             }
         }
@@ -297,7 +306,11 @@ public class Peer extends Thread {
     }
 
     public void updateNotInterested(int client_peer_id) {
-        interestedList.remove(client_peer_id);
+        if (priorityQueue.contains(references.get(client_peer_id))) {
+            priorityQueue.remove(references.get(client_peer_id));
+        }
+
+        Peer.getInstance().references.get(client_peer_id).is_interested = false;
     }
 
     public void sendPieceMessage(int client_peer_id, int chunk_id) {
@@ -336,17 +349,7 @@ public class Peer extends Thread {
         int peer_id;
         private int download_bandwidth_data_counter;
         private boolean has_choked_me;
-
-        public boolean isIs_interested() {
-            return is_interested;
-        }
-
-        public void setIs_interested(boolean is_interested) {
-            this.is_interested = is_interested;
-        }
-
         boolean is_interested;
-        boolean is_unchoked;
 
         PeerConfig(int peer_id) throws Exception {
             this.peer_id = peer_id;

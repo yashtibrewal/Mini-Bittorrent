@@ -1,82 +1,118 @@
 package uf.cs.cn.peer;
 
-import uf.cs.cn.message.BitfieldMessage;
-import uf.cs.cn.message.HandShakeMessage;
-import uf.cs.cn.message.HaveMessage;
-import uf.cs.cn.utils.BitFieldUtils;
-import uf.cs.cn.utils.HandShakeMessageUtils;
-import uf.cs.cn.utils.PeerLogging;
+import uf.cs.cn.listeners.BitFieldEventListener;
+import uf.cs.cn.message.*;
+import uf.cs.cn.utils.*;
 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.Arrays;
 
-class OutgoingConnection extends Thread {
+class OutgoingConnection extends Thread implements BitFieldEventListener {
+    private PeerLogging peerLogging;
+    ObjectOutputStream objectOutputStream;
+    ObjectInputStream objectInputStream;
     private String destination_host_name;
     private Socket connection;
     private int destination_port;
     private int destination_peer_id;
     private int self_peer_id;
     private HandShakeMessage handShakeMessage;
-    private PeerLogging peerLogging;
-
     public OutgoingConnection(String destination_host_name, int destination_port, int self_peer_id, int destination_peer_id) {
         this.destination_host_name = destination_host_name;
         this.self_peer_id = self_peer_id;
         this.destination_peer_id = destination_peer_id;
         this.destination_port = destination_port;
         handShakeMessage = new HandShakeMessage(this.self_peer_id);
-        peerLogging = new PeerLogging();
+        peerLogging = PeerLogging.getInstance();
     }
 
+    public int getDestination_peer_id() {
+        return destination_peer_id;
+    }
+
+    public void sendChokesAndUnChokes() {
+
+        System.out.println("Calculating preferred neighbours");
+        Peer.getInstance().calculatePreferredNeighbours();
+        System.out.println("-PREFERRED NEIGHBOURS are - " + Peer.preferredNeighborsList);
+        Peer.getInstance().resetDownloadCounters();
+        System.out.println("-PRIORITY QUEUE is - " + Peer.getInstance().priorityQueue);
+        Peer.getInstance().getPreferredNeighborsList().forEach((pN -> {
+            Peer.getInstance().outgoingConnections.forEach((outgoingConnection -> {
+                if (outgoingConnection.getDestination_peer_id() == pN) {
+                    if (Peer.getInstance().getPreferredNeighborsList().contains(pN)) {
+                        outgoingConnection.sendUnChokeMessages();
+                    }else if(!Peer.getInstance().getPreferredNeighborsList().contains(pN))
+                        outgoingConnection.sendChokeMessages();
+                }
+            }));
+        }));
+    }
+
+    public void triggerPeriodicMessaging() throws InterruptedException {
+        // update preferred neighbours
+        // select one optimistically neighbour
+        // send un choke message
+        Peer.updateCloseConnection();
+        Thread.sleep(CommonConfigFileReader.un_chocking_interval* 1000L);
+        sendChokesAndUnChokes();
+    }
+
+
     public void run() {
-        byte[] handshakeMessageBuffer = new byte[32];
         connection = null;
-        ObjectOutputStream objectOutputStream = null;
-        ObjectInputStream objectInputStream = null;
-        try{
+        try {
             connection = new Socket(destination_host_name, destination_port);
             objectOutputStream = new ObjectOutputStream(connection.getOutputStream());
             objectInputStream = new ObjectInputStream(connection.getInputStream());
+            Thread.sleep(1000);
 
-            // send handshake message
-            System.out.println("Writing " + handShakeMessage.getMessage() + " to server peer " + destination_peer_id);
-            objectOutputStream.write(handShakeMessage.getBytes());
-            objectOutputStream.flush();
+            HandShakeMessageUtils.sendHandshake(objectOutputStream, handShakeMessage);
+            HandShakeMessageUtils.receiveHandshake(objectInputStream);
 
-            // receive handshake message
-            objectInputStream.read(handshakeMessageBuffer);
-            System.out.println("Received " + new String(handshakeMessageBuffer) + " from server peer " + destination_peer_id);
-            if(!HandShakeMessageUtils.validateHandShakeMessage(handshakeMessageBuffer)){
-                peerLogging.genericErrorLog("Invalid Handshake Message");
-            }
-            // Check if it's the actual peer_id
-            if(!(new HandShakeMessage(handshakeMessageBuffer).checkPeerId(this.destination_peer_id))){
-                peerLogging.genericErrorLog("Invalid Peer Id");
-            }
 
-            //sendBitFieldMessage(objectOutputStream);
+            Thread.sleep(5000);
+//            while(HandShakeMessageUtils.getRecvCounter() != PeerInfoConfigFileReader.numberOfPeers-1
+//                    && HandShakeMessageUtils.getSendCounter()!= PeerInfoConfigFileReader.numberOfPeers-1) Thread.sleep(10);
 
-            objectOutputStream.write(new HaveMessage(1).getEncodedMessage());
-            objectOutputStream.flush();
+
+
+            sendBitFieldMessage(objectOutputStream);
+
+            Thread.sleep(5000);
+
+            while(HandShakeMessageUtils.getOutgoingBitfields() != PeerInfoConfigFileReader.numberOfPeers-1
+            && HandShakeMessageUtils.getIncomingBitFieldCounter() != PeerInfoConfigFileReader.numberOfPeers-1) Thread.sleep(10);
+
+
+            // starting the chokehandler
+//            BUG: chokehandler does not work
+//            ChokeHandler.getInstance();
+
 
             // send infinitely
-            while (true) {
-                System.out.println("Have Messages");
-                Thread.sleep(5000);
+            while (!Peer.isClose_connection()) {
+                triggerPeriodicMessaging();
             }
+
+
+            objectOutputStream.close();
+            objectInputStream.close();
+            connection.close();
         } catch (Exception ex) {
             System.err.println(ex.getCause() + " -Error encountered when sending data to remote server.");
             ex.printStackTrace();
-        }finally {
+        } finally {
             try {
-                if(objectOutputStream!=null) {
+                if (objectOutputStream != null) {
                     objectOutputStream.close();
                 }
-                if (objectInputStream!=null){
+                if (objectInputStream != null) {
                     objectInputStream.close();
                 }
-                if(connection!=null) {
+                if (connection != null) {
                     connection.close();
                 }
             } catch (Exception e) {
@@ -87,13 +123,53 @@ class OutgoingConnection extends Thread {
 
     private void sendBitFieldMessage(ObjectOutputStream objectOutputStream) throws Exception {
         int numChunks = BitFieldUtils.getNumberOfChunks();
-        int messageLength = 0;
-        BitfieldMessage bitfieldMessage = new BitfieldMessage( numChunks, this.self_peer_id);
-
-        bitfieldMessage.generatePayload();
-
-
+        int bitFieldSize = BitFieldUtils.getPayloadDataSize(numChunks);
+        BitfieldMessage bitfieldMessage = new BitfieldMessage(bitFieldSize);
+        byte[] output = bitfieldMessage.generatePayload();
+        objectOutputStream.write(output);
         objectOutputStream.flush();
+        HandShakeMessageUtils.setOutgoingBitfields(HandShakeMessageUtils.getOutgoingBitfields()+1);
     }
 
+    @Override
+    public void sendInterestedMessages() {
+        try {
+            byte[] output = new InterestedMessage().getEncodedMessage();
+            objectOutputStream.write(output);
+            objectOutputStream.flush();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void sendNotInterestedMessages() {
+        try {
+            byte[] output = new NotInterestedMessage().getEncodedMessage();
+            objectOutputStream.write(output);
+            objectOutputStream.flush();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void sendUnChokeMessages() {
+        try {
+            byte[] output = new UnChokeMessage().getEncodedMessage();
+            objectOutputStream.write(output);
+            objectOutputStream.flush();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void sendChokeMessages() {
+        try {
+            byte[] output = new ChokeMessage().getEncodedMessage();
+            objectOutputStream.write(output);
+            objectOutputStream.flush();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

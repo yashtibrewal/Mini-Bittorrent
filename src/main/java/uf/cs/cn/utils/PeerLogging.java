@@ -1,4 +1,5 @@
 package uf.cs.cn.utils;
+
 import uf.cs.cn.peer.Peer;
 
 import java.io.IOException;
@@ -6,29 +7,37 @@ import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
+import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.logging.*;
+import java.util.logging.SimpleFormatter;
 
 // TODO: convert to single ton
 public class PeerLogging {
-
+    private static PeerLogging peerLogging;
     private String logFileName;
     private String peerId;
     private FileHandler peerLogFileHandler;
     private SimpleDateFormat dateFormat = null;
     private Logger peerLogger;
 
-    public PeerLogging() {
+    private PeerLogging() {
         this.peerId = Peer.getPeerId() + "";
         startLogger();
+    }
+
+    public static PeerLogging getInstance() {
+        if (PeerLogging.peerLogging == null) {
+            peerLogging = new PeerLogging();
+        }
+        return peerLogging;
     }
 
     public void startLogger() {
         try {
             this.dateFormat = new SimpleDateFormat("dd-MMM-yyyy hh:mm:ss a");
             this.logFileName = "log_peer_" + this.peerId + ".log";
+            // TODO: if folder path does not exists, create it.
             this.peerLogFileHandler = new FileHandler(Paths.get(System.getProperty("user.dir"),
                     String.valueOf(this.peerId),
                     this.logFileName).toString(),
@@ -38,9 +47,8 @@ public class PeerLogging {
             this.peerLogger = Logger.getLogger("Peer_Logs");
             this.peerLogger.setUseParentHandlers(false);
             this.peerLogger.addHandler(this.peerLogFileHandler);
-        }
-        catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
         }
     }
 
@@ -131,14 +139,15 @@ public class PeerLogging {
         Calendar c = Calendar.getInstance();
         String currTime = this.dateFormat.format(c.getTime());
         this.peerLogger.log(Level.SEVERE,
-                "[" + currTime + "]: Exception: "+ ex.getMessage()+" ,Cause:"+ ex.getCause());
+                "[" + currTime + "]: Exception: " + ex.getMessage() + " ,Cause:" + ex.getCause());
     }
 
     public synchronized void genericErrorLog(String msg) {
         Calendar c = Calendar.getInstance();
         String currTime = this.dateFormat.format(c.getTime());
+        if(this.peerLogger!=null)
         this.peerLogger.log(Level.SEVERE,
-                "[" + currTime + "]: Error Message: "+ msg);
+                "[" + currTime + "]: Error Message: " + msg);
     }
 
     public void closeLogger() {
@@ -146,8 +155,7 @@ public class PeerLogging {
             if (this.peerLogFileHandler != null) {
                 this.peerLogFileHandler.close();
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             System.out.println("Failed to close peer logger");
             e.printStackTrace();
         }

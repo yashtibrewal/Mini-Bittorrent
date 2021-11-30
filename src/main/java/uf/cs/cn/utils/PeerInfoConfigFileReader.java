@@ -2,7 +2,6 @@ package uf.cs.cn.utils;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -17,20 +16,24 @@ import java.util.ArrayList;
 public class PeerInfoConfigFileReader {
     public static final String config_file_name = "PeerInfo.cfg";
     private static ArrayList<PeerInfo> peer_info_lists = new ArrayList<>();
+    public static int numberOfPeers;
+
     static {
         try (
                 InputStreamReader inputStreamReader = new InputStreamReader(new FileInputStream(Paths.get(System.getProperty("user.dir"), config_file_name).toString()));
                 BufferedReader bufferedReader = new BufferedReader(inputStreamReader)
-        ){
-            String[] words; String line;
-            while(true) {
+        ) {
+            String[] words;
+            String line;
+            while (true) {
                 line = bufferedReader.readLine();
-                if(line==null) {
+                if (line == null) {
                     break;
                 }
                 words = line.split(" ");
-                peer_info_lists.add(new PeerInfo(Integer.parseInt(words[0]),words[1],Integer.parseInt(words[2]),words[3].equals("1")));
+                peer_info_lists.add(new PeerInfo(Integer.parseInt(words[0]), words[1], Integer.parseInt(words[2]), words[3].equals("1")));
             }
+            numberOfPeers = peer_info_lists.size();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -38,6 +41,31 @@ public class PeerInfoConfigFileReader {
 
     public static ArrayList<PeerInfo> getPeerInfoList() {
         return peer_info_lists;
+    }
+
+    public static boolean isPeerServer(int peer_id) {
+        for (PeerInfo peerInfo : peer_info_lists) {
+            if (peerInfo.getPeer_id() == peer_id) {
+                return peerInfo.has_file;
+            }
+        }
+        return false;
+    }
+
+    public static int getPortForPeerID(int peer_id) {
+        for (PeerInfo peerInfo : peer_info_lists) {
+            if (peerInfo.getPeer_id() == peer_id) {
+                return peerInfo.getListening_port();
+            }
+        }
+        return -1;
+    }
+
+    //    Just for testing
+    public static void main(String[] args) {
+        for (PeerInfo peerInfo : PeerInfoConfigFileReader.peer_info_lists) {
+            System.out.println(peerInfo);
+        }
     }
 
     public static class PeerInfo {
@@ -54,7 +82,7 @@ public class PeerInfoConfigFileReader {
             this.has_file = has_file;
         }
 
-        public int getPeer_id(){
+        public int getPeer_id() {
             return peer_id;
         }
 
@@ -70,24 +98,9 @@ public class PeerInfoConfigFileReader {
             return has_file;
         }
 
+
         public String toString() {
             return this.getPeer_id() + " " + this.getPeer_host_name() + " " + this.getListening_port() + " " + (this.isHas_file() ? 1 : 0);
-        }
-    }
-
-    public static int getPortForPeerID(int peer_id) {
-        for(PeerInfo peerInfo: peer_info_lists){
-            if(peerInfo.getPeer_id() == peer_id){
-                return peerInfo.getListening_port();
-            }
-        }
-        return -1;
-    }
-
-//    Just for testing
-    public static void main(String[] args) {
-        for(PeerInfo peerInfo:PeerInfoConfigFileReader.peer_info_lists){
-            System.out.println(peerInfo);
         }
     }
 }

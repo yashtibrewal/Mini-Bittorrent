@@ -196,16 +196,18 @@ public class Peer extends Thread {
     public boolean isPreferredNeighbour(int neighbor_peer_id) {
         return preferredNeighborsList.contains(neighbor_peer_id);
     }
-
+    public int getMaxPossiblePreferredNeighbors() {
+        return Math.min(CommonConfigFileReader.number_of_preferred_neighbours, PeerInfoConfigFileReader.numberOfPeers-1);
+    }
 
     public void calculatePreferredNeighbours() {
         preferredNeighborsList.clear();
-        for (int i = 0; i < CommonConfigFileReader.number_of_preferred_neighbours; i++) {
+        for (int i = 0; i < getMaxPossiblePreferredNeighbors(); i++) {
             PeerConfig config = priorityQueue.poll();
             preferredNeighborsList.add(config.peer_id);
         }
 
-        int num = (int) ((Math.random() * (interestedList.size()-1 - CommonConfigFileReader.number_of_preferred_neighbours)) + CommonConfigFileReader.number_of_preferred_neighbours);
+        int num = (int) ((Math.random() * (interestedList.size()-1 - getMaxPossiblePreferredNeighbors())) + getMaxPossiblePreferredNeighbors());
         int ctr = 0;
         Iterator<Integer> it = interestedList.iterator();
         while (it.hasNext()) {

@@ -6,14 +6,13 @@ import uf.cs.cn.utils.PeerInfoConfigFileReader;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class BitfieldMessage extends ActualMessage {
     public BitfieldMessage(int messageLength) throws Exception {
         super(messageLength + 1, MessageType.BIT_FIELD);
     }
 
-    public byte[] generatePayload() throws IOException {
+    synchronized public byte[] generatePayload() throws IOException {
         byte byteVal = 0;
         int i;
         boolean isServer = PeerInfoConfigFileReader.isPeerServer(Peer.getPeerId());

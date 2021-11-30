@@ -9,7 +9,7 @@ public class FileMerger {
         return "piece_" + num;
     }
 
-    public static void mergeFile(String input_file_path, String out_put_path) {
+    synchronized public static void mergeFile(String input_file_path, String out_put_path) {
         FileInputStream fileInputStream = null;
         byte[] buffer = new byte[CommonConfigFileReader.piece_size];
         try (FileOutputStream fileOutputStream = new FileOutputStream(new File(out_put_path));

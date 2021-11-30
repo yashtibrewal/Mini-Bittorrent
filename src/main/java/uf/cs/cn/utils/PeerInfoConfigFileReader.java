@@ -39,11 +39,11 @@ public class PeerInfoConfigFileReader {
         }
     }
 
-    public static ArrayList<PeerInfo> getPeerInfoList() {
+    synchronized public static ArrayList<PeerInfo> getPeerInfoList() {
         return peer_info_lists;
     }
 
-    public static boolean isPeerServer(int peer_id) {
+    synchronized public static boolean isPeerServer(int peer_id) {
         for (PeerInfo peerInfo : peer_info_lists) {
             if (peerInfo.getPeer_id() == peer_id) {
                 return peerInfo.has_file;
@@ -52,7 +52,7 @@ public class PeerInfoConfigFileReader {
         return false;
     }
 
-    public static int getPortForPeerID(int peer_id) {
+    synchronized public static int getPortForPeerID(int peer_id) {
         for (PeerInfo peerInfo : peer_info_lists) {
             if (peerInfo.getPeer_id() == peer_id) {
                 return peerInfo.getListening_port();
@@ -62,7 +62,7 @@ public class PeerInfoConfigFileReader {
     }
 
     //    Just for testing
-    public static void main(String[] args) {
+    synchronized public static void main(String[] args) {
         for (PeerInfo peerInfo : PeerInfoConfigFileReader.peer_info_lists) {
             System.out.println(peerInfo);
         }
@@ -82,24 +82,24 @@ public class PeerInfoConfigFileReader {
             this.has_file = has_file;
         }
 
-        public int getPeer_id() {
+        synchronized public int getPeer_id() {
             return peer_id;
         }
 
-        public String getPeer_host_name() {
+        synchronized public String getPeer_host_name() {
             return peer_host_name;
         }
 
-        public int getListening_port() {
+        synchronized public int getListening_port() {
             return listening_port;
         }
 
-        public boolean isHas_file() {
+        synchronized public boolean isHas_file() {
             return has_file;
         }
 
 
-        public String toString() {
+        synchronized public String toString() {
             return this.getPeer_id() + " " + this.getPeer_host_name() + " " + this.getListening_port() + " " + (this.isHas_file() ? 1 : 0);
         }
     }

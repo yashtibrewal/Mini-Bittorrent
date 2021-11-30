@@ -3,7 +3,7 @@ package uf.cs.cn.utils;
 import java.util.ArrayList;
 
 public class PeerUtils {
-    public static boolean gotCompleteFile(ArrayList<Boolean> list) {
+    synchronized public static boolean gotCompleteFile(ArrayList<Boolean> list) {
         for (boolean piece : list) {
             if (!piece) return false;
         }
@@ -15,7 +15,7 @@ public class PeerUtils {
      * @param list2 file chunk representation in boolean array of other peer
      * @return random index of a chunk which is IN file 1 and NOT IN file 2.
      */
-    public static int pickRandomIndex(ArrayList<Boolean> list1, ArrayList<Boolean> list2) {
+    synchronized public static int pickRandomIndex(ArrayList<Boolean> list1, ArrayList<Boolean> list2) {
         ArrayList<Integer> bag = new ArrayList<>();
         System.out.println("LIST 1 :self is " + list1);
         System.out.println("LIST 2 :self is " + list2);

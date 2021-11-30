@@ -47,19 +47,19 @@ public class HandShakeMessage {
         this.id = peer_id_param;
     }
 
-    public String getMessage() {
+    synchronized public String getMessage() {
         return new String(header) + new String(zero_bits) + this.id;
     }
 
-    public int getPeerId() {
+    synchronized public int getPeerId() {
         return id;
     }
 
-    public boolean checkPeerId(int expected_peer_id) {
+    synchronized public boolean checkPeerId(int expected_peer_id) {
         return this.getPeerId() == expected_peer_id;
     }
 
-    public byte[] getBytes() {
+    synchronized public byte[] getBytes() {
         return this.getMessage().getBytes();
     }
 

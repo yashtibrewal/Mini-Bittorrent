@@ -18,7 +18,7 @@ public class PeerUtils {
     public static int pickRandomIndex(ArrayList<Boolean> list1, ArrayList<Boolean> list2) {
         ArrayList<Integer> bag = new ArrayList<>();
         for (int i = 0; i < list1.size(); i++) {
-            if (list1.get(i) && !list2.get(i)) {
+            if (!list1.get(i) && list2.get(i)) {
                 bag.add(i);
             }
         }

@@ -16,10 +16,10 @@ public class PeerUtilsTest {
     public void pickRandomIndex1() {
         ArrayList<Boolean> list1 = new ArrayList<>();
         ArrayList<Boolean> list2 = new ArrayList<>();
+        list1.add(false);
         list1.add(true);
         list1.add(true);
-        list1.add(true);
-        list2.add(false);
+        list2.add(true);
         list2.add(true);
         list2.add(true);
         Assert.assertEquals(0, PeerUtils.pickRandomIndex(list1, list2));
@@ -33,12 +33,12 @@ public class PeerUtilsTest {
     public void pickRandomIndex2() {
         ArrayList<Boolean> list1 = new ArrayList<>();
         ArrayList<Boolean> list2 = new ArrayList<>();
-        list1.add(true);
-        list1.add(true);
-        list1.add(true);
-        list2.add(false);
-        list2.add(false);
-        list2.add(false);
+        list2.add(true);
+        list2.add(true);
+        list2.add(true);
+        list1.add(false);
+        list1.add(false);
+        list1.add(false);
         Assert.assertTrue(inRange(PeerUtils.pickRandomIndex(list1, list2), 0, 2));
     }
 }

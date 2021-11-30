@@ -197,7 +197,7 @@ public class Peer extends Thread {
         return Math.min(CommonConfigFileReader.number_of_preferred_neighbours, PeerInfoConfigFileReader.numberOfPeers-1);
     }
 
-    public void rebuildHeap() {
+    synchronized public void rebuildHeap() {
         for (Integer i: preferredNeighborsList) {
             addToPriorityQueueIfInterested(i);
         }
@@ -210,7 +210,7 @@ public class Peer extends Thread {
         return preferredNeighborsList.size() + priorityQueue.size();
     }
 
-    public void calculatePreferredNeighbours() {
+    synchronized public void calculatePreferredNeighbours() {
 
         if (priorityQueue.size() == 0 ) return;
         System.out.println("HEAP BUILD CALLED!");

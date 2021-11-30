@@ -156,14 +156,14 @@ public class Peer extends Thread {
     /**
         gotCompleteFile returns true if all pieces exists, if even one piece is missing, it returns false.
      */
-    synchronized public boolean gotCompleteFile() {
+    public boolean gotCompleteFile() {
         for (boolean piece : self_file_chunks) {
             if (!piece) return false;
         }
         return true;
     }
 
-    synchronized public void updateNeighbourFileChunk(int neighbour_id, ArrayList<Boolean> neighbour_chunk) {
+    public void updateNeighbourFileChunk(int neighbour_id, ArrayList<Boolean> neighbour_chunk) {
         try {
             if (references.containsKey(neighbour_id)) {
                 references.get(neighbour_id).file_chunks = neighbour_chunk;
@@ -177,7 +177,7 @@ public class Peer extends Thread {
         }
     }
 
-    synchronized public void updateNeighbourFileChunk(int neighbour_id, int file_chunk_number) {
+    public void updateNeighbourFileChunk(int neighbour_id, int file_chunk_number) {
         try {
             references.get(neighbour_id).file_chunks.set(file_chunk_number-1,true);
         } catch (Exception e) {
@@ -185,16 +185,19 @@ public class Peer extends Thread {
         }
     }
 
-    synchronized public void updateSelfFileChunk(int piece_id) {
+    public void updateSelfFileChunk(int piece_id) {
         self_file_chunks.set(piece_id-1, true);
         System.out.println("Self File chunk updated to : " + self_file_chunks);
     }
 
-    synchronized public int getMaxPossiblePreferredNeighbors() {
+    public boolean isPreferredNeighbour(int neighbor_peer_id) {
+        return preferredNeighborsList.contains(neighbor_peer_id);
+    }
+    public int getMaxPossiblePreferredNeighbors() {
         return Math.min(CommonConfigFileReader.number_of_preferred_neighbours, PeerInfoConfigFileReader.numberOfPeers-1);
     }
 
-    synchronized public void rebuildHeap() {
+    public void rebuildHeap() {
         for (Integer i: preferredNeighborsList) {
             addToPriorityQueueIfInterested(i);
         }
@@ -203,11 +206,11 @@ public class Peer extends Thread {
 
     }
 
-    synchronized public int totalInterestedPeers() {
+    public int totalInterestedPeers() {
         return preferredNeighborsList.size() + priorityQueue.size();
     }
 
-    synchronized public void calculatePreferredNeighbours() {
+    public void calculatePreferredNeighbours() {
 
         if (priorityQueue.size() == 0 ) return;
         System.out.println("HEAP BUILD CALLED!");
@@ -253,11 +256,11 @@ public class Peer extends Thread {
         priorityQueue.clear();
     }
 
-    synchronized public void incrementDownloadCount(int client_peer_id) {
+    public void incrementDownloadCount(int client_peer_id) {
         references.get(client_peer_id).setDownload_bandwidth_data_counter(references.get(client_peer_id).download_bandwidth_data_counter + 1);
     }
 
-    synchronized public void sendHaveMessages(int chunk_id) {
+    public void sendHaveMessages(int chunk_id) {
         // for every outgoing connection, send a have message.
         for (OutgoingConnection outgoingConnection : outgoingConnections) {
             try {
@@ -269,7 +272,7 @@ public class Peer extends Thread {
         }
     }
 
-    synchronized public void checkAndSendNotInterestedForAllPeers() {
+    public void checkAndSendNotInterestedForAllPeers() {
         for(PeerInfoConfigFileReader.PeerInfo peerInfo: PeerInfoConfigFileReader.getPeerInfoList()) {
 
             if (Peer.getInstance().self_peer_id == peerInfo.getPeer_id()) continue;
@@ -284,7 +287,7 @@ public class Peer extends Thread {
      * Sends a request message to the client by selecting a RANDOM file chunk which the neighbour has, and I don't
      * @param client_peer_id
      */
-    synchronized public void sendRequestMessage(int client_peer_id) {
+    public void sendRequestMessage(int client_peer_id) {
         try {
             // since array was 0 indexed, and files pieces are 1 indexed, we are added 1 to get the correct file piece number
             int chunk_id = PeerUtils.pickRandomIndex(self_file_chunks,references.get(client_peer_id).file_chunks)+1;
@@ -304,19 +307,19 @@ public class Peer extends Thread {
         }
     }
 
-    synchronized public void addClientToInterestedMessage(int client_peer_id) {
+    public void addClientToInterestedMessage(int client_peer_id) {
         Peer.getInstance().addToInterested(client_peer_id);
     }
 
-    synchronized public void markHasChokedMe(int client_peer_id) {
+    public void markHasChokedMe(int client_peer_id) {
         references.get(client_peer_id).setHas_choked_me(true);
     }
 
-    synchronized public void markHasUnChokedMe(int client_peer_id) {
+    public void markHasUnChokedMe(int client_peer_id) {
         references.get(client_peer_id).setHas_choked_me(false);
     }
 
-    synchronized public void updateNotInterested(int client_peer_id) {
+    public void updateNotInterested(int client_peer_id) {
         if (priorityQueue.contains(references.get(client_peer_id))) {
             priorityQueue.remove(references.get(client_peer_id));
         }
@@ -324,7 +327,7 @@ public class Peer extends Thread {
         Peer.getInstance().references.get(client_peer_id).is_interested = false;
     }
 
-    synchronized public void sendPieceMessage(int client_peer_id, int chunk_id) {
+    public void sendPieceMessage(int client_peer_id, int chunk_id) {
         for(OutgoingConnection outgoingConnection: outgoingConnections) {
             if(outgoingConnection.getDestination_peer_id() == client_peer_id) {
                 try {
@@ -338,11 +341,11 @@ public class Peer extends Thread {
         }
     }
 
-    synchronized public static boolean isClose_connection() {
+    public static boolean isClose_connection() {
         return close_connection;
     }
 
-    synchronized public static void updateCloseConnection() {
+    public static void updateCloseConnection() {
         // if we are not have references for all other peers, return false
         if(getInstance().references.size() < PeerInfoConfigFileReader.getPeerInfoList().size()-1) return;
         // if all peers have all the files, close the connection.
@@ -371,15 +374,31 @@ public class Peer extends Thread {
             download_bandwidth_data_counter++;
         }
 
-        synchronized public void setDownload_bandwidth_data_counter(int download_bandwidth_data_counter) {
+        public int getDownload_bandwidth_data_counter() {
+            return download_bandwidth_data_counter;
+        }
+
+        public void setDownload_bandwidth_data_counter(int download_bandwidth_data_counter) {
             this.download_bandwidth_data_counter = download_bandwidth_data_counter;
         }
 
-        synchronized void resetCounter() {
+        void resetCounter() {
             this.download_bandwidth_data_counter = 0;
         }
 
-        synchronized public void setHas_choked_me(boolean has_choked_me) {
+        void setFileChunkTrue(int index) {
+            file_chunks.set(index - 1, true);
+        }
+
+        boolean hasAllChunks() {
+            return PeerUtils.gotCompleteFile(this.file_chunks);
+        }
+
+        public boolean isHas_choked_me() {
+            return has_choked_me;
+        }
+
+        public void setHas_choked_me(boolean has_choked_me) {
             this.has_choked_me = has_choked_me;
         }
     }

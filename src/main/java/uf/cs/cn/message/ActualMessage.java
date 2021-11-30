@@ -43,34 +43,38 @@ public class ActualMessage {
         setPayload(Arrays.copyOfRange(payload, 1, this.message_length));
     }
 
-    synchronized public int convertByteArrayToInt(byte[] int_chunk) {
+    public int convertByteArrayToInt(byte[] int_chunk) {
         return new BigInteger(int_chunk).intValue();
     }
 
-    synchronized public void setMessageLength(int message_length) {
+    public void setMessageLength(int message_length) {
         this.message_length = message_length;
     }
 
-    synchronized public int getMessage_type() {
+    public int getMessage_length() {
+        return this.message_length;
+    }
+
+    public int getMessage_type() {
         return this.message_type;
     }
 
-    synchronized public void setMessage_type(byte num) throws Exception {
+    public void setMessage_type(byte num) throws Exception {
         if (num < 0 || num > 7) {
             peerLogging.genericErrorLog("Invalid Message Type");
         }
         this.message_type = num;
     }
 
-    synchronized public byte[] getPayload() {
+    public byte[] getPayload() {
         return this.payload;
     }
 
-    synchronized public void setPayload(byte[] payload) {
+    public void setPayload(byte[] payload) {
         this.payload = payload;
     }
 
-    synchronized public byte[] getEncodedMessage() throws IOException {
+    public byte[] getEncodedMessage() throws IOException {
         // TODO: look for a better logic if any
         byte[] message = new byte[4 + 1 + payload.length];
         System.arraycopy(ActualMessageUtils.convertIntToByteArray(this.message_length), 0, message, 0, 4);

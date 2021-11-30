@@ -9,20 +9,20 @@ import java.util.ArrayList;
 
 public class BitFieldUtils {
 
-    synchronized  public static int isDivsible(int a, int b) {
+    public static int isDivsible(int a, int b) {
         return (a % b == 0 ? a / b : (a / b) + 1);
     }
 
-    synchronized public static int getNumberOfChunks() {
+    public static int getNumberOfChunks() {
         int size = isDivsible(CommonConfigFileReader.file_size, CommonConfigFileReader.piece_size);
         return size;
     }
 
-    synchronized public static int getPayloadDataSize(int numChunks) {
+    public static int getPayloadDataSize(int numChunks) {
         return isDivsible(numChunks, 8);
     }
 
-    synchronized public static ArrayList<Boolean> convertToBoolArray(byte[] payload) {
+    public static ArrayList<Boolean> convertToBoolArray(byte[] payload) {
         int i;
         int j;
         ArrayList<Boolean> response = new ArrayList<Boolean>();

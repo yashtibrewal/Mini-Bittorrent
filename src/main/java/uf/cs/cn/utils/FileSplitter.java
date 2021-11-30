@@ -10,7 +10,7 @@ import java.nio.file.Paths;
  * Aim is to split a file into pieces
  */
 public class FileSplitter {
-    synchronized public static void splitFile(String input_file_path, String out_put_path) {
+    public static void splitFile(String input_file_path, String out_put_path) {
         try (FileInputStream fileInputStream = new FileInputStream(input_file_path)) {
             byte[] piece = new byte[CommonConfigFileReader.piece_size];
             int counter = 1;

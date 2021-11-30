@@ -12,7 +12,7 @@ import java.util.Arrays;
 public class MessageParser {
     static PeerLogging logger = PeerLogging.getInstance();
 
-    synchronized public static void parse(ActualMessage actualMessage, int client_peer_id) throws IOException {
+    public static void parse(ActualMessage actualMessage, int client_peer_id) throws IOException {
         if(actualMessage.getMessage_type()!=MessageType.PIECE)
             System.out.println("MESSAGE TYPE "+actualMessage.getMessage_type()+" ARRAY "+Arrays.toString(actualMessage.getEncodedMessage()));
         else

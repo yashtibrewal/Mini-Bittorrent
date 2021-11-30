@@ -34,7 +34,7 @@ public class IncomingConnectionHandler extends Thread {
         peerLogging = PeerLogging.getInstance();
     }
 
-    synchronized public void listenMessage() throws IOException {
+    public void listenMessage() throws IOException {
         // memory for reading message length header
         message_len_arr = new byte[4];
 

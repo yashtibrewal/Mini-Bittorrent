@@ -28,11 +28,11 @@ class OutgoingConnection extends Thread implements BitFieldEventListener {
         peerLogging = PeerLogging.getInstance();
     }
 
-    synchronized public int getDestination_peer_id() {
+    public int getDestination_peer_id() {
         return destination_peer_id;
     }
 
-    synchronized public void sendChokesAndUnChokes() {
+    public void sendChokesAndUnChokes() {
 
         System.out.println("Calculating preferred neighbours");
         Peer.getInstance().calculatePreferredNeighbours();
@@ -51,7 +51,7 @@ class OutgoingConnection extends Thread implements BitFieldEventListener {
         }));
     }
 
-    synchronized public void triggerPeriodicMessaging() throws InterruptedException {
+    public void triggerPeriodicMessaging() throws InterruptedException {
         // update preferred neighbours
         // select one optimistically neighbour
         // send un choke message
@@ -121,7 +121,7 @@ class OutgoingConnection extends Thread implements BitFieldEventListener {
         }
     }
 
-    synchronized private void sendBitFieldMessage(ObjectOutputStream objectOutputStream) throws Exception {
+    private void sendBitFieldMessage(ObjectOutputStream objectOutputStream) throws Exception {
         int numChunks = BitFieldUtils.getNumberOfChunks();
         int bitFieldSize = BitFieldUtils.getPayloadDataSize(numChunks);
         BitfieldMessage bitfieldMessage = new BitfieldMessage(bitFieldSize);
@@ -132,7 +132,7 @@ class OutgoingConnection extends Thread implements BitFieldEventListener {
     }
 
     @Override
-    synchronized public void sendInterestedMessages() {
+    public void sendInterestedMessages() {
         try {
             byte[] output = new InterestedMessage().getEncodedMessage();
             objectOutputStream.write(output);
@@ -143,7 +143,7 @@ class OutgoingConnection extends Thread implements BitFieldEventListener {
     }
 
     @Override
-    synchronized public void sendNotInterestedMessages() {
+    public void sendNotInterestedMessages() {
         try {
             byte[] output = new NotInterestedMessage().getEncodedMessage();
             objectOutputStream.write(output);
@@ -153,7 +153,7 @@ class OutgoingConnection extends Thread implements BitFieldEventListener {
         }
     }
 
-    synchronized public void sendUnChokeMessages() {
+    public void sendUnChokeMessages() {
         try {
             byte[] output = new UnChokeMessage().getEncodedMessage();
             objectOutputStream.write(output);
@@ -163,7 +163,7 @@ class OutgoingConnection extends Thread implements BitFieldEventListener {
         }
     }
 
-    synchronized public void sendChokeMessages() {
+    public void sendChokeMessages() {
         try {
             byte[] output = new ChokeMessage().getEncodedMessage();
             objectOutputStream.write(output);

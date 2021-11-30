@@ -24,7 +24,7 @@ public class HaveMessage extends ActualMessage {
         this.piece_index = convertByteArrayToInt(Arrays.copyOfRange(payload, 1, 5));
     }
 
-    synchronized public int getPieceIndex() {
+    public int getPieceIndex() {
         return this.piece_index;
     }
 }

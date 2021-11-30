@@ -13,10 +13,43 @@ import java.util.Arrays;
  */
 public class HandShakeMessageUtils {
     static PeerLogging peerLogging = PeerLogging.getInstance();
-    public static int recvCounter = 0;
-    public static int sendCounter = 0;
-    public static int incomingBitFieldCounter = 0;
-    public static int outgoingBitfields = 0;
+    private static int recvCounter = 0;
+    private static int sendCounter = 0;
+
+    synchronized public static int getRecvCounter() {
+        return recvCounter;
+    }
+
+    synchronized public static void setRecvCounter(int recvCounter) {
+        HandShakeMessageUtils.recvCounter = recvCounter;
+    }
+
+    synchronized public static int getSendCounter() {
+        return sendCounter;
+    }
+
+    synchronized public static void setSendCounter(int sendCounter) {
+        HandShakeMessageUtils.sendCounter = sendCounter;
+    }
+
+    synchronized public static int getIncomingBitFieldCounter() {
+        return incomingBitFieldCounter;
+    }
+
+    synchronized public static void setIncomingBitFieldCounter(int incomingBitFieldCounter) {
+        HandShakeMessageUtils.incomingBitFieldCounter = incomingBitFieldCounter;
+    }
+
+    synchronized public static int getOutgoingBitfields() {
+        return outgoingBitfields;
+    }
+
+    synchronized public static void setOutgoingBitfields(int outgoingBitfields) {
+        HandShakeMessageUtils.outgoingBitfields = outgoingBitfields;
+    }
+
+    private static int incomingBitFieldCounter = 0;
+    private static int outgoingBitfields = 0;
 
     // peerId is numeric
     public static boolean validatePeerId(byte[] message) throws Exception {

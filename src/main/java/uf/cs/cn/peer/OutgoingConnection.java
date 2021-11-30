@@ -74,13 +74,17 @@ class OutgoingConnection extends Thread implements BitFieldEventListener {
             HandShakeMessageUtils.sendHandshake(objectOutputStream, handShakeMessage);
             HandShakeMessageUtils.receiveHandshake(objectInputStream);
 
-            while(HandShakeMessageUtils.recvCounter != PeerInfoConfigFileReader.numberOfPeers-1
-                    && HandShakeMessageUtils.sendCounter!= PeerInfoConfigFileReader.numberOfPeers-1) Thread.sleep(10);
 
+            Thread.sleep(5000);
+            while(HandShakeMessageUtils.getRecvCounter() != PeerInfoConfigFileReader.numberOfPeers-1
+                    && HandShakeMessageUtils.getSendCounter()!= PeerInfoConfigFileReader.numberOfPeers-1) Thread.sleep(10);
+
+
+            Thread.sleep(5000);
             sendBitFieldMessage(objectOutputStream);
 
-            while(HandShakeMessageUtils.outgoingBitfields != PeerInfoConfigFileReader.numberOfPeers-1
-            && HandShakeMessageUtils.incomingBitFieldCounter != PeerInfoConfigFileReader.numberOfPeers-1) Thread.sleep(10);
+            while(HandShakeMessageUtils.getOutgoingBitfields() != PeerInfoConfigFileReader.numberOfPeers-1
+            && HandShakeMessageUtils.getIncomingBitFieldCounter() != PeerInfoConfigFileReader.numberOfPeers-1) Thread.sleep(10);
 
 
             // starting the chokehandler
@@ -125,7 +129,7 @@ class OutgoingConnection extends Thread implements BitFieldEventListener {
         System.out.println("I am sending " + Arrays.toString(output));
         objectOutputStream.write(output);
         objectOutputStream.flush();
-        HandShakeMessageUtils.outgoingBitfields+=1;
+        HandShakeMessageUtils.setOutgoingBitfields(HandShakeMessageUtils.getOutgoingBitfields()+1);
     }
 
     @Override

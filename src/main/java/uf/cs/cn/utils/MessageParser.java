@@ -51,7 +51,7 @@ public class MessageParser {
                 if (Peer.getInstance().checkIfInterested(client_peer_id)) Peer.sendInterested(client_peer_id);
                 else Peer.sendNotInterested(client_peer_id);
 
-                HandShakeMessageUtils.incomingBitFieldCounter +=1;
+                HandShakeMessageUtils.setIncomingBitFieldCounter(HandShakeMessageUtils.getIncomingBitFieldCounter()+1);
                 break;
 
 

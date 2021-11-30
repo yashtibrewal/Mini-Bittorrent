@@ -81,13 +81,15 @@ public class IncomingConnectionHandler extends Thread {
             //sending handshake
             HandShakeMessageUtils.sendHandshake(speaking_stream, handShakeMessage);
 
-            while(HandShakeMessageUtils.recvCounter != PeerInfoConfigFileReader.numberOfPeers && HandShakeMessageUtils.sendCounter!= PeerInfoConfigFileReader.numberOfPeers) Thread.sleep(10);
+            while(HandShakeMessageUtils.getRecvCounter() != PeerInfoConfigFileReader.numberOfPeers && HandShakeMessageUtils.getSendCounter()!= PeerInfoConfigFileReader.numberOfPeers) Thread.sleep(10);
 
+            Thread.sleep(5000);
             //listen to bitfield message first
             listenMessage();
-            while(HandShakeMessageUtils.outgoingBitfields != PeerInfoConfigFileReader.numberOfPeers-1
-                    && HandShakeMessageUtils.incomingBitFieldCounter != PeerInfoConfigFileReader.numberOfPeers-1) Thread.sleep(10);
+            while(HandShakeMessageUtils.getOutgoingBitfields() != PeerInfoConfigFileReader.numberOfPeers-1
+                    && HandShakeMessageUtils.getIncomingBitFieldCounter() != PeerInfoConfigFileReader.numberOfPeers-1) Thread.sleep(10);
 
+            Thread.sleep(5000);
             // listen infinitely
             while (!Peer.isClose_connection()) {
                 listenMessage();

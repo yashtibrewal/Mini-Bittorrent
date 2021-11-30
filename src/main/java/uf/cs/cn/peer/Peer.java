@@ -312,6 +312,8 @@ public class Peer extends Thread {
     }
 
     public static void updateCloseConnection() {
+        // if we are not have references for all other peers, return false
+        if(getInstance().references.size() < PeerInfoConfigFileReader.getPeerInfoList().size()-1) return;
         // if all peers have all the files, close the connection.
         for(Integer i:Peer.getInstance().references.keySet()){
             if(!PeerUtils.gotCompleteFile(Peer.getInstance().references.get(i).file_chunks)){

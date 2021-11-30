@@ -33,6 +33,9 @@ public class BitFieldUtils {
         int ctr = 0;
         for (i = 0; i < payload.length; i++) {
             binaries[i] = Integer.toBinaryString(payload[i] & 0xff);
+            if (binaries[i].equals("0")) {
+                binaries[i] = "00000000";
+            }
         }
 
         for (i = 0; i < binaries.length; i++) {

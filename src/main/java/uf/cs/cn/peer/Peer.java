@@ -186,7 +186,7 @@ public class Peer extends Thread {
     }
 
     public void updateSelfFileChunk(int piece_id) {
-        self_file_chunks.set(piece_id, true);
+        self_file_chunks.set(piece_id-1, true);
         System.out.println("Self File chunk updated to : " + self_file_chunks);
     }
 

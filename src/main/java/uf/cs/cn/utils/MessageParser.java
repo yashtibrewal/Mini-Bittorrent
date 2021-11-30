@@ -60,7 +60,7 @@ public class MessageParser {
 
             case MessageType.REQUEST:
                 // send a piece
-                chunk_id = actualMessage.convertByteArrayToInt(Arrays.copyOfRange(actualMessage.getPayload(),1,5));
+                chunk_id = actualMessage.convertByteArrayToInt(Arrays.copyOfRange(actualMessage.getPayload(),0,4));
                 Peer.getInstance().sendPieceMessage(client_peer_id,chunk_id);
                 break;
 

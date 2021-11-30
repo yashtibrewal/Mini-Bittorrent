@@ -23,7 +23,7 @@ public class Peer extends Thread {
     /**
      * List of neighbours I am interested in.
      */
-    private static HashSet<Integer> preferredNeighborsList = new HashSet<>();
+    public static HashSet<Integer> preferredNeighborsList = new HashSet<>();
     /**
      * List of neighbours who are interested in me.
      */
@@ -81,8 +81,15 @@ public class Peer extends Thread {
         return Peer.peer;
     }
 
+    public void addToPriorityQueueIfInterested(int client_id) {
+
+        if (!priorityQueue.contains(references.get(client_id))) priorityQueue.add(references.get(client_id));
+    }
+
     public void addToInterested(int client_id){
+        System.out.println("Adding to interested " + client_id);
         Peer.getInstance().references.get(client_id).is_interested = true;
+        addToPriorityQueueIfInterested(client_id);
     }
 
     public static int getPeerId() {
@@ -161,12 +168,15 @@ public class Peer extends Thread {
     public void updateNeighbourFileChunk(int neighbour_id, ArrayList<Boolean> neighbour_chunk) {
         try {
             if (references.containsKey(neighbour_id)) {
+
+                System.out.println("Updated chunk value for " + neighbour_id);
                 references.get(neighbour_id).file_chunks = neighbour_chunk;
             } else {
+                System.out.println("Created and updated chunk value for " + neighbour_id);
+
                 references.put(neighbour_id, new PeerConfig(neighbour_id));
                 references.get(neighbour_id).file_chunks = neighbour_chunk;
-                if(references.get(neighbour_id).is_interested)
-                priorityQueue.offer(references.get(neighbour_id));
+                addToPriorityQueueIfInterested(neighbour_id);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -195,7 +205,7 @@ public class Peer extends Thread {
     public void rebuildHeap() {
         for (Integer i: preferredNeighborsList) {
             if (references.get(i).is_interested)
-                priorityQueue.offer(references.get(i));
+                priorityQueue.add(references.get(i));
         }
 
         preferredNeighborsList.clear();
@@ -209,9 +219,11 @@ public class Peer extends Thread {
     public void calculatePreferredNeighbours() {
 
         if (priorityQueue.size() == 0 ) return;
+        System.out.println("Rebuilding the heap!");
         rebuildHeap();
         for (int i = 0; i < getMaxPossiblePreferredNeighbors(); i++) {
             PeerConfig config = priorityQueue.poll();
+            System.out.println("adding " + config.peer_id + " to the quuee. ");
             preferredNeighborsList.add(config.peer_id);
         }
 
@@ -238,6 +250,7 @@ public class Peer extends Thread {
             if (other_end.get(i)  && !self_file_chunks.get(i)) {
 
                 Peer.getInstance().references.get(neighbor_peer_id).is_interested = true;
+                addToPriorityQueueIfInterested(neighbor_peer_id);
                 return true;
             }
         }

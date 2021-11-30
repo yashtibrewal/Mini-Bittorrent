@@ -66,7 +66,6 @@ public class MessageParser {
 
             case MessageType.PIECE:
                 new PieceMessage(actualMessage.getEncodedMessage());
-                Peer.getInstance().updateSelfFileChunk(actualMessage.convertByteArrayToInt(Arrays.copyOfRange(actualMessage.getPayload(), 0, 4)));
                 chunk_id = actualMessage.convertByteArrayToInt(Arrays.copyOfRange(actualMessage.getPayload(), 0, 4));
                 Peer.getInstance().updateSelfFileChunk(chunk_id);
                 Peer.getInstance().incrementDownloadCount(client_peer_id);

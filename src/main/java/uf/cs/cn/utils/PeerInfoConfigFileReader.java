@@ -16,6 +16,7 @@ import java.util.ArrayList;
 public class PeerInfoConfigFileReader {
     public static final String config_file_name = "PeerInfo.cfg";
     private static ArrayList<PeerInfo> peer_info_lists = new ArrayList<>();
+    public static int numberOfPeers;
 
     static {
         try (
@@ -32,6 +33,7 @@ public class PeerInfoConfigFileReader {
                 words = line.split(" ");
                 peer_info_lists.add(new PeerInfo(Integer.parseInt(words[0]), words[1], Integer.parseInt(words[2]), words[3].equals("1")));
             }
+            numberOfPeers = peer_info_lists.size();
         } catch (Exception e) {
             e.printStackTrace();
         }

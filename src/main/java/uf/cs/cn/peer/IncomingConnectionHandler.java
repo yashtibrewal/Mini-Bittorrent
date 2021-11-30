@@ -4,6 +4,7 @@ import uf.cs.cn.message.ActualMessage;
 import uf.cs.cn.message.HandShakeMessage;
 import uf.cs.cn.utils.HandShakeMessageUtils;
 import uf.cs.cn.utils.MessageParser;
+import uf.cs.cn.utils.PeerInfoConfigFileReader;
 import uf.cs.cn.utils.PeerLogging;
 
 import java.io.IOException;
@@ -80,8 +81,7 @@ public class IncomingConnectionHandler extends Thread {
             //sending handshake
             HandShakeMessageUtils.sendHandshake(speaking_stream, handShakeMessage);
 
-
-            while(HandShakeMessageUtils.recvCounter !=2 && HandShakeMessageUtils.sendCounter!=2) Thread.sleep(10);
+            while(HandShakeMessageUtils.recvCounter != PeerInfoConfigFileReader.numberOfPeers && HandShakeMessageUtils.sendCounter!= PeerInfoConfigFileReader.numberOfPeers) Thread.sleep(10);
 
             //listen to bitfield message first
             listenMessage();

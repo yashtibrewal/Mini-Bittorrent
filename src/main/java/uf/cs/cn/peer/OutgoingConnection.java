@@ -2,10 +2,7 @@ package uf.cs.cn.peer;
 
 import uf.cs.cn.listeners.BitFieldEventListener;
 import uf.cs.cn.message.*;
-import uf.cs.cn.utils.BitFieldUtils;
-import uf.cs.cn.utils.CommonConfigFileReader;
-import uf.cs.cn.utils.HandShakeMessageUtils;
-import uf.cs.cn.utils.PeerLogging;
+import uf.cs.cn.utils.*;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -81,7 +78,7 @@ class OutgoingConnection extends Thread implements BitFieldEventListener {
             sendBitFieldMessage(objectOutputStream);
 
 
-            while(HandShakeMessageUtils.recvCounter !=2 && HandShakeMessageUtils.sendCounter!=2) Thread.sleep(10);
+            while(HandShakeMessageUtils.recvCounter != PeerInfoConfigFileReader.numberOfPeers && HandShakeMessageUtils.sendCounter!= PeerInfoConfigFileReader.numberOfPeers) Thread.sleep(10);
             // starting the chokehandler
 //            BUG: chokehandler does not work
 //            ChokeHandler.getInstance();

@@ -1,25 +1,15 @@
 package uf.cs.cn.message;
-
-import java.nio.ByteBuffer;
+import uf.cs.cn.utils.ActualMessageUtils;
 
 public class RequestMessage extends ActualMessage {
     private int pieceIndex;
 
     public RequestMessage(int pieceIndex) throws Exception {
-        super(4, MessageType.REQUEST);
+        super(4+1, MessageType.REQUEST);
         this.pieceIndex = pieceIndex;
-        makeRequestMessage();
+        byte[] payload = new byte[5];
+        payload[0] = MessageType.REQUEST;
+        System.arraycopy(ActualMessageUtils.convertIntToByteArray(pieceIndex),0,payload,1,4);
+        setPayload(payload);
     }
-
-    public void makeRequestMessage() {
-        try {
-            setPayload(ByteBuffer.allocate(4).putInt(pieceIndex).array());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-//    public static void main(String[] args) throws Exception {
-//        RequestMessage rm = new RequestMessage(9);
-//        System.out.println(new String(rm.getRequestMessageBytes()));
-//    }
 }

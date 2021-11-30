@@ -15,7 +15,8 @@ public class HandShakeMessageUtils {
     static PeerLogging peerLogging = PeerLogging.getInstance();
     public static int recvCounter = 0;
     public static int sendCounter = 0;
-
+    public static int bitfieldCounter = 0;
+    public static int outgoingBitfields = 0;
 
     // peerId is numeric
     public static boolean validatePeerId(byte[] message) throws Exception {

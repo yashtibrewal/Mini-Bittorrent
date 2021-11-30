@@ -47,6 +47,7 @@ public class MessageParser {
 
             case MessageType.BIT_FIELD:
                 // update peer memory
+                HandShakeMessageUtils.bitfieldCounter+=1;
                 Peer.getInstance().updateNeighbourFileChunk(client_peer_id, BitFieldUtils.convertToBoolArray(actualMessage.getPayload()));
                 // trigger sending the interested message event
                 if (Peer.getInstance().checkIfInterested(client_peer_id)) Peer.sendInterested(client_peer_id);

@@ -208,6 +208,7 @@ public class Peer extends Thread {
 
     public void calculatePreferredNeighbours() {
 
+        if (priorityQueue.size() == 0 ) return;
         rebuildHeap();
         for (int i = 0; i < getMaxPossiblePreferredNeighbors(); i++) {
             PeerConfig config = priorityQueue.poll();

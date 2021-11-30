@@ -53,8 +53,13 @@ public class IncomingConnectionHandler extends Thread {
 
         System.out.println(Arrays.toString(actual_message_without_len));
         // reading the payload ( with type )
-        bytes_read_from_stream = listening_stream.read(actual_message_without_len);
-        System.out.println("Bytes read from the stream : "+ bytes_read_from_stream);
+        //bytes_read_from_stream = listening_stream.read(actual_message_without_len);
+
+        for(int i=0;i<actual_message_without_len.length;i++){
+            actual_message_without_len[i]=listening_stream.readByte();
+        }
+
+        System.out.println("Bytes read from the stream : "+ actual_message_without_len.length);
 
         // parsing the payload
         MessageParser.parse(new ActualMessage(message_len_arr, actual_message_without_len), client_peer_id);

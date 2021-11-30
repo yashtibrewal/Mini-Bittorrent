@@ -238,14 +238,16 @@ public class Peer extends Thread {
         }
     }
 
+    /**
+     * This methods returns if the running peer is interested in the neighbour's chunks
+     * @param neighbor_peer_id
+     * @return
+     */
     public synchronized boolean checkIfInterested(int neighbor_peer_id) {
         ArrayList<Boolean> other_end = references.get(neighbor_peer_id).file_chunks;
 
         for (int i = 0; i < other_end.size() && i < BitFieldUtils.getNumberOfChunks(); i++) {
             if (other_end.get(i)  && !self_file_chunks.get(i)) {
-
-                Peer.getInstance().references.get(neighbor_peer_id).is_interested = true;
-                addToPriorityQueueIfInterested(neighbor_peer_id);
                 return true;
             }
         }

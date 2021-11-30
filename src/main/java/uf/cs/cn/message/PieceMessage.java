@@ -73,8 +73,7 @@ public class PieceMessage extends ActualMessage {
 
         try (FileOutputStream fos = new FileOutputStream(Paths.get(running_dir, peer_id + "/piece_"+ this.piece_index ).toString())) {
             fos.write(this.piece_bytes);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            fos.flush();
         } catch (IOException e) {
             e.printStackTrace();
         }

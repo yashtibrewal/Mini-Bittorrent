@@ -280,6 +280,9 @@ public class Peer extends Thread {
 
     public void checkAndSendNotInterestedForAllPeers() {
         for(PeerInfoConfigFileReader.PeerInfo peerInfo: PeerInfoConfigFileReader.getPeerInfoList()) {
+
+            if (Peer.getInstance().self_peer_id == peerInfo.getPeer_id()) continue;
+
             if (!Peer.getInstance().checkIfInterested(peerInfo.getPeer_id())){
                 Peer.sendNotInterested(peerInfo.getPeer_id());
             }

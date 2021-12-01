@@ -163,7 +163,7 @@ public class Peer extends Thread {
         return true;
     }
 
-    public void updateNeighbourFileChunk(int neighbour_id, ArrayList<Boolean> neighbour_chunk) {
+    synchronized public void updateNeighbourFileChunk(int neighbour_id, ArrayList<Boolean> neighbour_chunk) {
         try {
             if (references.containsKey(neighbour_id)) {
                 references.get(neighbour_id).file_chunks = neighbour_chunk;

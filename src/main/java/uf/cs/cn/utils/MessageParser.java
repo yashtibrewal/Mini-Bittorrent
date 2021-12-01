@@ -9,8 +9,6 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Arrays;
 
-import static uf.cs.cn.utils.FileMerger.deleteChunks;
-
 public class MessageParser {
     static PeerLogging logger = PeerLogging.getInstance();
 
@@ -84,7 +82,6 @@ public class MessageParser {
                             Paths.get(running_dir, peer_id, CommonConfigFileReader.file_name).toString());
                     logger.downloadingCompleteLog();
 
-                    deleteChunks();
                 }
                 break;
 

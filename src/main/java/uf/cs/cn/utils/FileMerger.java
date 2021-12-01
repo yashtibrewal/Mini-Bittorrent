@@ -30,6 +30,7 @@ public class FileMerger {
                 fileInputStream.close();
             }
             System.out.println("bytes written " + total_bytes_written);
+            deleteChunks();
         } catch (IOException e) {
             e.printStackTrace();
         } finally {

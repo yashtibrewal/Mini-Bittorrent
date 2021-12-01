@@ -32,7 +32,7 @@ class OutgoingConnection extends Thread implements BitFieldEventListener {
         return destination_peer_id;
     }
 
-    public void sendChokesAndUnChokes() {
+    synchronized public void sendChokesAndUnChokes() {
 
         System.out.println("Calculating preferred neighbours");
         Peer.getInstance().calculatePreferredNeighbours();
@@ -121,7 +121,7 @@ class OutgoingConnection extends Thread implements BitFieldEventListener {
         }
     }
 
-    private void sendBitFieldMessage(ObjectOutputStream objectOutputStream) throws Exception {
+    synchronized private void sendBitFieldMessage(ObjectOutputStream objectOutputStream) throws Exception {
         int numChunks = BitFieldUtils.getNumberOfChunks();
         int bitFieldSize = BitFieldUtils.getPayloadDataSize(numChunks);
         BitfieldMessage bitfieldMessage = new BitfieldMessage(bitFieldSize);
@@ -134,7 +134,7 @@ class OutgoingConnection extends Thread implements BitFieldEventListener {
     }
 
     @Override
-    public void sendInterestedMessages() {
+    synchronized public void sendInterestedMessages() {
         try {
             byte[] output = new InterestedMessage().getEncodedMessage();
             for(byte b:output){
@@ -147,7 +147,7 @@ class OutgoingConnection extends Thread implements BitFieldEventListener {
     }
 
     @Override
-    public void sendNotInterestedMessages() {
+    synchronized public void sendNotInterestedMessages() {
         try {
             byte[] output = new NotInterestedMessage().getEncodedMessage();
             for(byte b:output){
@@ -159,7 +159,7 @@ class OutgoingConnection extends Thread implements BitFieldEventListener {
         }
     }
 
-    public void sendUnChokeMessages() {
+    synchronized public void sendUnChokeMessages() {
         try {
             byte[] output = new UnChokeMessage().getEncodedMessage();
             for(byte b:output){
@@ -171,7 +171,7 @@ class OutgoingConnection extends Thread implements BitFieldEventListener {
         }
     }
 
-    public void sendChokeMessages() {
+    synchronized public void sendChokeMessages() {
         try {
             byte[] output = new ChokeMessage().getEncodedMessage();
             for(byte b:output){

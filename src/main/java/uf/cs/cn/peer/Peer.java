@@ -215,10 +215,12 @@ public class Peer extends Thread {
         if (priorityQueue.size() == 0 ) return;
         System.out.println("HEAP BUILD CALLED!");
         rebuildHeap();
-        for (int i = 0; i < getMaxPossiblePreferredNeighbors(); i++) {
+        int k = PeerInfoConfigFileReader.numberOfPeers - 1;
+        while(priorityQueue.size()>0 && k > 0) {
             PeerConfig config = priorityQueue.poll();
             System.out.println("adding " + config.peer_id + " to the queue. ");
             preferredNeighborsList.add(config.peer_id);
+            k--;
         }
 
         int num = (int) ((Math.random() * ( totalInterestedPeers()-1 - getMaxPossiblePreferredNeighbors())) + getMaxPossiblePreferredNeighbors());

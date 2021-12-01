@@ -37,6 +37,9 @@ public class IncomingConnectionHandler extends Thread {
         // reading the message length header
         for(int i=0;i<message_len_arr.length;i++){
             message_len_arr[i] = (byte) listening_stream.read();
+            if(i==0 && message_len_arr[0] == -1){
+                return;
+            }
         }
         // converting to readable int
         message_len_val = new BigInteger(message_len_arr).intValue();

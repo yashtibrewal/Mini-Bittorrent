@@ -47,7 +47,7 @@ public class IncomingConnectionHandler extends Thread {
         actual_message_without_len = new byte[message_len_val];
 
         for(int i=0;i<actual_message_without_len.length;i++){
-            actual_message_without_len[i]=listening_stream.readByte();
+            actual_message_without_len[i]= (byte) listening_stream.read();
         }
 
         // parsing the payload

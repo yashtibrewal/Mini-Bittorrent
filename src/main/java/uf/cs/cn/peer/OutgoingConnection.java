@@ -7,7 +7,6 @@ import uf.cs.cn.utils.*;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.util.Arrays;
 
 class OutgoingConnection extends Thread implements BitFieldEventListener {
     private PeerLogging peerLogging;
@@ -73,7 +72,7 @@ class OutgoingConnection extends Thread implements BitFieldEventListener {
             HandShakeMessageUtils.receiveHandshake(objectInputStream);
 
 
-            Thread.sleep(5000);
+            Thread.sleep(CommonConfigFileReader.un_chocking_interval*1000L);
 //            while(HandShakeMessageUtils.getRecvCounter() != PeerInfoConfigFileReader.numberOfPeers-1
 //                    && HandShakeMessageUtils.getSendCounter()!= PeerInfoConfigFileReader.numberOfPeers-1) Thread.sleep(10);
 
@@ -81,7 +80,7 @@ class OutgoingConnection extends Thread implements BitFieldEventListener {
 
             sendBitFieldMessage(objectOutputStream);
 
-            Thread.sleep(5000);
+            Thread.sleep(CommonConfigFileReader.un_chocking_interval*1000L);
 
             while(HandShakeMessageUtils.getOutgoingBitfields() != PeerInfoConfigFileReader.numberOfPeers-1
             && HandShakeMessageUtils.getIncomingBitFieldCounter() != PeerInfoConfigFileReader.numberOfPeers-1) Thread.sleep(10);

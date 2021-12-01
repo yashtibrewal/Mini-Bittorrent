@@ -290,7 +290,7 @@ public class Peer extends Thread {
      * Sends a request message to the client by selecting a RANDOM file chunk which the neighbour has, and I don't
      * @param client_peer_id
      */
-    public void sendRequestMessage(int client_peer_id) {
+    synchronized public void sendRequestMessage(int client_peer_id) {
         try {
             // since array was 0 indexed, and files pieces are 1 indexed, we are added 1 to get the correct file piece number
             int chunk_id = PeerUtils.pickRandomIndex(self_file_chunks,references.get(client_peer_id).file_chunks)+1;
@@ -331,7 +331,7 @@ public class Peer extends Thread {
         Peer.getInstance().references.get(client_peer_id).is_interested = false;
     }
 
-    public void sendPieceMessage(int client_peer_id, int chunk_id) {
+    synchronized public void sendPieceMessage(int client_peer_id, int chunk_id) {
         for(OutgoingConnection outgoingConnection: outgoingConnections) {
             if(outgoingConnection.getDestination_peer_id() == client_peer_id) {
                 try {
@@ -370,7 +370,7 @@ public class Peer extends Thread {
         private boolean has_choked_me;
         boolean is_interested;
 
-        PeerConfig(int peer_id) throws Exception {
+        PeerConfig(int peer_id) {
             this.peer_id = peer_id;
             file_chunks = new ArrayList<>();
             for(int i=0;i<BitFieldUtils.getNumberOfChunks();i++) {
@@ -379,28 +379,12 @@ public class Peer extends Thread {
             download_bandwidth_data_counter++;
         }
 
-        public int getDownload_bandwidth_data_counter() {
-            return download_bandwidth_data_counter;
-        }
-
         public void setDownload_bandwidth_data_counter(int download_bandwidth_data_counter) {
             this.download_bandwidth_data_counter = download_bandwidth_data_counter;
         }
 
         void resetCounter() {
             this.download_bandwidth_data_counter = 0;
-        }
-
-        void setFileChunkTrue(int index) {
-            file_chunks.set(index - 1, true);
-        }
-
-        boolean hasAllChunks() {
-            return PeerUtils.gotCompleteFile(this.file_chunks);
-        }
-
-        public boolean isHas_choked_me() {
-            return has_choked_me;
         }
 
         public void setHas_choked_me(boolean has_choked_me) {

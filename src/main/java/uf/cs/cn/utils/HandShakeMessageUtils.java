@@ -67,7 +67,7 @@ public class HandShakeMessageUtils {
     }
 
 
-    public static int receiveHandshake(ObjectInputStream ois) throws Exception {
+    synchronized public static int receiveHandshake(ObjectInputStream ois) throws Exception {
 
         byte[] handshakeMessageBuffer = new byte[32];
         // receive handshake message
@@ -99,7 +99,7 @@ public class HandShakeMessageUtils {
         return true;
     }
 
-    public static void sendHandshake(ObjectOutputStream oos, HandShakeMessage handShakeMessage) throws IOException {
+    synchronized public static void sendHandshake(ObjectOutputStream oos, HandShakeMessage handShakeMessage) throws IOException {
         // send handshake message
         System.out.println("Sending handshake message which is "+Arrays.toString(handShakeMessage.getBytes()));
         oos.write(handShakeMessage.getBytes());

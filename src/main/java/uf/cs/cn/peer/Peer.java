@@ -266,7 +266,8 @@ public class Peer extends Thread {
         // for every outgoing connection, send a have message.
         for (OutgoingConnection outgoingConnection : outgoingConnections) {
             try {
-                outgoingConnection.objectOutputStream.write(new HaveMessage(chunk_id).getEncodedMessage());
+                byte[] output = new HaveMessage(chunk_id).getEncodedMessage();
+                for(byte b:output) outgoingConnection.objectOutputStream.write(b);
                 outgoingConnection.objectOutputStream.flush();
             } catch (Exception e) {
                 e.printStackTrace();
@@ -299,7 +300,8 @@ public class Peer extends Thread {
             RequestMessage requestMessage = new RequestMessage(chunk_id);
             for(OutgoingConnection outgoingConnection: outgoingConnections) {
                 if(outgoingConnection.getDestination_peer_id() == client_peer_id){
-                    outgoingConnection.objectOutputStream.write(requestMessage.getEncodedMessage());
+                    byte[] output = requestMessage.getEncodedMessage();
+                    for(byte b:output) outgoingConnection.objectOutputStream.write(b);
                     outgoingConnection.objectOutputStream.flush();
                     break;
                 }
@@ -333,7 +335,8 @@ public class Peer extends Thread {
         for(OutgoingConnection outgoingConnection: outgoingConnections) {
             if(outgoingConnection.getDestination_peer_id() == client_peer_id) {
                 try {
-                    outgoingConnection.objectOutputStream.write(new PieceMessage(chunk_id).getEncodedMessage());
+                    byte[] output = new PieceMessage(chunk_id).getEncodedMessage();
+                    for(byte b:output) outgoingConnection.objectOutputStream.write(b);
                     outgoingConnection.objectOutputStream.flush();
                     break;
                 } catch (Exception e) {

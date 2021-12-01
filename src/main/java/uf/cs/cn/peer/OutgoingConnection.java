@@ -126,7 +126,9 @@ class OutgoingConnection extends Thread implements BitFieldEventListener {
         int bitFieldSize = BitFieldUtils.getPayloadDataSize(numChunks);
         BitfieldMessage bitfieldMessage = new BitfieldMessage(bitFieldSize);
         byte[] output = bitfieldMessage.generatePayload();
-        objectOutputStream.write(output);
+        for(byte b:output){
+            objectOutputStream.write(b);
+        }
         objectOutputStream.flush();
         HandShakeMessageUtils.setOutgoingBitfields(HandShakeMessageUtils.getOutgoingBitfields()+1);
     }
@@ -135,7 +137,9 @@ class OutgoingConnection extends Thread implements BitFieldEventListener {
     public void sendInterestedMessages() {
         try {
             byte[] output = new InterestedMessage().getEncodedMessage();
-            objectOutputStream.write(output);
+            for(byte b:output){
+                objectOutputStream.write(b);
+            }
             objectOutputStream.flush();
         } catch (Exception e) {
             e.printStackTrace();
@@ -146,7 +150,9 @@ class OutgoingConnection extends Thread implements BitFieldEventListener {
     public void sendNotInterestedMessages() {
         try {
             byte[] output = new NotInterestedMessage().getEncodedMessage();
-            objectOutputStream.write(output);
+            for(byte b:output){
+                objectOutputStream.write(b);
+            }
             objectOutputStream.flush();
         } catch (Exception e) {
             e.printStackTrace();
@@ -156,7 +162,9 @@ class OutgoingConnection extends Thread implements BitFieldEventListener {
     public void sendUnChokeMessages() {
         try {
             byte[] output = new UnChokeMessage().getEncodedMessage();
-            objectOutputStream.write(output);
+            for(byte b:output){
+                objectOutputStream.write(b);
+            }
             objectOutputStream.flush();
         } catch (Exception e) {
             e.printStackTrace();
@@ -166,7 +174,9 @@ class OutgoingConnection extends Thread implements BitFieldEventListener {
     public void sendChokeMessages() {
         try {
             byte[] output = new ChokeMessage().getEncodedMessage();
-            objectOutputStream.write(output);
+            for(byte b:output){
+                objectOutputStream.write(b);
+            }
             objectOutputStream.flush();
         } catch (Exception e) {
             e.printStackTrace();

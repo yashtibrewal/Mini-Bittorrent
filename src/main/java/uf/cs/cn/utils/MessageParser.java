@@ -81,7 +81,7 @@ public class MessageParser {
                     String peer_id = String.valueOf(Peer.getInstance().getSelf_peer_id());
                     FileMerger.mergeFile(
                             Paths.get(running_dir, peer_id, CommonConfigFileReader.file_name).toString(),
-                            Paths.get(running_dir, peer_id, CommonConfigFileReader.file_name, CommonConfigFileReader.file_extension).toString());
+                            Paths.get(running_dir, peer_id, CommonConfigFileReader.file_name).toString());
                     logger.downloadingCompleteLog();
 
                     deleteChunks();

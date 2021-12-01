@@ -79,13 +79,4 @@ public class FileMerger {
         }
     }
 
-    public static void main(String[] args) {
-        String running_dir = System.getProperty("user.dir"); // gets the base directory of the project
-        String peer_id = String.valueOf(PeerInfoConfigFileReader.getPeerInfoList().get(0).getPeer_id());
-        FileMerger.mergeFile(
-                Paths.get(running_dir, peer_id).toString(),
-                Paths.get(running_dir, peer_id, "merged_file." + CommonConfigFileReader.file_extension).toString());
-
-        deleteChunks();
-    }
 }

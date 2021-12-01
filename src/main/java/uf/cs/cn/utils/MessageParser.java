@@ -78,7 +78,7 @@ public class MessageParser {
                     String running_dir = System.getProperty("user.dir"); // gets the base directory of the project
                     String peer_id = String.valueOf(Peer.getInstance().getSelf_peer_id());
                     FileMerger.mergeFile(
-                            Paths.get(running_dir, peer_id, CommonConfigFileReader.file_name).toString(),
+                            Paths.get(running_dir, peer_id ).toString(),
                             Paths.get(running_dir, peer_id, CommonConfigFileReader.file_name).toString());
                     logger.downloadingCompleteLog();
 

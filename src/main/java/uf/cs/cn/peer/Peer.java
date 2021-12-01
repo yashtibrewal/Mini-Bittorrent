@@ -33,6 +33,13 @@ public class Peer extends Thread {
     private final PeerLogging peerLogging;
     private static boolean close_connection = false;
 
+    public static boolean allPeersReceivedAllChunks() {
+        for(Integer peer_id: Peer.getInstance().references.keySet()) {
+            if(!Peer.getInstance().references.get(peer_id).gotAllChunks())return false;
+        }
+        return Peer.getInstance().gotCompleteFile();
+    }
+
     private Peer(int self_peer_id) {
         this.self_peer_id = self_peer_id;
         Peer.peer = this;
@@ -377,6 +384,13 @@ public class Peer extends Thread {
                 file_chunks.add(false);
             }
             download_bandwidth_data_counter++;
+        }
+
+        public boolean gotAllChunks() {
+            for(Boolean file_chunk:file_chunks) {
+                if(!file_chunk) return false;
+            }
+            return true;
         }
 
         public void setDownload_bandwidth_data_counter(int download_bandwidth_data_counter) {

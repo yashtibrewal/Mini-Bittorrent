@@ -20,6 +20,7 @@ public class FileSplitter {
             while (true) {
                 output_file_name = "piece_" + counter;
                 int number_of_characters_read = fileInputStream.read(piece);
+                System.out.println("number_of_characters_read " + number_of_characters_read);
                 total_bytes_read += number_of_characters_read;
                 if (number_of_characters_read == -1) {
                     break;

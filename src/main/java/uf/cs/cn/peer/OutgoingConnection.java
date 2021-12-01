@@ -7,7 +7,6 @@ import uf.cs.cn.utils.*;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.util.Arrays;
 
 class OutgoingConnection extends Thread implements BitFieldEventListener {
     private PeerLogging peerLogging;
@@ -32,7 +31,7 @@ class OutgoingConnection extends Thread implements BitFieldEventListener {
         return destination_peer_id;
     }
 
-    public void sendChokesAndUnChokes() {
+    synchronized public void sendChokesAndUnChokes() {
 
         System.out.println("Calculating preferred neighbours");
         Peer.getInstance().calculatePreferredNeighbours();
@@ -73,7 +72,7 @@ class OutgoingConnection extends Thread implements BitFieldEventListener {
             HandShakeMessageUtils.receiveHandshake(objectInputStream);
 
 
-            Thread.sleep(5000);
+            Thread.sleep(CommonConfigFileReader.un_chocking_interval*1000L);
 //            while(HandShakeMessageUtils.getRecvCounter() != PeerInfoConfigFileReader.numberOfPeers-1
 //                    && HandShakeMessageUtils.getSendCounter()!= PeerInfoConfigFileReader.numberOfPeers-1) Thread.sleep(10);
 
@@ -81,7 +80,7 @@ class OutgoingConnection extends Thread implements BitFieldEventListener {
 
             sendBitFieldMessage(objectOutputStream);
 
-            Thread.sleep(5000);
+            Thread.sleep(CommonConfigFileReader.un_chocking_interval*1000L);
 
             while(HandShakeMessageUtils.getOutgoingBitfields() != PeerInfoConfigFileReader.numberOfPeers-1
             && HandShakeMessageUtils.getIncomingBitFieldCounter() != PeerInfoConfigFileReader.numberOfPeers-1) Thread.sleep(10);
@@ -121,21 +120,25 @@ class OutgoingConnection extends Thread implements BitFieldEventListener {
         }
     }
 
-    private void sendBitFieldMessage(ObjectOutputStream objectOutputStream) throws Exception {
+    synchronized private void sendBitFieldMessage(ObjectOutputStream objectOutputStream) throws Exception {
         int numChunks = BitFieldUtils.getNumberOfChunks();
         int bitFieldSize = BitFieldUtils.getPayloadDataSize(numChunks);
         BitfieldMessage bitfieldMessage = new BitfieldMessage(bitFieldSize);
         byte[] output = bitfieldMessage.generatePayload();
-        objectOutputStream.write(output);
+        for(byte b:output){
+            objectOutputStream.write(b);
+        }
         objectOutputStream.flush();
         HandShakeMessageUtils.setOutgoingBitfields(HandShakeMessageUtils.getOutgoingBitfields()+1);
     }
 
     @Override
-    public void sendInterestedMessages() {
+    synchronized public void sendInterestedMessages() {
         try {
             byte[] output = new InterestedMessage().getEncodedMessage();
-            objectOutputStream.write(output);
+            for(byte b:output){
+                objectOutputStream.write(b);
+            }
             objectOutputStream.flush();
         } catch (Exception e) {
             e.printStackTrace();
@@ -143,30 +146,36 @@ class OutgoingConnection extends Thread implements BitFieldEventListener {
     }
 
     @Override
-    public void sendNotInterestedMessages() {
+    synchronized public void sendNotInterestedMessages() {
         try {
             byte[] output = new NotInterestedMessage().getEncodedMessage();
-            objectOutputStream.write(output);
+            for(byte b:output){
+                objectOutputStream.write(b);
+            }
             objectOutputStream.flush();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public void sendUnChokeMessages() {
+    synchronized public void sendUnChokeMessages() {
         try {
             byte[] output = new UnChokeMessage().getEncodedMessage();
-            objectOutputStream.write(output);
+            for(byte b:output){
+                objectOutputStream.write(b);
+            }
             objectOutputStream.flush();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public void sendChokeMessages() {
+    synchronized public void sendChokeMessages() {
         try {
             byte[] output = new ChokeMessage().getEncodedMessage();
-            objectOutputStream.write(output);
+            for(byte b:output){
+                objectOutputStream.write(b);
+            }
             objectOutputStream.flush();
         } catch (Exception e) {
             e.printStackTrace();

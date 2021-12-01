@@ -2,12 +2,8 @@ package uf.cs.cn.message;
 
 import uf.cs.cn.peer.Peer;
 import uf.cs.cn.utils.ActualMessageUtils;
-import uf.cs.cn.utils.CommonConfigFileReader;
-import uf.cs.cn.utils.FileMerger;
-import uf.cs.cn.utils.PeerInfoConfigFileReader;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -55,14 +51,6 @@ public class PieceMessage extends ActualMessage {
         this(Arrays.copyOfRange(actualMessage, 0, 4),Arrays.copyOfRange(actualMessage, 4, actualMessage.length));
         this.piece_bytes = Arrays.copyOfRange(actualMessage, 4+1+4, actualMessage.length);
         processPieceMessage();
-    }
-
-    public int getPieceIndex() {
-        return this.piece_index;
-    }
-
-    public byte[] getFileChunk() {
-        return Arrays.copyOfRange(getPayload(), 4, getPayload().length);
     }
 
     public void processPieceMessage(){

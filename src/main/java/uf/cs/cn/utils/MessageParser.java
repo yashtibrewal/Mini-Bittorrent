@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Arrays;
 
+import static uf.cs.cn.utils.FileMerger.deleteChunks;
+
 public class MessageParser {
     static PeerLogging logger = PeerLogging.getInstance();
 
@@ -46,6 +48,9 @@ public class MessageParser {
                 // send if interested
                 if (Peer.getInstance().checkIfInterested(client_peer_id)) Peer.sendInterested(client_peer_id);
                 else Peer.sendNotInterested(client_peer_id);
+                if(Peer.allPeersReceivedAllChunks()){
+                    deleteChunks();
+                }
                 break;
 
             case MessageType.BIT_FIELD:
@@ -78,9 +83,13 @@ public class MessageParser {
                     String running_dir = System.getProperty("user.dir"); // gets the base directory of the project
                     String peer_id = String.valueOf(Peer.getInstance().getSelf_peer_id());
                     FileMerger.mergeFile(
-                            Paths.get(running_dir, peer_id, CommonConfigFileReader.file_name).toString(),
-                            Paths.get(running_dir, peer_id).toString());
+                            Paths.get(running_dir, peer_id ).toString(),
+                            Paths.get(running_dir, peer_id, CommonConfigFileReader.file_name).toString());
                     logger.downloadingCompleteLog();
+
+                }
+                if(Peer.allPeersReceivedAllChunks()){
+                    deleteChunks();
                 }
                 break;
 

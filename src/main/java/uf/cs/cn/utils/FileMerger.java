@@ -12,7 +12,9 @@ public class FileMerger {
     public static void mergeFile(String input_file_path, String out_put_path) {
         FileInputStream fileInputStream = null;
         byte[] buffer = new byte[CommonConfigFileReader.piece_size];
-        try (FileOutputStream fileOutputStream = new FileOutputStream(new File(out_put_path));
+        System.out.println("Trying to read out put path " + out_put_path);
+        System.out.println("Input stream is " + input_file_path);
+        try (FileOutputStream fileOutputStream = new FileOutputStream((out_put_path));
         ) {
             // Total number of piece files would be
             int num_of_pieces = (int) Math.ceil(1.0 * CommonConfigFileReader.file_size / CommonConfigFileReader.piece_size);
@@ -28,8 +30,6 @@ public class FileMerger {
                 fileInputStream.close();
             }
             System.out.println("bytes written " + total_bytes_written);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -79,13 +79,4 @@ public class FileMerger {
         }
     }
 
-    public static void main(String[] args) {
-        String running_dir = System.getProperty("user.dir"); // gets the base directory of the project
-        String peer_id = String.valueOf(PeerInfoConfigFileReader.getPeerInfoList().get(0).getPeer_id());
-        FileMerger.mergeFile(
-                Paths.get(running_dir, peer_id).toString(),
-                Paths.get(running_dir, peer_id, "merged_file." + CommonConfigFileReader.file_extension).toString());
-
-        deleteChunks();
-    }
 }

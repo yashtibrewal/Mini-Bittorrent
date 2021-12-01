@@ -74,7 +74,7 @@ public class MessageParser {
                 Peer.getInstance().sendHaveMessages(chunk_id);
                 // update not interested states and send if necessary
                 Peer.getInstance().checkAndSendNotInterestedForAllPeers();
-                if (Peer.getInstance().gotCompleteFile()) {
+                if (Peer.getInstance().gotCompleteFile() && !PeerInfoConfigFileReader.isPeerServer(Peer.getPeerId())) {
                     String running_dir = System.getProperty("user.dir"); // gets the base directory of the project
                     String peer_id = String.valueOf(Peer.getInstance().getSelf_peer_id());
                     FileMerger.mergeFile(
@@ -83,6 +83,7 @@ public class MessageParser {
                     logger.downloadingCompleteLog();
 
                 }
+                if(PeerInfoConfigFileReader.isPeerServer(Peer.getPeerId()))
                 break;
 
             default:

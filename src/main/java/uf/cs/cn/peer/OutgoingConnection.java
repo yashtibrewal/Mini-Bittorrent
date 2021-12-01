@@ -8,6 +8,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
+import static uf.cs.cn.utils.FileMerger.deleteChunks;
+
 class OutgoingConnection extends Thread implements BitFieldEventListener {
     private PeerLogging peerLogging;
     ObjectOutputStream objectOutputStream;
@@ -100,6 +102,7 @@ class OutgoingConnection extends Thread implements BitFieldEventListener {
             objectOutputStream.close();
             objectInputStream.close();
             connection.close();
+            deleteChunks();
         } catch (Exception ex) {
             System.err.println(ex.getCause() + " -Error encountered when sending data to remote server.");
             ex.printStackTrace();

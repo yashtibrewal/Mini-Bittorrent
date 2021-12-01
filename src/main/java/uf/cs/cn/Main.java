@@ -9,10 +9,11 @@ import java.io.InputStreamReader;
 public class Main {
 
     public static void main(String[] args) throws IOException {
-        System.out.println("Please enter the peer id");
-        args = new String[]{new BufferedReader(new InputStreamReader(System.in)).readLine()};
-        // TODO: pass the peer_id to constructor from Command Line Argument
-
+        if(args.length == 0) {
+            System.out.println("Please enter the peer id");
+            args = new String[]{new BufferedReader(new InputStreamReader(System.in)).readLine()};
+            // TODO: pass the peer_id to constructor from Command Line Argument
+        }
         int peer_id;
         try {
             peer_id = extractPeerId(args);

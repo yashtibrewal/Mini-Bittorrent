@@ -3,9 +3,11 @@ package uf.cs.cn.peer;
 import uf.cs.cn.utils.CommonConfigFileReader;
 import uf.cs.cn.utils.FileSplitter;
 import uf.cs.cn.utils.PeerInfoConfigFileReader;
+import uf.cs.cn.utils.PeerLogging;
 
 import java.net.ServerSocket;
 import java.nio.file.Paths;
+import java.util.Objects;
 
 public class PeerServer extends Thread {
     private ServerSocket serverSocket;
@@ -21,6 +23,7 @@ public class PeerServer extends Thread {
      * We split the file into the pieces.
      */
     private void splitFileIntoChunks(){
+        System.out.println("Splitting the file in pieces.");
         String running_dir = System.getProperty("user.dir"); // gets the base directory of the project
         String peer_id = String.valueOf(self_peer_id);
         FileSplitter.splitFile(
@@ -36,6 +39,7 @@ public class PeerServer extends Thread {
              * Server means a connection which is duplex and waiting for the other peer to get connected.
              */
             serverSocket = new ServerSocket(self_port);
+            System.out.println("Peer " + self_peer_id + " running server socket on " + self_port);
             boolean is_server = false;
             for(PeerInfoConfigFileReader.PeerInfo peerInfo: PeerInfoConfigFileReader.getPeerInfoList()){
                 /**
@@ -58,12 +62,24 @@ public class PeerServer extends Thread {
             int counter = 0;
             while (counter != PeerInfoConfigFileReader.getPeerInfoList().size() - 1) {
                 IncomingConnectionHandler connHandler = new IncomingConnectionHandler(serverSocket.accept(), this.self_peer_id);
+                int port = connHandler.getContextClassLoader().getResource(connHandler.getName()).getPort();
+                System.out.println("Incoming connection from port " + port);
+                logIncomingConnection(port);
                 connHandler.start();
                 counter++;
             }
         } catch (Exception e) {
             // TODO: handle exception here
             e.printStackTrace();
+        }
+    }
+
+    private void logIncomingConnection(int port) {
+        for (PeerInfoConfigFileReader.PeerInfo peerInfo: PeerInfoConfigFileReader.getPeerInfoList()){
+            if(peerInfo.getListening_port() == port){
+                PeerLogging.getInstance().incomingTCPConnectionLog(peerInfo.getPeer_host_name());
+            }
+            break;
         }
     }
 }

@@ -33,6 +33,10 @@ public class PeerLogging {
         return peerLogging;
     }
 
+    /**
+     * The function needs to be called only once.
+     * Creates the file for the peer.
+     */
     public void startLogger() {
         try {
             this.dateFormat = new SimpleDateFormat("dd-MMM-yyyy hh:mm:ss a");

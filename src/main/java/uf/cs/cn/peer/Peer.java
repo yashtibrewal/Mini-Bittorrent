@@ -22,7 +22,6 @@ public class Peer extends Thread {
     /**
      * List of neighbours who are interested in me.
      */
-//    private static HashSet<Integer> interestedList = new HashSet<>();
     private final int self_peer_id;
     PriorityQueue<PeerConfig> priorityQueue = new PriorityQueue<>((a, b) -> b.download_bandwidth_data_counter - a.download_bandwidth_data_counter);
     // to keep the references to the objects in priority queue

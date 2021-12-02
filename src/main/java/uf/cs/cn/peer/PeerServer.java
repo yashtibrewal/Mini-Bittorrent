@@ -44,8 +44,8 @@ public class PeerServer extends Thread {
             for(PeerInfoConfigFileReader.PeerInfo peerInfo: PeerInfoConfigFileReader.getPeerInfoList()){
                 /**
                  * This line will only iterate all elements until it reaches itself. Point of doing this is to connect
-                 * only to the peers who are already in the network. Assuming we run the peers as per thier index numbers
-                 * and the file is in sorted index number list, we are connecting to the ones who are already running.
+                 * only to the peers who are already in the network. Assuming we run the peers as per their index numbers
+                 * mentioned in the file in sequential order, we are connecting to the ones who are already running.
                  */
                 if(Peer.getPeerId() == peerInfo.getPeer_id() && peerInfo.isHas_file()){
                     is_server = true;
@@ -62,7 +62,12 @@ public class PeerServer extends Thread {
             int counter = 0;
             while (counter != PeerInfoConfigFileReader.getPeerInfoList().size() - 1) {
                 IncomingConnectionHandler connHandler = new IncomingConnectionHandler(serverSocket.accept(), this.self_peer_id);
-                int port = connHandler.getContextClassLoader().getResource(connHandler.getName()).getPort();
+                int port = 0;
+                try{
+                    port = connHandler.getContextClassLoader().getResource(connHandler.getName()).getPort();
+                }catch (NullPointerException e){
+                    e.printStackTrace();
+                }
                 System.out.println("Incoming connection from port " + port);
                 logIncomingConnection(port);
                 connHandler.start();

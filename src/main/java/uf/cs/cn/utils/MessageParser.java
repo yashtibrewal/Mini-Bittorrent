@@ -23,13 +23,11 @@ public class MessageParser {
         switch (actualMessage.getMessage_type()) {
             case MessageType.UN_CHOKE:
                 // send request message
-                Peer.getInstance().markHasUnChokedMe(client_peer_id);
                 if(!Peer.getInstance().gotCompleteFile())
                     Peer.getInstance().sendRequestMessage(client_peer_id);
                 break;
 
             case MessageType.CHOKE:
-                Peer.getInstance().markHasChokedMe(client_peer_id);
                 break;
 
             case MessageType.INTERESTED:

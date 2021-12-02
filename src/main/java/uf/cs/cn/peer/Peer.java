@@ -16,22 +16,53 @@ public class Peer extends Thread {
 
     private static Peer peer;
     /**
-     * List of neighbours I am interested in.
+     * {@link Peer#preferredNeighborsList}
+     * List of neighbours who are in this are the ones who we send unchoke message to, so that they can send us
+     * the request message and we can send them back the requested piece.
+     * All the members in this list for sure have had sent the interested message before.
      */
     public static HashSet<Integer> preferredNeighborsList = new HashSet<>();
     /**
+     * {@link Peer#self_peer_id}
      * List of neighbours who are interested in me.
      */
     private final int self_peer_id;
+    /**
+     * {@link Peer#priorityQueue}
+     * The queue will keep the list of interested neighbours who are eligible to be the preferred neighbours.
+     * It keeps them in a descending order of downloading content, for example if the peer has downloaded more data
+     * from Peer A and less data from Peer B, then Peer A will pop from the queue first so that we can add it to the
+     * preferred neighbours.
+     */
     PriorityQueue<PeerConfig> priorityQueue = new PriorityQueue<>((a, b) -> b.download_bandwidth_data_counter - a.download_bandwidth_data_counter);
     // to keep the references to the objects in priority queue
+    /**
+     * {@link Peer#references}
+     * Stores the references for all object references to the
+     */
     HashMap<Integer, PeerConfig> references = new HashMap<>();
+    /**
+     * {@link Peer#outgoingConnections}
+     * Keeps references to all the outgoing connections so that in case we have to boradcase a message like have,
+     * we can iterate over it and send it to all connection.
+     */
     ArrayList<OutgoingConnection> outgoingConnections = new ArrayList<>();
+    /**
+     *
+     */
     PeerServer peer_server;
+    /**
+     * {@link Peer#self_file_chunks}
+     * Keeps the list of chunks marked true which the present peer has.
+     */
     ArrayList<Boolean> self_file_chunks ;
-    private final PeerLogging peerLogging;
     private static boolean close_connection = false;
 
+    /**
+     * {@link Peer#allPeersReceivedAllChunks()}
+     * returns true if all the peers have received all the files including the present peer.s
+     * @return
+     */
     public static boolean allPeersReceivedAllChunks() {
         for(Integer peer_id: Peer.getInstance().references.keySet()) {
             if(!Peer.getInstance().references.get(peer_id).gotAllChunks())return false;
@@ -47,12 +78,10 @@ public class Peer extends Thread {
         for(int i=0;i<BitFieldUtils.getNumberOfChunks();i++) {
             self_file_chunks.add(isServer);
         }
-
-        peerLogging = PeerLogging.getInstance();
     }
 
     public static void sendInterested(int client_peer_id) {
-        // TODO: make it efficient by adding a break in a manual loop - NOT POSSIBLE WITH STREAMS
+        // TODO: make it efficient by adding a break in a manual loop by keeping the reference in PeerConfig class.
         Peer.getInstance().outgoingConnections.forEach((outgoingConnection -> {
             if (outgoingConnection.getDestination_peer_id() == client_peer_id) {
                 outgoingConnection.sendInterestedMessages();
@@ -69,15 +98,15 @@ public class Peer extends Thread {
         }));
     }
 
-    /**
-     * Note: If getInstance(self_peer_id) is called twice, we are losing the previous object.
-     *
-     * @return
-     */
     public static Peer getInstance() {
         return Peer.peer;
     }
 
+    /**
+     * {@link Peer#getInstance(int)}
+     * Note: v is called twice, we are losing the previous object.
+     * @return
+     */
     public static Peer getInstance(int self_peer_id) {
         //TODO: Throw exception if object already exists
         Peer.peer = new Peer(self_peer_id);
@@ -85,9 +114,9 @@ public class Peer extends Thread {
     }
 
     public void addToPriorityQueueIfInterested(int client_id) {
-
         if (!priorityQueue.contains(references.get(client_id))
-        && references.get(client_id).is_interested) priorityQueue.add(references.get(client_id));
+                && references.get(client_id).is_interested)
+            priorityQueue.add(references.get(client_id));
     }
 
     public void addToInterested(int client_id){
@@ -107,23 +136,22 @@ public class Peer extends Thread {
         return preferredNeighborsList;
     }
 
-    public void setPreferredNeighborsList(HashSet<Integer> preferredNeighborsList) {
-        this.preferredNeighborsList = preferredNeighborsList;
-    }
-
     public int getSelf_peer_id() {
         return self_peer_id;
     }
 
     /**
-     * Purpose of the function is to connect to all peers' servers
+     * Purpose of the function is to connect to all peers' which are already in the network.
+     * Logic: Traverse through the list of connections from the file. Since the file is getting started in the sequence
+     * the peers before this peer are already started, and hence we initiate connection with them.
      */
     public void establishOutgoingConnections() {
-        // TODO: Poll this array every x mins and check the connection.
-        PeerInfoConfigFileReader.getPeerInfoList();
+        // TODO: Poll this array every x time units and check the connection.
         for (PeerInfoConfigFileReader.PeerInfo peerInfo : PeerInfoConfigFileReader.getPeerInfoList()) {
             if (peerInfo.getPeer_id() != this.self_peer_id) {
-                peerLogging.outgoingTCPConnectionLog(String.valueOf(peerInfo.getPeer_id()));
+                System.out.println("INITIATING connection to "
+                        + peerInfo.getPeer_host_name() + " at port " + peerInfo.getListening_port());
+                PeerLogging.getInstance().outgoingTCPConnectionLog(String.valueOf(peerInfo.getPeer_id()));
                 //TODO: Store the object references when looping for future use
                 OutgoingConnection outgoingConnection = new OutgoingConnection(
                         peerInfo.getPeer_host_name(),
@@ -137,12 +165,15 @@ public class Peer extends Thread {
     }
 
     /**
-     * Purpose of the function is to listen to all incoming peer client requests
+     * Purpose of the function is to start a server socket for the peer so that other peers can connect to this peer.
      */
     public void runServer() {
         // read peer id from file
         try {
-            this.peer_server = new PeerServer(PeerInfoConfigFileReader.getPortForPeerID(this.self_peer_id), this.self_peer_id);
+            this.peer_server = new PeerServer(
+                    PeerInfoConfigFileReader.getPortForPeerID(
+                            this.self_peer_id),
+                            this.self_peer_id);
             peer_server.start();
         } catch (Exception e) {
             // TODO: handle the exception
@@ -163,12 +194,14 @@ public class Peer extends Thread {
         gotCompleteFile returns true if all pieces exists, if even one piece is missing, it returns false.
      */
     public boolean gotCompleteFile() {
-        for (boolean piece : self_file_chunks) {
-            if (!piece) return false;
-        }
-        return true;
+        return PeerUtils.gotCompleteFile(self_file_chunks);
     }
 
+    /**
+     * Used to set the neighbour's list of file chunks.
+     * @param neighbour_id
+     * @param neighbour_chunk
+     */
     synchronized public void updateNeighbourFileChunk(int neighbour_id, ArrayList<Boolean> neighbour_chunk) {
         try {
             if (references.containsKey(neighbour_id)) {
@@ -183,6 +216,11 @@ public class Peer extends Thread {
         }
     }
 
+    /**
+     * Updates the particular chunk of the neighbour.
+     * @param neighbour_id
+     * @param file_chunk_number
+     */
     public void updateNeighbourFileChunk(int neighbour_id, int file_chunk_number) {
         try {
             references.get(neighbour_id).file_chunks.set(file_chunk_number-1,true);
@@ -196,9 +234,6 @@ public class Peer extends Thread {
         System.out.println("Self File chunk updated to : " + self_file_chunks);
     }
 
-    public boolean isPreferredNeighbour(int neighbor_peer_id) {
-        return preferredNeighborsList.contains(neighbor_peer_id);
-    }
     public int getMaxPossiblePreferredNeighbors() {
         return Math.min(CommonConfigFileReader.number_of_preferred_neighbours, PeerInfoConfigFileReader.numberOfPeers-1);
     }
@@ -207,9 +242,7 @@ public class Peer extends Thread {
         for (Integer i: preferredNeighborsList) {
             addToPriorityQueueIfInterested(i);
         }
-
         preferredNeighborsList.clear();
-
     }
 
     public int totalInterestedPeers() {
@@ -321,14 +354,6 @@ public class Peer extends Thread {
         Peer.getInstance().addToInterested(client_peer_id);
     }
 
-    public void markHasChokedMe(int client_peer_id) {
-        references.get(client_peer_id).setHas_choked_me(true);
-    }
-
-    public void markHasUnChokedMe(int client_peer_id) {
-        references.get(client_peer_id).setHas_choked_me(false);
-    }
-
     public void updateNotInterested(int client_peer_id) {
         if (priorityQueue.contains(references.get(client_peer_id))) {
             priorityQueue.remove(references.get(client_peer_id));
@@ -369,39 +394,4 @@ public class Peer extends Thread {
         Peer.close_connection = true;
     }
 
-    static class PeerConfig {
-        ArrayList<Boolean> file_chunks;
-        int peer_id;
-        private int download_bandwidth_data_counter;
-        private boolean has_choked_me;
-        boolean is_interested;
-
-        PeerConfig(int peer_id) {
-            this.peer_id = peer_id;
-            file_chunks = new ArrayList<>();
-            for(int i=0;i<BitFieldUtils.getNumberOfChunks();i++) {
-                file_chunks.add(false);
-            }
-            download_bandwidth_data_counter++;
-        }
-
-        public boolean gotAllChunks() {
-            for(Boolean file_chunk:file_chunks) {
-                if(!file_chunk) return false;
-            }
-            return true;
-        }
-
-        public void setDownload_bandwidth_data_counter(int download_bandwidth_data_counter) {
-            this.download_bandwidth_data_counter = download_bandwidth_data_counter;
-        }
-
-        void resetCounter() {
-            this.download_bandwidth_data_counter = 0;
-        }
-
-        public void setHas_choked_me(boolean has_choked_me) {
-            this.has_choked_me = has_choked_me;
-        }
-    }
 }

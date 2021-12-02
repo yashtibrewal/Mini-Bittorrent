@@ -4,6 +4,7 @@ import uf.cs.cn.listeners.BitFieldEventListener;
 import uf.cs.cn.message.*;
 import uf.cs.cn.utils.*;
 
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
@@ -59,11 +60,20 @@ class OutgoingConnection extends Thread implements BitFieldEventListener {
         sendChokesAndUnChokes();
     }
 
+    private boolean waitingForConnection() {
+        try {
+            System.out.println("Waiting for connection");
+            connection = new Socket(destination_host_name, destination_port);
+            return true;
+        }catch(Exception e){
+            return false;
+        }
+    }
 
     public void run() {
-        connection = null;
         try {
-            connection = new Socket(destination_host_name, destination_port);
+            Thread.sleep(2000);
+            while(!waitingForConnection());
             objectOutputStream = new ObjectOutputStream(connection.getOutputStream());
             objectInputStream = new ObjectInputStream(connection.getInputStream());
             Thread.sleep(1000);
@@ -119,6 +129,8 @@ class OutgoingConnection extends Thread implements BitFieldEventListener {
             }
         }
     }
+
+
 
     synchronized private void sendBitFieldMessage(ObjectOutputStream objectOutputStream) throws Exception {
         int numChunks = BitFieldUtils.getNumberOfChunks();

@@ -123,7 +123,7 @@ public class Peer extends Thread {
         // TODO: Poll this array every x mins and check the connection.
         PeerInfoConfigFileReader.getPeerInfoList();
         for (PeerInfoConfigFileReader.PeerInfo peerInfo : PeerInfoConfigFileReader.getPeerInfoList()) {
-            if (peerInfo.getPeer_id() != this.self_peer_id) {
+            if ( peerInfo != null && peerInfo.getPeer_id() != this.self_peer_id) {
                 peerLogging.outgoingTCPConnectionLog(String.valueOf(peerInfo.getPeer_id()));
                 //TODO: Store the object references when looping for future use
                 OutgoingConnection outgoingConnection = new OutgoingConnection(

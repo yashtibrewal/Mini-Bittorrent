@@ -6,6 +6,7 @@ import uf.cs.cn.utils.PeerInfoConfigFileReader;
 import uf.cs.cn.utils.PeerLogging;
 
 import java.net.ServerSocket;
+import java.net.URL;
 import java.nio.file.Paths;
 import java.util.Objects;
 
@@ -63,12 +64,9 @@ public class PeerServer extends Thread {
             while (counter != PeerInfoConfigFileReader.getPeerInfoList().size() - 1) {
                 IncomingConnectionHandler connHandler = new IncomingConnectionHandler(serverSocket.accept(), this.self_peer_id);
                 int port = 0;
-                try{
-                    port = connHandler.getContextClassLoader().getResource(connHandler.getName()).getPort();
-                }catch (NullPointerException e){
-                    e.printStackTrace();
-                }
-                System.out.println("Incoming connection from port " + port);
+                URL url = connHandler.getContextClassLoader().getResource(connHandler.getName());
+                if(url!=null)
+                    System.out.println("Incoming connection from port " + port);
                 logIncomingConnection(port);
                 connHandler.start();
                 counter++;

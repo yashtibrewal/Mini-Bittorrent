@@ -69,13 +69,14 @@ public class FileMerger {
             String folderPath = Paths.get(running_dir, Integer.toString(peer_ids[i])).toString();
             File folder = new File(folderPath);
             File[] listOfFiles = folder.listFiles();
-            for (int j = 0; j < listOfFiles.length; j++) {
-                String tempFileName = listOfFiles[j].getName();
-                if (tempFileName.startsWith("piece_")) {
-                    String tempFilePath = Paths.get(folderPath, tempFileName).toString();
-                    deleteFile(tempFilePath);
+            if(listOfFiles!=null)
+                for (File listOfFile : listOfFiles) {
+                    String tempFileName = listOfFile.getName();
+                    if (tempFileName.startsWith("piece_")) {
+                        String tempFilePath = Paths.get(folderPath, tempFileName).toString();
+                        deleteFile(tempFilePath);
+                    }
                 }
-            }
         }
     }
 

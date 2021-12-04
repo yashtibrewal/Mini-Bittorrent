@@ -18,7 +18,7 @@ public class MessageParser {
         if(actualMessage.getMessage_type()!=MessageType.PIECE)
             System.out.println("MESSAGE TYPE "+actualMessage.getMessage_type()+" ARRAY "+Arrays.toString(actualMessage.getEncodedMessage()));
         else
-            System.out.println("got piece " + actualMessage.convertByteArrayToInt(Arrays.copyOfRange(actualMessage.getPayload(),0,4)));
+            System.out.println("PIECE INDEX RECEIVED : " + actualMessage.convertByteArrayToInt(Arrays.copyOfRange(actualMessage.getPayload(),0,4)));
         int chunk_id;
         switch (actualMessage.getMessage_type()) {
             case MessageType.UN_CHOKE:

@@ -23,21 +23,26 @@ public class MessageParser {
         switch (actualMessage.getMessage_type()) {
             case MessageType.UN_CHOKE:
                 // send request message
-                if(!Peer.getInstance().gotCompleteFile())
+                if(!Peer.getInstance().gotCompleteFile()) {
                     Peer.getInstance().sendRequestMessage(client_peer_id);
+                    logger.unChokingNeighbourLog(client_peer_id+"");
+                }
                 break;
 
             case MessageType.CHOKE:
+                logger.chokingNeighbourLog(client_peer_id+"");
                 break;
 
             case MessageType.INTERESTED:
                 // add to the interested list
                 Peer.getInstance().addClientToInterestedMessage(client_peer_id);
+                logger.receivedInterestedLog(client_peer_id+"");
                 break;
 
             case MessageType.NOT_INTERESTED:
                 // remove from the interested
                 Peer.getInstance().updateNotInterested(client_peer_id);
+                logger.receiveNotInterested(client_peer_id+"");
                 break;
 
             case MessageType.HAVE:
@@ -49,6 +54,7 @@ public class MessageParser {
                 if(Peer.allPeersReceivedAllChunks()){
                     deleteChunks();
                 }
+                logger.receivedHaveLog(client_peer_id+"", actualMessage.convertByteArrayToInt(Arrays.copyOfRange(actualMessage.getPayload(),0,4)));
                 break;
 
             case MessageType.BIT_FIELD:
@@ -73,6 +79,7 @@ public class MessageParser {
                 chunk_id = actualMessage.convertByteArrayToInt(Arrays.copyOfRange(actualMessage.getPayload(), 0, 4));
                 Peer.getInstance().updateSelfFileChunk(chunk_id);
                 Peer.getInstance().incrementDownloadCount(client_peer_id);
+                logger.downloadedPieceLog(client_peer_id+"", chunk_id, Peer.getInstance().selfFileChunkCount());
                 // send have messages
                 Peer.getInstance().sendHaveMessages(chunk_id);
                 // update not interested states and send if necessary

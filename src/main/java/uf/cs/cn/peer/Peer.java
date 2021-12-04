@@ -234,6 +234,15 @@ public class Peer extends Thread {
         System.out.println("Self File chunk updated to : " + self_file_chunks);
     }
 
+    public int selfFileChunkCount(){
+        int count = 0;
+        for (boolean piece: self_file_chunks
+             ) {
+            if(piece) count++;
+        }
+        return count;
+    }
+
     public int getMaxPossiblePreferredNeighbors() {
         return Math.min(CommonConfigFileReader.number_of_preferred_neighbours, PeerInfoConfigFileReader.numberOfPeers-1);
     }

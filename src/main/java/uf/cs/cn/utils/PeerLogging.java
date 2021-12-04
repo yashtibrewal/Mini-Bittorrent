@@ -7,6 +7,7 @@ import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -70,11 +71,11 @@ public class PeerLogging {
                 "[" + currTime + "]: Peer [" + this.peerId + "] is connected from Peer " + "[" + peer_id + "].");
     }
 
-    public synchronized void changeOfPreferredNeighboursLog(ArrayList<String> neighbours) {
+    public synchronized void changeOfPreferredNeighboursLog(List<Integer> neighbours) {
         Calendar c = Calendar.getInstance();
         String currTime = this.dateFormat.format(c.getTime());
         String neighbourList = "";
-        for (String neighbour : neighbours) {
+        for (Integer neighbour : neighbours) {
             neighbourList += neighbour + ",";
         }
         neighbourList = neighbourList.substring(0, neighbourList.length() - 1);

@@ -92,6 +92,7 @@ public class IncomingConnectionHandler extends Thread {
                 listenMessage();
             }
 
+            peerLogging.closeLogger();
             listening_stream.close();
             speaking_stream.close();
             connection.close();

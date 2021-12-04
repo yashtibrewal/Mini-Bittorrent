@@ -7,6 +7,8 @@ import uf.cs.cn.utils.*;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 class OutgoingConnection extends Thread implements BitFieldEventListener {
     private PeerLogging peerLogging;
@@ -48,6 +50,7 @@ class OutgoingConnection extends Thread implements BitFieldEventListener {
                 }
             }));
         }));
+        peerLogging.changeOfPreferredNeighboursLog(Peer.preferredNeighborsList.stream().collect(Collectors.toList()));
     }
 
     public void triggerPeriodicMessaging() throws InterruptedException {

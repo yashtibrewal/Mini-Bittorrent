@@ -34,14 +34,10 @@ public class PeerLogging {
         return peerLogging;
     }
 
-    /**
-     * The function needs to be called only once.
-     * Creates the file for the peer.
-     */
     public void startLogger() {
         try {
             this.dateFormat = new SimpleDateFormat("dd-MMM-yyyy hh:mm:ss a");
-            this.logFileName = "log_peer_" + this.peerId + ".log";
+            this.logFileName = "log_" + this.peerId + ".log";
             // TODO: if folder path does not exists, create it.
             this.peerLogFileHandler = new FileHandler(Paths.get(System.getProperty("user.dir"),
                     String.valueOf(this.peerId),

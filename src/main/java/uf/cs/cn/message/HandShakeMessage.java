@@ -1,12 +1,10 @@
 package uf.cs.cn.message;
 
-import uf.cs.cn.utils.PeerLogging;
-
 public class HandShakeMessage {
 
-    private byte[] header;
-    private byte[] zero_bits;
-    private byte[] peer_id; // 4 bytes
+    private final byte[] header;
+    private final byte[] zero_bits;
+    private final byte[] peer_id; // 4 bytes
     private int id;
 //    private PeerLogging peerLogging;
 

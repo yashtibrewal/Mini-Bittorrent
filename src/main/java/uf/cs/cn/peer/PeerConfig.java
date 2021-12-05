@@ -5,9 +5,9 @@ import uf.cs.cn.utils.BitFieldUtils;
 import java.util.ArrayList;
 
 class PeerConfig {
+    public int download_bandwidth_data_counter;
     ArrayList<Boolean> file_chunks;
     int peer_id;
-    public int download_bandwidth_data_counter;
     boolean is_interested;
 
     PeerConfig(int peer_id) {
@@ -21,6 +21,7 @@ class PeerConfig {
 
     /**
      * Checks if the present peer has received all the chunks.
+     *
      * @return
      */
     public boolean gotAllChunks() {

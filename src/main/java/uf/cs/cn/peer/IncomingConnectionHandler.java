@@ -14,16 +14,15 @@ import static uf.cs.cn.utils.FileMerger.deleteChunks;
 
 public class IncomingConnectionHandler extends Thread {
     private final Socket connection;
+    private final PeerLogging peerLogging;
+    private final HandShakeMessage handShakeMessage;
     int self_peer_id;
     int client_peer_id;
     ObjectInputStream listening_stream;
     ObjectOutputStream speaking_stream;
-    private final PeerLogging peerLogging;
-
     int message_len_val, bytes_read_from_stream;
     byte[] message_len_arr;
     byte[] actual_message_without_len;
-    private final HandShakeMessage handShakeMessage;
 
     public IncomingConnectionHandler(Socket connection, int self_peer_id) {
         this.connection = connection;
@@ -37,22 +36,22 @@ public class IncomingConnectionHandler extends Thread {
         message_len_arr = new byte[4];
 
         // reading the message length header
-        for(int i=0;i<message_len_arr.length;i++){
+        for (int i = 0; i < message_len_arr.length; i++) {
             message_len_arr[i] = (byte) listening_stream.read();
         }
         // converting to readable int
         message_len_val = new BigInteger(message_len_arr).intValue();
 
         // breaking at the end of the stream
-        if(message_len_val == -1) {
+        if (message_len_val == -1) {
             return;
         }
 
         // memory declaration for reading the payload
         actual_message_without_len = new byte[message_len_val];
 
-        for(int i=0;i<actual_message_without_len.length;i++){
-            actual_message_without_len[i]= (byte) listening_stream.read();
+        for (int i = 0; i < actual_message_without_len.length; i++) {
+            actual_message_without_len[i] = (byte) listening_stream.read();
         }
 
         // parsing the payload
@@ -82,13 +81,14 @@ public class IncomingConnectionHandler extends Thread {
 
 //            while(HandShakeMessageUtils.getRecvCounter() != PeerInfoConfigFileReader.numberOfPeers-1 && HandShakeMessageUtils.getSendCounter()!= PeerInfoConfigFileReader.numberOfPeers-1) Thread.sleep(10);
 
-            Thread.sleep(CommonConfigFileReader.un_chocking_interval*1000L);
+            Thread.sleep(CommonConfigFileReader.un_chocking_interval * 1000L);
             //listen to bitfield message first
-            while(HandShakeMessageUtils.getOutgoingBitfields() != PeerInfoConfigFileReader.numberOfPeers-1
-                    && HandShakeMessageUtils.getIncomingBitFieldCounter() != PeerInfoConfigFileReader.numberOfPeers-1) Thread.sleep(10);
+            while (HandShakeMessageUtils.getOutgoingBitfields() != PeerInfoConfigFileReader.numberOfPeers - 1
+                    && HandShakeMessageUtils.getIncomingBitFieldCounter() != PeerInfoConfigFileReader.numberOfPeers - 1)
+                Thread.sleep(10);
             listenMessage();
 
-            Thread.sleep(CommonConfigFileReader.un_chocking_interval*1000L);
+            Thread.sleep(CommonConfigFileReader.un_chocking_interval * 1000L);
             // listen infinitely
             while (!Peer.isClose_connection()) {
                 listenMessage();

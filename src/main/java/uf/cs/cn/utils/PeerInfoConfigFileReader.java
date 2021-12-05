@@ -15,8 +15,8 @@ import java.util.ArrayList;
  */
 public class PeerInfoConfigFileReader {
     public static final String config_file_name = "PeerInfo.cfg";
-    private static ArrayList<PeerInfo> peer_info_lists = new ArrayList<>();
     public static int numberOfPeers;
+    private static final ArrayList<PeerInfo> peer_info_lists = new ArrayList<>();
 
     static {
         try (
@@ -69,10 +69,10 @@ public class PeerInfoConfigFileReader {
     }
 
     public static class PeerInfo {
-        private int peer_id;
-        private String peer_host_name;
-        private int listening_port;
-        private boolean has_file;
+        private final int peer_id;
+        private final String peer_host_name;
+        private final int listening_port;
+        private final boolean has_file;
 
         // TODO: create setters and call them inside the constructor, purpose is sanity check for values
         PeerInfo(int peer_id, String peer_host_name, int listening_port, boolean has_file) {

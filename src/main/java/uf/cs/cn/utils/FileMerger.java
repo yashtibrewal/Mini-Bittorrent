@@ -1,6 +1,9 @@
 package uf.cs.cn.utils;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.nio.file.*;
 
 public class FileMerger {
@@ -14,7 +17,7 @@ public class FileMerger {
         byte[] buffer = new byte[CommonConfigFileReader.piece_size];
         System.out.println("Trying to read out put path " + out_put_path);
         System.out.println("Input stream is " + input_file_path);
-        try (FileOutputStream fileOutputStream = new FileOutputStream((out_put_path));
+        try (FileOutputStream fileOutputStream = new FileOutputStream((out_put_path))
         ) {
             // Total number of piece files would be
             int num_of_pieces = (int) Math.ceil(1.0 * CommonConfigFileReader.file_size / CommonConfigFileReader.piece_size);
@@ -69,7 +72,7 @@ public class FileMerger {
             String folderPath = Paths.get(running_dir, Integer.toString(peer_ids[i])).toString();
             File folder = new File(folderPath);
             File[] listOfFiles = folder.listFiles();
-            if(listOfFiles!=null)
+            if (listOfFiles != null)
                 for (File listOfFile : listOfFiles) {
                     String tempFileName = listOfFile.getName();
                     if (tempFileName.startsWith("piece_")) {

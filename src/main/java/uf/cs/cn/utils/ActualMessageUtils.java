@@ -1,7 +1,5 @@
 package uf.cs.cn.utils;
 
-import uf.cs.cn.message.ActualMessage;
-
 import java.math.BigInteger;
 
 public class ActualMessageUtils {

@@ -15,6 +15,8 @@ public class HandShakeMessageUtils {
     static PeerLogging peerLogging = PeerLogging.getInstance();
     private static int recvCounter = 0;
     private static int sendCounter = 0;
+    private static int incomingBitFieldCounter = 0;
+    private static int outgoingBitfields = 0;
 
     synchronized public static int getRecvCounter() {
         return recvCounter;
@@ -48,13 +50,10 @@ public class HandShakeMessageUtils {
         HandShakeMessageUtils.outgoingBitfields = outgoingBitfields;
     }
 
-    private static int incomingBitFieldCounter = 0;
-    private static int outgoingBitfields = 0;
-
     // peerId is numeric
     public static boolean validatePeerId(byte[] message) throws Exception {
 //        if (message.length < 32) {
-            peerLogging.genericErrorLog("Invalid Peer Id");
+        peerLogging.genericErrorLog("Invalid Peer Id");
 //
 //
 //        }
@@ -75,7 +74,7 @@ public class HandShakeMessageUtils {
 
         int destination_peer_id = new HandShakeMessage(handshakeMessageBuffer).getPeerId();
         System.out.println("Received " + Arrays.toString(handshakeMessageBuffer) + " from server peer " + destination_peer_id);
-        setRecvCounter(getRecvCounter()+1);
+        setRecvCounter(getRecvCounter() + 1);
 //        if (!HandShakeMessageUtils.validateHandShakeMessage(handshakeMessageBuffer)) {
 //            peerLogging.genericErrorLog("Invalid Handshake Message");
 //        }
@@ -101,11 +100,11 @@ public class HandShakeMessageUtils {
 
     synchronized public static void sendHandshake(ObjectOutputStream oos, HandShakeMessage handShakeMessage) throws IOException {
         // send handshake message
-        System.out.println("Sending handshake message which is "+Arrays.toString(handShakeMessage.getBytes()));
+        System.out.println("Sending handshake message which is " + Arrays.toString(handShakeMessage.getBytes()));
         oos.write(handShakeMessage.getBytes());
         oos.flush();
         sendCounter++;
-        setSendCounter(getSendCounter()+1);
+        setSendCounter(getSendCounter() + 1);
     }
 
     public static boolean checkHandshakePaddingMessage(byte[] message) throws Exception {

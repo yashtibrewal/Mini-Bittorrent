@@ -8,19 +8,18 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.stream.Collectors;
 
 class OutgoingConnection extends Thread implements BitFieldEventListener {
-    private PeerLogging peerLogging;
     ObjectOutputStream objectOutputStream;
     ObjectInputStream objectInputStream;
-    private String destination_host_name;
+    private final PeerLogging peerLogging;
+    private final String destination_host_name;
     private Socket connection;
-    private int destination_port;
-    private int destination_peer_id;
-    private int self_peer_id;
-    private HandShakeMessage handShakeMessage;
+    private final int destination_port;
+    private final int destination_peer_id;
+    private final int self_peer_id;
+    private final HandShakeMessage handShakeMessage;
+
     public OutgoingConnection(String destination_host_name, int destination_port, int self_peer_id, int destination_peer_id) {
         this.destination_host_name = destination_host_name;
         this.self_peer_id = self_peer_id;
@@ -46,7 +45,7 @@ class OutgoingConnection extends Thread implements BitFieldEventListener {
                 if (outgoingConnection.getDestination_peer_id() == pN) {
                     if (Peer.getInstance().getPreferredNeighborsList().contains(pN)) {
                         outgoingConnection.sendUnChokeMessages();
-                    }else if(!Peer.getInstance().getPreferredNeighborsList().contains(pN))
+                    } else if (!Peer.getInstance().getPreferredNeighborsList().contains(pN))
                         outgoingConnection.sendChokeMessages();
                 }
             }));
@@ -59,7 +58,7 @@ class OutgoingConnection extends Thread implements BitFieldEventListener {
         // select one optimistically neighbour
         // send un choke message
         Peer.updateCloseConnection();
-        Thread.sleep(CommonConfigFileReader.un_chocking_interval* 1000L);
+        Thread.sleep(CommonConfigFileReader.un_chocking_interval * 1000L);
         sendChokesAndUnChokes();
     }
 
@@ -76,18 +75,18 @@ class OutgoingConnection extends Thread implements BitFieldEventListener {
             HandShakeMessageUtils.receiveHandshake(objectInputStream);
 
 
-            Thread.sleep(CommonConfigFileReader.un_chocking_interval*1000L);
+            Thread.sleep(CommonConfigFileReader.un_chocking_interval * 1000L);
 //            while(HandShakeMessageUtils.getRecvCounter() != PeerInfoConfigFileReader.numberOfPeers-1
 //                    && HandShakeMessageUtils.getSendCounter()!= PeerInfoConfigFileReader.numberOfPeers-1) Thread.sleep(10);
 
 
-
             sendBitFieldMessage(objectOutputStream);
 
-            Thread.sleep(CommonConfigFileReader.un_chocking_interval*1000L);
+            Thread.sleep(CommonConfigFileReader.un_chocking_interval * 1000L);
 
-            while(HandShakeMessageUtils.getOutgoingBitfields() != PeerInfoConfigFileReader.numberOfPeers-1
-            && HandShakeMessageUtils.getIncomingBitFieldCounter() != PeerInfoConfigFileReader.numberOfPeers-1) Thread.sleep(10);
+            while (HandShakeMessageUtils.getOutgoingBitfields() != PeerInfoConfigFileReader.numberOfPeers - 1
+                    && HandShakeMessageUtils.getIncomingBitFieldCounter() != PeerInfoConfigFileReader.numberOfPeers - 1)
+                Thread.sleep(10);
 
 
             // starting the chokehandler
@@ -129,18 +128,18 @@ class OutgoingConnection extends Thread implements BitFieldEventListener {
         int bitFieldSize = BitFieldUtils.getPayloadDataSize(numChunks);
         BitfieldMessage bitfieldMessage = new BitfieldMessage(bitFieldSize);
         byte[] output = bitfieldMessage.generatePayload();
-        for(byte b:output){
+        for (byte b : output) {
             objectOutputStream.write(b);
         }
         objectOutputStream.flush();
-        HandShakeMessageUtils.setOutgoingBitfields(HandShakeMessageUtils.getOutgoingBitfields()+1);
+        HandShakeMessageUtils.setOutgoingBitfields(HandShakeMessageUtils.getOutgoingBitfields() + 1);
     }
 
     @Override
     synchronized public void sendInterestedMessages() {
         try {
             byte[] output = new InterestedMessage().getEncodedMessage();
-            for(byte b:output){
+            for (byte b : output) {
                 objectOutputStream.write(b);
             }
             objectOutputStream.flush();
@@ -153,7 +152,7 @@ class OutgoingConnection extends Thread implements BitFieldEventListener {
     synchronized public void sendNotInterestedMessages() {
         try {
             byte[] output = new NotInterestedMessage().getEncodedMessage();
-            for(byte b:output){
+            for (byte b : output) {
                 objectOutputStream.write(b);
             }
             objectOutputStream.flush();
@@ -165,7 +164,7 @@ class OutgoingConnection extends Thread implements BitFieldEventListener {
     synchronized public void sendUnChokeMessages() {
         try {
             byte[] output = new UnChokeMessage().getEncodedMessage();
-            for(byte b:output){
+            for (byte b : output) {
                 objectOutputStream.write(b);
             }
             objectOutputStream.flush();
@@ -177,7 +176,7 @@ class OutgoingConnection extends Thread implements BitFieldEventListener {
     synchronized public void sendChokeMessages() {
         try {
             byte[] output = new ChokeMessage().getEncodedMessage();
-            for(byte b:output){
+            for (byte b : output) {
                 objectOutputStream.write(b);
             }
             objectOutputStream.flush();

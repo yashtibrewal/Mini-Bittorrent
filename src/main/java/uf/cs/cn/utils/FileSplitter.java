@@ -27,16 +27,16 @@ public class FileSplitter {
                     break;
                 }
                 output = new byte[number_of_characters_read];
-                for(int i=0;i<number_of_characters_read;i++) {
+                for (int i = 0; i < number_of_characters_read; i++) {
                     output[i] = piece[i];
                 }
-                try (FileOutputStream fileOutputStream = new FileOutputStream(Paths.get(out_put_path, output_file_name).toString());) {
+                try (FileOutputStream fileOutputStream = new FileOutputStream(Paths.get(out_put_path, output_file_name).toString())) {
                     fileOutputStream.write(output);
                     fileOutputStream.flush();
                 }
                 counter++;
             }
-            System.out.println("----FILE SPLITTER "+total_bytes_read);
+            System.out.println("----FILE SPLITTER " + total_bytes_read);
         } catch (FileNotFoundException e) {
             System.out.println(e.getMessage());
         } catch (IOException e) {

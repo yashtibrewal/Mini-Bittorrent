@@ -5,7 +5,6 @@ import uf.cs.cn.peer.Peer;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.logging.FileHandler;
@@ -17,7 +16,7 @@ import java.util.logging.SimpleFormatter;
 public class PeerLogging {
     private static PeerLogging peerLogging;
     private String logFileName;
-    private String peerId;
+    private final String peerId;
     private FileHandler peerLogFileHandler;
     private SimpleDateFormat dateFormat = null;
     private Logger peerLogger;
@@ -123,7 +122,7 @@ public class PeerLogging {
             Calendar c = Calendar.getInstance();
             String currTime = this.dateFormat.format(c.getTime());
             this.peerLogger.log(Level.INFO, "[" + currTime + "]: Peer [" + this.peerId
-                    + "] received the ‘have’ message from [" + peer + "] for the piece [" + String.valueOf(index) + "].");
+                    + "] received the ‘have’ message from [" + peer + "] for the piece [" + index + "].");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -156,8 +155,8 @@ public class PeerLogging {
             Calendar c = Calendar.getInstance();
             String currTime = this.dateFormat.format(c.getTime());
             this.peerLogger.log(Level.INFO,
-                    "[" + currTime + "]: Peer [" + this.peerId + "] has downloaded the piece [" + String.valueOf(ind)
-                            + "] from [" + peer + "]. Now the number of pieces it has is [" + String.valueOf(pieces)
+                    "[" + currTime + "]: Peer [" + this.peerId + "] has downloaded the piece [" + ind
+                            + "] from [" + peer + "]. Now the number of pieces it has is [" + pieces
                             + "].");
         } catch (Exception e) {
             e.printStackTrace();

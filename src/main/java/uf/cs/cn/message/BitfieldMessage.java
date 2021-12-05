@@ -6,7 +6,6 @@ import uf.cs.cn.utils.PeerInfoConfigFileReader;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class BitfieldMessage extends ActualMessage {
     public BitfieldMessage(int messageLength) throws Exception {

@@ -8,12 +8,11 @@ import uf.cs.cn.utils.PeerLogging;
 import java.net.ServerSocket;
 import java.net.URL;
 import java.nio.file.Paths;
-import java.util.Objects;
 
 public class PeerServer extends Thread {
     private ServerSocket serverSocket;
-    private int self_port;
-    private int self_peer_id;
+    private final int self_port;
+    private final int self_peer_id;
 
     public PeerServer(int self_port, int self_peer_id) {
         this.self_port = self_port;
@@ -23,7 +22,7 @@ public class PeerServer extends Thread {
     /**
      * We split the file into the pieces.
      */
-    private void splitFileIntoChunks(){
+    private void splitFileIntoChunks() {
         System.out.println("Splitting the file in pieces.");
         String running_dir = System.getProperty("user.dir"); // gets the base directory of the project
         String peer_id = String.valueOf(self_peer_id);
@@ -42,17 +41,17 @@ public class PeerServer extends Thread {
             serverSocket = new ServerSocket(self_port);
             System.out.println("Peer " + self_peer_id + " running server socket on " + self_port);
             boolean is_server = false;
-            for(PeerInfoConfigFileReader.PeerInfo peerInfo: PeerInfoConfigFileReader.getPeerInfoList()){
+            for (PeerInfoConfigFileReader.PeerInfo peerInfo : PeerInfoConfigFileReader.getPeerInfoList()) {
                 /**
                  * This line will only iterate all elements until it reaches itself. Point of doing this is to connect
                  * only to the peers who are already in the network. Assuming we run the peers as per their index numbers
                  * mentioned in the file in sequential order, we are connecting to the ones who are already running.
                  */
-                if(Peer.getPeerId() == peerInfo.getPeer_id() && peerInfo.isHas_file()){
+                if (Peer.getPeerId() == peerInfo.getPeer_id() && peerInfo.isHas_file()) {
                     is_server = true;
                 }
             }
-            if(is_server) {
+            if (is_server) {
                 splitFileIntoChunks();
             }
 
@@ -65,7 +64,7 @@ public class PeerServer extends Thread {
                 IncomingConnectionHandler connHandler = new IncomingConnectionHandler(serverSocket.accept(), this.self_peer_id);
                 int port = 0;
                 URL url = connHandler.getContextClassLoader().getResource(connHandler.getName());
-                if(url!=null)
+                if (url != null)
                     System.out.println("Incoming connection from port " + port);
                 logIncomingConnection(port);
                 connHandler.start();
@@ -78,8 +77,8 @@ public class PeerServer extends Thread {
     }
 
     private void logIncomingConnection(int port) {
-        for (PeerInfoConfigFileReader.PeerInfo peerInfo: PeerInfoConfigFileReader.getPeerInfoList()){
-            if(peerInfo.getListening_port() == port){
+        for (PeerInfoConfigFileReader.PeerInfo peerInfo : PeerInfoConfigFileReader.getPeerInfoList()) {
+            if (peerInfo.getListening_port() == port) {
                 PeerLogging.getInstance().incomingTCPConnectionLog(peerInfo.getPeer_host_name());
             }
             break;

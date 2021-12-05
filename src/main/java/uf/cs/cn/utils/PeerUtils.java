@@ -24,7 +24,7 @@ public class PeerUtils {
                 bag.add(i);
             }
         }
-        if(bag.size() == 0){
+        if (bag.size() == 0) {
             return -1;
         }
 //        System.out.println("BAG IS " + bag);

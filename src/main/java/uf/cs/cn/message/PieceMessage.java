@@ -11,7 +11,7 @@ import java.util.Arrays;
 
 public class PieceMessage extends ActualMessage {
 
-    private int piece_index;
+    private final int piece_index;
     private byte[] piece_bytes;
 
     /**
@@ -47,18 +47,18 @@ public class PieceMessage extends ActualMessage {
         this.piece_index = convertByteArrayToInt(Arrays.copyOfRange(payload, 1, 5));
     }
 
-    public PieceMessage(byte[] actualMessage){
-        this(Arrays.copyOfRange(actualMessage, 0, 4),Arrays.copyOfRange(actualMessage, 4, actualMessage.length));
-        this.piece_bytes = Arrays.copyOfRange(actualMessage, 4+1+4, actualMessage.length);
+    public PieceMessage(byte[] actualMessage) {
+        this(Arrays.copyOfRange(actualMessage, 0, 4), Arrays.copyOfRange(actualMessage, 4, actualMessage.length));
+        this.piece_bytes = Arrays.copyOfRange(actualMessage, 4 + 1 + 4, actualMessage.length);
         processPieceMessage();
     }
 
-    public void processPieceMessage(){
+    public void processPieceMessage() {
 
         String running_dir = System.getProperty("user.dir"); // gets the base directory of the project
         String peer_id = String.valueOf(Peer.getInstance().getSelf_peer_id());
 
-        try (FileOutputStream fos = new FileOutputStream(Paths.get(running_dir, peer_id + "/piece_"+ this.piece_index ).toString())) {
+        try (FileOutputStream fos = new FileOutputStream(Paths.get(running_dir, peer_id + "/piece_" + this.piece_index).toString())) {
             fos.write(this.piece_bytes);
             fos.flush();
         } catch (IOException e) {

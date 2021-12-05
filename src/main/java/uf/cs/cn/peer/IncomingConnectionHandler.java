@@ -64,7 +64,7 @@ public class IncomingConnectionHandler extends Thread {
 
         // handshake message reading
 
-        try {
+        try {   
             listening_stream = new ObjectInputStream(connection.getInputStream());
             speaking_stream = new ObjectOutputStream(connection.getOutputStream());
             Thread.sleep(1000);

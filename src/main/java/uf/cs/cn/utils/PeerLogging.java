@@ -54,101 +54,153 @@ public class PeerLogging {
     }
 
     public synchronized void outgoingTCPConnectionLog(String peer_id) {
-        Calendar c = Calendar.getInstance();
-        String currTime = this.dateFormat.format(c.getTime());
-        this.peerLogger.log(Level.INFO,
-                "[" + currTime + "]: Peer [" + this.peerId + "] makes a connection to Peer " + "[" + peer_id + "].");
+        try {
+            Calendar c = Calendar.getInstance();
+            String currTime = this.dateFormat.format(c.getTime());
+            this.peerLogger.log(Level.INFO,
+                    "[" + currTime + "]: Peer [" + this.peerId + "] makes a connection to Peer " + "[" + peer_id + "].");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public synchronized void incomingTCPConnectionLog(String peer_id) {
-        Calendar c = Calendar.getInstance();
-        String currTime = this.dateFormat.format(c.getTime());
-        this.peerLogger.log(Level.INFO,
-                "[" + currTime + "]: Peer [" + this.peerId + "] is connected from Peer " + "[" + peer_id + "].");
+        try {
+            Calendar c = Calendar.getInstance();
+            String currTime = this.dateFormat.format(c.getTime());
+            this.peerLogger.log(Level.INFO,
+                    "[" + currTime + "]: Peer [" + this.peerId + "] is connected from Peer " + "[" + peer_id + "].");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public synchronized void changeOfPreferredNeighboursLog(List<Integer> neighbours) {
-        Calendar c = Calendar.getInstance();
-        String currTime = this.dateFormat.format(c.getTime());
-        String neighbourList = "";
-        for (Integer neighbour : neighbours) {
-            neighbourList += neighbour + ",";
+        try {
+            Calendar c = Calendar.getInstance();
+            String currTime = this.dateFormat.format(c.getTime());
+            String neighbourList = "";
+            for (Integer neighbour : neighbours) {
+                neighbourList += neighbour + ",";
+            }
+            neighbourList = neighbourList.substring(0, neighbourList.length() - 1);
+            this.peerLogger.log(Level.INFO,
+                    "[" + currTime + "]: Peer [" + this.peerId + "] has the preferred neighbours [" + neighbourList + "].");
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        neighbourList = neighbourList.substring(0, neighbourList.length() - 1);
-        this.peerLogger.log(Level.INFO,
-                "[" + currTime + "]: Peer [" + this.peerId + "] has the preferred neighbours [" + neighbourList + "].");
     }
 
     public synchronized void changeOfOptimisticallyUnchokedNeighbourLog(String peer) {
-        Calendar c = Calendar.getInstance();
-        String currTime = this.dateFormat.format(c.getTime());
-        this.peerLogger.log(Level.INFO, "[" + currTime + "]: Peer [" + this.peerId
-                + "] has the optimistically unchoked neighbour [" + peer + "].");
+        try {
+            Calendar c = Calendar.getInstance();
+            String currTime = this.dateFormat.format(c.getTime());
+            this.peerLogger.log(Level.INFO, "[" + currTime + "]: Peer [" + this.peerId
+                    + "] has the optimistically unchoked neighbour [" + peer + "].");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public synchronized void unChokingNeighbourLog(String peer) {
-        Calendar c = Calendar.getInstance();
-        String currTime = this.dateFormat.format(c.getTime());
-        this.peerLogger.log(Level.INFO,
-                "[" + currTime + "]: Peer [" + this.peerId + "] is unchoked by [" + peer + "].");
+        try {
+            Calendar c = Calendar.getInstance();
+            String currTime = this.dateFormat.format(c.getTime());
+            this.peerLogger.log(Level.INFO,
+                    "[" + currTime + "]: Peer [" + this.peerId + "] is unchoked by [" + peer + "].");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public synchronized void chokingNeighbourLog(String peer) {
-        Calendar c = Calendar.getInstance();
-        String currTime = this.dateFormat.format(c.getTime());
-        this.peerLogger.log(Level.INFO, "[" + currTime + "]: Peer [" + this.peerId + "] is choked by [" + peer + "].");
+        try {
+            Calendar c = Calendar.getInstance();
+            String currTime = this.dateFormat.format(c.getTime());
+            this.peerLogger.log(Level.INFO, "[" + currTime + "]: Peer [" + this.peerId + "] is choked by [" + peer + "].");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public synchronized void receivedHaveLog(String peer, int index) {
-        Calendar c = Calendar.getInstance();
-        String currTime = this.dateFormat.format(c.getTime());
-        this.peerLogger.log(Level.INFO, "[" + currTime + "]: Peer [" + this.peerId
-                + "] received the ‘have’ message from [" + peer + "] for the piece [" + String.valueOf(index) + "].");
+        try {
+            Calendar c = Calendar.getInstance();
+            String currTime = this.dateFormat.format(c.getTime());
+            this.peerLogger.log(Level.INFO, "[" + currTime + "]: Peer [" + this.peerId
+                    + "] received the ‘have’ message from [" + peer + "] for the piece [" + String.valueOf(index) + "].");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public synchronized void receivedInterestedLog(String peer) {
-        Calendar c = Calendar.getInstance();
-        String currTime = this.dateFormat.format(c.getTime());
-        this.peerLogger.log(Level.INFO, "[" + currTime + "]: Peer [" + this.peerId
-                + "] received the ‘interested’ message from [" + peer + "].");
+        try {
+            Calendar c = Calendar.getInstance();
+            String currTime = this.dateFormat.format(c.getTime());
+            this.peerLogger.log(Level.INFO, "[" + currTime + "]: Peer [" + this.peerId
+                    + "] received the ‘interested’ message from [" + peer + "].");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public synchronized void receiveNotInterested(String peer) {
-        Calendar c = Calendar.getInstance();
-        String currTime = this.dateFormat.format(c.getTime());
-        this.peerLogger.log(Level.INFO, "[" + currTime + "]: Peer [" + this.peerId
-                + "] received the ‘not interested’ message from [" + peer + "].");
+        try {
+            Calendar c = Calendar.getInstance();
+            String currTime = this.dateFormat.format(c.getTime());
+            this.peerLogger.log(Level.INFO, "[" + currTime + "]: Peer [" + this.peerId
+                    + "] received the ‘not interested’ message from [" + peer + "].");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public synchronized void downloadedPieceLog(String peer, int ind, int pieces) {
-        Calendar c = Calendar.getInstance();
-        String currTime = this.dateFormat.format(c.getTime());
-        this.peerLogger.log(Level.INFO,
-                "[" + currTime + "]: Peer [" + this.peerId + "] has downloaded the piece [" + String.valueOf(ind)
-                        + "] from [" + peer + "]. Now the number of pieces it has is [" + String.valueOf(pieces)
-                        + "].");
+        try {
+            Calendar c = Calendar.getInstance();
+            String currTime = this.dateFormat.format(c.getTime());
+            this.peerLogger.log(Level.INFO,
+                    "[" + currTime + "]: Peer [" + this.peerId + "] has downloaded the piece [" + String.valueOf(ind)
+                            + "] from [" + peer + "]. Now the number of pieces it has is [" + String.valueOf(pieces)
+                            + "].");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public synchronized void downloadingCompleteLog() {
-        Calendar c = Calendar.getInstance();
-        String currTime = this.dateFormat.format(c.getTime());
-        this.peerLogger.log(Level.INFO,
-                "[" + currTime + "]: Peer [" + this.peerId + "] has downloaded the complete file.");
+        try {
+            Calendar c = Calendar.getInstance();
+            String currTime = this.dateFormat.format(c.getTime());
+            this.peerLogger.log(Level.INFO,
+                    "[" + currTime + "]: Peer [" + this.peerId + "] has downloaded the complete file.");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public synchronized void genericErrorLog(Exception ex) {
-        Calendar c = Calendar.getInstance();
-        String currTime = this.dateFormat.format(c.getTime());
-        this.peerLogger.log(Level.SEVERE,
-                "[" + currTime + "]: Exception: " + ex.getMessage() + " ,Cause:" + ex.getCause());
+        try {
+            Calendar c = Calendar.getInstance();
+            String currTime = this.dateFormat.format(c.getTime());
+            this.peerLogger.log(Level.SEVERE,
+                    "[" + currTime + "]: Exception: " + ex.getMessage() + " ,Cause:" + ex.getCause());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public synchronized void genericErrorLog(String msg) {
-        Calendar c = Calendar.getInstance();
-        String currTime = this.dateFormat.format(c.getTime());
-        if(this.peerLogger!=null)
-        this.peerLogger.log(Level.SEVERE,
-                "[" + currTime + "]: Error Message: " + msg);
+        try {
+            Calendar c = Calendar.getInstance();
+            String currTime = this.dateFormat.format(c.getTime());
+            if (this.peerLogger != null)
+                this.peerLogger.log(Level.SEVERE,
+                        "[" + currTime + "]: Error Message: " + msg);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void closeLogger() {

@@ -10,6 +10,8 @@ import java.io.ObjectOutputStream;
 import java.math.BigInteger;
 import java.net.Socket;
 
+import static uf.cs.cn.utils.FileMerger.deleteChunks;
+
 public class IncomingConnectionHandler extends Thread {
     private final Socket connection;
     int self_peer_id;
@@ -99,6 +101,8 @@ public class IncomingConnectionHandler extends Thread {
         } catch (Exception ioException) {
             ioException.printStackTrace();
         } finally {
+
+            deleteChunks();
             try {
                 if (speaking_stream != null) {
                     speaking_stream.close();

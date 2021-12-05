@@ -20,7 +20,7 @@ public class Main {
             Peer peer = Peer.getInstance(peer_id);
             peer.start();
         } catch (Exception e) {
-            System.err.println(e.toString());
+            System.err.println(e);
             System.exit(1);
         }
 

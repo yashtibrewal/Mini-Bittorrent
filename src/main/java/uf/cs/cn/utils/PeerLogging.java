@@ -79,13 +79,8 @@ public class PeerLogging {
         try {
             Calendar c = Calendar.getInstance();
             String currTime = this.dateFormat.format(c.getTime());
-            String neighbourList = "";
-            for (Integer neighbour : neighbours) {
-                neighbourList += neighbour + ",";
-            }
-            neighbourList = neighbourList.substring(0, neighbourList.length() - 1);
             this.peerLogger.log(Level.INFO,
-                    "[" + currTime + "]: Peer [" + this.peerId + "] has the preferred neighbours [" + neighbourList + "].");
+                    "[" + currTime + "]: Peer [" + this.peerId + "] has the preferred neighbours " + neighbours + ".");
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -19,8 +19,8 @@ public class IncomingConnectionHandler extends Thread {
     int self_peer_id;
     int client_peer_id;
     ObjectInputStream inputStream;
-    ObjectOutputStream ouputStream;
-    int message_len_val, bytes_read_from_stream;
+    ObjectOutputStream outputStream;
+    int message_len_val;
     byte[] message_len_arr;
     byte[] actual_message_without_len;
 
@@ -60,13 +60,13 @@ public class IncomingConnectionHandler extends Thread {
 
         try {
             inputStream = new ObjectInputStream(connection.getInputStream());
-            ouputStream = new ObjectOutputStream(connection.getOutputStream());
+            outputStream = new ObjectOutputStream(connection.getOutputStream());
             Thread.sleep(1000);
 
             //receive handshake
             this.client_peer_id = HandShakeMessageUtils.receiveHandshake(inputStream);
             //sending handshake
-            HandShakeMessageUtils.sendHandshake(ouputStream, handShakeMessage);
+            HandShakeMessageUtils.sendHandshake(outputStream, handShakeMessage);
 
             // Wait for syncing all peers to common point
             Thread.sleep(CommonConfigFileReader.un_chocking_interval * 1000L);
@@ -86,15 +86,15 @@ public class IncomingConnectionHandler extends Thread {
 
             peerLogging.closeLogger();
             inputStream.close();
-            ouputStream.close();
+            outputStream.close();
             connection.close();
         } catch (Exception ioException) {
             ioException.printStackTrace();
         } finally {
             deleteChunks();
             try {
-                if (ouputStream != null) {
-                    ouputStream.close();
+                if (outputStream != null) {
+                    outputStream.close();
                 }
                 if (inputStream != null) {
                     inputStream.close();

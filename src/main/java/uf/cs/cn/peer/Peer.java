@@ -31,11 +31,6 @@ public class Peer extends Thread {
      */
     private final int self_peer_id;
     // to keep the references to the objects in priority queue
-
-    public PriorityQueue<PeerConfig> getPriorityQueue() {
-        return priorityQueue;
-    }
-
     /**
      * {@link Peer#priorityQueue}
      * The queue will keep the list of interested neighbours who are eligible to be the preferred neighbours.
@@ -77,6 +72,7 @@ public class Peer extends Thread {
     /**
      * {@link Peer#allPeersReceivedAllChunks()}
      * returns true if all the peers have received all the files including the present peer
+     *
      * @return
      */
     public static boolean allPeersReceivedAllChunks() {
@@ -124,6 +120,10 @@ public class Peer extends Thread {
         }
         if (!PeerUtils.gotCompleteFile(getInstance().self_file_chunks)) return;
         Peer.close_connection = true;
+    }
+
+    public PriorityQueue<PeerConfig> getPriorityQueue() {
+        return priorityQueue;
     }
 
     public HashMap<Integer, PeerConfig> getReferences() {
@@ -283,7 +283,7 @@ public class Peer extends Thread {
      * This function randomly selects 1 peer from the remaining interested peers who are not in the preferred
      * neighbours list and adds them to the preferred neighbours list.
      */
-    synchronized  public void calculateAndAddUnOptimisticallyUnChokedNeighbour() {
+    synchronized public void calculateAndAddUnOptimisticallyUnChokedNeighbour() {
         int num = (int) ((Math.random() * (totalInterestedPeers()
                 - 1
                 - getMaxPossiblePreferredNeighbors()))

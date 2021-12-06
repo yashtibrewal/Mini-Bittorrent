@@ -70,8 +70,9 @@ public class FileMerger {
 
         for (int i = 0; i < peer_ids.length - 1; i += 1) {
             String folderPath = Paths.get(running_dir, Integer.toString(peer_ids[i])).toString();
-            File folder = new File(folderPath);
-            File[] listOfFiles = folder.listFiles();
+            File file = new File(folderPath);
+            if (!file.exists()) return;
+            File[] listOfFiles = file.listFiles();
             if (listOfFiles != null)
                 for (File listOfFile : listOfFiles) {
                     String tempFileName = listOfFile.getName();

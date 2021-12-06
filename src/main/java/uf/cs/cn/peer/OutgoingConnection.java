@@ -2,12 +2,14 @@ package uf.cs.cn.peer;
 
 import uf.cs.cn.listeners.BitFieldEventListener;
 import uf.cs.cn.message.*;
-import uf.cs.cn.utils.*;
+import uf.cs.cn.utils.BitFieldUtils;
+import uf.cs.cn.utils.CommonConfigFileReader;
+import uf.cs.cn.utils.HandShakeMessageUtils;
+import uf.cs.cn.utils.PeerInfoConfigFileReader;
 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.util.ArrayList;
 
 import static uf.cs.cn.utils.FileMerger.deleteChunks;
 
@@ -20,6 +22,7 @@ public class OutgoingConnection extends Thread implements BitFieldEventListener 
     ObjectOutputStream objectOutputStream;
     ObjectInputStream objectInputStream;
     private Socket connection;
+
     public OutgoingConnection(String destination_host_name, int destination_port, int self_peer_id, int destination_peer_id) {
         this.destination_host_name = destination_host_name;
         this.self_peer_id = self_peer_id;

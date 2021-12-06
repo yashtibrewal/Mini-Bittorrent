@@ -39,8 +39,9 @@ public class ActualMessage {
     public ActualMessage(byte[] message_length, byte[] payload) {
         this.message_length = this.convertByteArrayToInt(message_length);
         this.message_type = payload[0];
-        // TODO: check the logic of this line
         setPayload(Arrays.copyOfRange(payload, 1, this.message_length));
+        if(payload.length == 1)
+        setPayload(new byte[]{});
     }
 
     public int convertByteArrayToInt(byte[] int_chunk) {
@@ -49,10 +50,6 @@ public class ActualMessage {
 
     public void setMessageLength(int message_length) {
         this.message_length = message_length;
-    }
-
-    public int getMessage_length() {
-        return this.message_length;
     }
 
     public int getMessage_type() {

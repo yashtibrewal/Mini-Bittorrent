@@ -58,7 +58,7 @@ public class FileMerger {
         }
     }
 
-    public static void deleteChunks() {
+    public static synchronized void deleteChunks() {
         int[] peer_ids = new int[PeerInfoConfigFileReader.getPeerInfoList().size()];
         int k = 0;
         for (PeerInfoConfigFileReader.PeerInfo peerInfo : PeerInfoConfigFileReader.getPeerInfoList()) {

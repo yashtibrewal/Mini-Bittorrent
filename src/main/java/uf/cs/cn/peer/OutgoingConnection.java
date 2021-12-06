@@ -9,6 +9,8 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
 
+import static uf.cs.cn.utils.FileMerger.deleteChunks;
+
 public class OutgoingConnection extends Thread implements BitFieldEventListener {
     private final String destination_host_name;
     private final int destination_port;
@@ -84,6 +86,7 @@ public class OutgoingConnection extends Thread implements BitFieldEventListener 
             System.err.println(ex.getCause() + " -Error encountered when sending data to remote server.");
             ex.printStackTrace();
         } finally {
+            deleteChunks();
             try {
                 if (objectOutputStream != null) {
                     objectOutputStream.close();

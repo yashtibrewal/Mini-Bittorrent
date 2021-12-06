@@ -1,6 +1,7 @@
 package uf.cs.cn.utils;
 
 import uf.cs.cn.message.ActualMessage;
+import uf.cs.cn.message.MessageSender;
 import uf.cs.cn.message.MessageType;
 import uf.cs.cn.message.PieceMessage;
 import uf.cs.cn.peer.Peer;
@@ -24,7 +25,7 @@ public class MessageParser {
             case MessageType.UN_CHOKE:
                 // send request message
                 if (!Peer.getInstance().gotCompleteFile()) {
-                    Peer.getInstance().sendRequestMessage(client_peer_id);
+                    MessageSender.sendRequestMessage(Peer.getInstance().getSelf_file_chunks(), client_peer_id);
                     logger.unChokingNeighbourLog(client_peer_id + "");
                 }
                 break;
@@ -49,8 +50,8 @@ public class MessageParser {
                 // update the memory state of that particular client in our memory
                 Peer.getInstance().updateNeighbourFileChunk(client_peer_id, actualMessage.convertByteArrayToInt(Arrays.copyOfRange(actualMessage.getPayload(), 0, 4)));
                 // send if interested
-                if (Peer.getInstance().checkIfInterested(client_peer_id)) Peer.sendInterested(client_peer_id);
-                else Peer.sendNotInterested(client_peer_id);
+                if (Peer.getInstance().checkIfInterested(client_peer_id)) MessageSender.sendInterested(client_peer_id);
+                else MessageSender.sendNotInterested(client_peer_id);
                 if (Peer.allPeersReceivedAllChunks()) {
                     deleteChunks();
                 }
@@ -61,8 +62,8 @@ public class MessageParser {
                 // update peer memory
                 Peer.getInstance().updateNeighbourFileChunk(client_peer_id, BitFieldUtils.convertToBoolArray(actualMessage.getPayload()));
                 // trigger sending the interested message event
-                if (Peer.getInstance().checkIfInterested(client_peer_id)) Peer.sendInterested(client_peer_id);
-                else Peer.sendNotInterested(client_peer_id);
+                if (Peer.getInstance().checkIfInterested(client_peer_id)) MessageSender.sendInterested(client_peer_id);
+                else MessageSender.sendNotInterested(client_peer_id);
 
                 HandShakeMessageUtils.setIncomingBitFieldCounter(HandShakeMessageUtils.getIncomingBitFieldCounter() + 1);
                 break;
@@ -71,7 +72,7 @@ public class MessageParser {
             case MessageType.REQUEST:
                 // send a piece
                 chunk_id = actualMessage.convertByteArrayToInt(Arrays.copyOfRange(actualMessage.getPayload(), 0, 4));
-                Peer.getInstance().sendPieceMessage(client_peer_id, chunk_id);
+                MessageSender.sendPieceMessage(client_peer_id, chunk_id);
                 break;
 
             case MessageType.PIECE:
@@ -81,7 +82,7 @@ public class MessageParser {
                 Peer.getInstance().incrementDownloadCount(client_peer_id);
                 logger.downloadedPieceLog(client_peer_id + "", chunk_id, Peer.getInstance().selfFileChunkCount());
                 // send have messages
-                Peer.getInstance().sendHaveMessages(chunk_id);
+                MessageSender.sendHaveMessages(chunk_id);
                 // update not interested states and send if necessary
                 Peer.getInstance().checkAndSendNotInterestedForAllPeers();
                 if (Peer.getInstance().gotCompleteFile()) {

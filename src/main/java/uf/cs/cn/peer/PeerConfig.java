@@ -4,7 +4,7 @@ import uf.cs.cn.utils.BitFieldUtils;
 
 import java.util.ArrayList;
 
-class PeerConfig {
+public class PeerConfig {
     public int download_bandwidth_data_counter;
     ArrayList<Boolean> file_chunks;
     int peer_id;
@@ -17,6 +17,18 @@ class PeerConfig {
             file_chunks.add(false);
         }
         download_bandwidth_data_counter++;
+    }
+
+    public ArrayList<Boolean> getFile_chunks() {
+        return file_chunks;
+    }
+
+    public boolean isIs_interested() {
+        return is_interested;
+    }
+
+    public void setIs_interested(boolean is_interested) {
+        this.is_interested = is_interested;
     }
 
     /**

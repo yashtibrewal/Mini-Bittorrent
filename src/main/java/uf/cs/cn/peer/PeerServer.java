@@ -10,9 +10,9 @@ import java.net.URL;
 import java.nio.file.Paths;
 
 public class PeerServer extends Thread {
-    private ServerSocket serverSocket;
     private final int self_port;
     private final int self_peer_id;
+    private ServerSocket serverSocket;
 
     public PeerServer(int self_port, int self_peer_id) {
         this.self_port = self_port;

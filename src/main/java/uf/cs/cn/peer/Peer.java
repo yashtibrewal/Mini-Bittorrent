@@ -1,8 +1,6 @@
 package uf.cs.cn.peer;
 
-import uf.cs.cn.message.HaveMessage;
-import uf.cs.cn.message.PieceMessage;
-import uf.cs.cn.message.RequestMessage;
+import uf.cs.cn.message.MessageSender;
 import uf.cs.cn.utils.*;
 
 import java.util.ArrayList;
@@ -33,6 +31,11 @@ public class Peer extends Thread {
      */
     private final int self_peer_id;
     // to keep the references to the objects in priority queue
+
+    public PriorityQueue<PeerConfig> getPriorityQueue() {
+        return priorityQueue;
+    }
+
     /**
      * {@link Peer#priorityQueue}
      * The queue will keep the list of interested neighbours who are eligible to be the preferred neighbours.
@@ -61,7 +64,6 @@ public class Peer extends Thread {
      * Keeps the list of chunks marked true which the present peer has.
      */
     ArrayList<Boolean> self_file_chunks;
-
     private Peer(int self_peer_id) {
         this.self_peer_id = self_peer_id;
         Peer.peer = this;
@@ -74,8 +76,7 @@ public class Peer extends Thread {
 
     /**
      * {@link Peer#allPeersReceivedAllChunks()}
-     * returns true if all the peers have received all the files including the present peer.s
-     *
+     * returns true if all the peers have received all the files including the present peer
      * @return
      */
     public static boolean allPeersReceivedAllChunks() {
@@ -83,24 +84,6 @@ public class Peer extends Thread {
             if (!Peer.getInstance().references.get(peer_id).gotAllChunks()) return false;
         }
         return Peer.getInstance().gotCompleteFile();
-    }
-
-    public static void sendInterested(int client_peer_id) {
-        // TODO: make it efficient by adding a break in a manual loop by keeping the reference in PeerConfig class.
-        Peer.getInstance().outgoingConnections.forEach((outgoingConnection -> {
-            if (outgoingConnection.getDestination_peer_id() == client_peer_id) {
-                outgoingConnection.sendInterestedMessages();
-            }
-        }));
-    }
-
-    public static void sendNotInterested(int client_peer_id) {
-        Peer.getInstance().outgoingConnections.forEach((outgoingConnection -> {
-            if (outgoingConnection.getDestination_peer_id() == client_peer_id) {
-                Peer.getInstance().references.get(client_peer_id).is_interested = !Peer.getInstance().references.get(client_peer_id).is_interested && Peer.getInstance().references.get(client_peer_id).is_interested;
-                outgoingConnection.sendNotInterestedMessages();
-            }
-        }));
     }
 
     public static Peer getInstance() {
@@ -141,6 +124,18 @@ public class Peer extends Thread {
         }
         if (!PeerUtils.gotCompleteFile(getInstance().self_file_chunks)) return;
         Peer.close_connection = true;
+    }
+
+    public HashMap<Integer, PeerConfig> getReferences() {
+        return references;
+    }
+
+    public ArrayList<OutgoingConnection> getOutgoingConnections() {
+        return outgoingConnections;
+    }
+
+    public ArrayList<Boolean> getSelf_file_chunks() {
+        return self_file_chunks;
     }
 
     public void addToPriorityQueueIfInterested(int client_id) {
@@ -283,8 +278,31 @@ public class Peer extends Thread {
         return preferredNeighborsList.size() + priorityQueue.size();
     }
 
-    synchronized public void calculatePreferredNeighbours() {
+    /**
+     * Logic for Optimistic neighbour.
+     * This function randomly selects 1 peer from the remaining interested peers who are not in the preferred
+     * neighbours list and adds them to the preferred neighbours list.
+     */
+    synchronized  public void calculateAndAddUnOptimisticallyUnChokedNeighbour() {
+        int num = (int) ((Math.random() * (totalInterestedPeers()
+                - 1
+                - getMaxPossiblePreferredNeighbors()))
+                + getMaxPossiblePreferredNeighbors());
+        int ctr = 0;
+        for (int it_value : preferredNeighborsList) {
+            if (!preferredNeighborsList.contains(it_value)) {
+                ctr++;
+            }
 
+            if (ctr == num) {
+                PeerLogging.getInstance().changeOfOptimisticallyUnChokedNeighbourLog(String.valueOf(num));
+                preferredNeighborsList.add(it_value);
+                break;
+            }
+        }
+    }
+
+    synchronized public void calculatePreferredNeighbours() {
         if (priorityQueue.size() == 0) return;
         System.out.println("HEAP BUILD CALLED!");
         rebuildHeap();
@@ -295,19 +313,7 @@ public class Peer extends Thread {
             preferredNeighborsList.add(config.peer_id);
             k--;
         }
-
-        int num = (int) ((Math.random() * (totalInterestedPeers() - 1 - getMaxPossiblePreferredNeighbors())) + getMaxPossiblePreferredNeighbors());
-        int ctr = 0;
-        for (int it_value : preferredNeighborsList) {
-            if (!preferredNeighborsList.contains(it_value)) {
-                ctr++;
-            }
-
-            if (ctr == num) {
-                preferredNeighborsList.add(it_value);
-                break;
-            }
-        }
+        calculateAndAddUnOptimisticallyUnChokedNeighbour();
     }
 
     /**
@@ -336,55 +342,17 @@ public class Peer extends Thread {
         references.get(client_peer_id).setDownload_bandwidth_data_counter(references.get(client_peer_id).download_bandwidth_data_counter + 1);
     }
 
-    public void sendHaveMessages(int chunk_id) {
-        // for every outgoing connection, send a have message.
-        for (OutgoingConnection outgoingConnection : outgoingConnections) {
-            try {
-                byte[] output = new HaveMessage(chunk_id).getEncodedMessage();
-                for (byte b : output) outgoingConnection.objectOutputStream.write(b);
-                outgoingConnection.objectOutputStream.flush();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
     public void checkAndSendNotInterestedForAllPeers() {
         for (PeerInfoConfigFileReader.PeerInfo peerInfo : PeerInfoConfigFileReader.getPeerInfoList()) {
 
             if (Peer.getInstance().self_peer_id == peerInfo.getPeer_id()) continue;
 
             if (!Peer.getInstance().checkIfInterested(peerInfo.getPeer_id())) {
-                Peer.sendNotInterested(peerInfo.getPeer_id());
+                MessageSender.sendNotInterested(peerInfo.getPeer_id());
             }
         }
     }
 
-    /**
-     * Sends a request message to the client by selecting a RANDOM file chunk which the neighbour has, and I don't
-     *
-     * @param client_peer_id
-     */
-    synchronized public void sendRequestMessage(int client_peer_id) {
-        try {
-            // since array was 0 indexed, and files pieces are 1 indexed, we are added 1 to get the correct file piece number
-            int chunk_id = PeerUtils.pickRandomIndex(self_file_chunks, references.get(client_peer_id).file_chunks) + 1;
-            if (chunk_id == -1) {
-                return;
-            }
-            RequestMessage requestMessage = new RequestMessage(chunk_id);
-            for (OutgoingConnection outgoingConnection : outgoingConnections) {
-                if (outgoingConnection.getDestination_peer_id() == client_peer_id) {
-                    byte[] output = requestMessage.getEncodedMessage();
-                    for (byte b : output) outgoingConnection.objectOutputStream.write(b);
-                    outgoingConnection.objectOutputStream.flush();
-                    break;
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
     public void addClientToInterestedMessage(int client_peer_id) {
         Peer.getInstance().addToInterested(client_peer_id);
@@ -392,23 +360,8 @@ public class Peer extends Thread {
 
     public void updateNotInterested(int client_peer_id) {
         priorityQueue.remove(references.get(client_peer_id));
-
         Peer.getInstance().references.get(client_peer_id).is_interested = false;
     }
 
-    synchronized public void sendPieceMessage(int client_peer_id, int chunk_id) {
-        for (OutgoingConnection outgoingConnection : outgoingConnections) {
-            if (outgoingConnection.getDestination_peer_id() == client_peer_id) {
-                try {
-                    byte[] output = new PieceMessage(chunk_id).getEncodedMessage();
-                    for (byte b : output) outgoingConnection.objectOutputStream.write(b);
-                    outgoingConnection.objectOutputStream.flush();
-                    break;
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
 
 }

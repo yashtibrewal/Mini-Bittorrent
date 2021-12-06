@@ -15,8 +15,8 @@ import java.util.ArrayList;
  */
 public class PeerInfoConfigFileReader {
     public static final String config_file_name = "PeerInfo.cfg";
-    public static int numberOfPeers;
     private static final ArrayList<PeerInfo> peer_info_lists = new ArrayList<>();
+    public static int numberOfPeers;
 
     static {
         try (

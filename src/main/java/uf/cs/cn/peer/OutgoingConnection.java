@@ -4,54 +4,34 @@ import uf.cs.cn.listeners.BitFieldEventListener;
 import uf.cs.cn.message.*;
 import uf.cs.cn.utils.*;
 
-import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
 
-class OutgoingConnection extends Thread implements BitFieldEventListener {
-    ObjectOutputStream objectOutputStream;
-    ObjectInputStream objectInputStream;
-    private final PeerLogging peerLogging;
+public class OutgoingConnection extends Thread implements BitFieldEventListener {
     private final String destination_host_name;
-    private Socket connection;
     private final int destination_port;
     private final int destination_peer_id;
     private final int self_peer_id;
     private final HandShakeMessage handShakeMessage;
-
+    ObjectOutputStream objectOutputStream;
+    ObjectInputStream objectInputStream;
+    private Socket connection;
     public OutgoingConnection(String destination_host_name, int destination_port, int self_peer_id, int destination_peer_id) {
         this.destination_host_name = destination_host_name;
         this.self_peer_id = self_peer_id;
         this.destination_peer_id = destination_peer_id;
         this.destination_port = destination_port;
         handShakeMessage = new HandShakeMessage(this.self_peer_id);
-        peerLogging = PeerLogging.getInstance();
+    }
+
+    public ObjectOutputStream getObjectOutputStream() {
+        return objectOutputStream;
     }
 
     public int getDestination_peer_id() {
         return destination_peer_id;
-    }
-
-    synchronized public void sendChokesAndUnChokes() {
-
-        System.out.println("Calculating preferred neighbours");
-        Peer.getInstance().calculatePreferredNeighbours();
-        System.out.println("-PREFERRED NEIGHBOURS are - " + Peer.preferredNeighborsList);
-        Peer.getInstance().resetDownloadCounters();
-        System.out.println("-PRIORITY QUEUE is - " + Peer.getInstance().priorityQueue);
-        Peer.getInstance().getPreferredNeighborsList().forEach((pN -> {
-            Peer.getInstance().outgoingConnections.forEach((outgoingConnection -> {
-                if (outgoingConnection.getDestination_peer_id() == pN) {
-                    if (Peer.getInstance().getPreferredNeighborsList().contains(pN)) {
-                        outgoingConnection.sendUnChokeMessages();
-                    } else if (!Peer.getInstance().getPreferredNeighborsList().contains(pN))
-                        outgoingConnection.sendChokeMessages();
-                }
-            }));
-        }));
-        peerLogging.changeOfPreferredNeighboursLog(new ArrayList<>(Peer.preferredNeighborsList));
     }
 
     public void triggerPeriodicMessaging() throws InterruptedException {
@@ -60,7 +40,7 @@ class OutgoingConnection extends Thread implements BitFieldEventListener {
         // send un choke message
         Peer.updateCloseConnection();
         Thread.sleep(CommonConfigFileReader.un_chocking_interval * 1000L);
-        sendChokesAndUnChokes();
+        MessageSender.sendChokesAndUnChokes();
     }
 
     private boolean waitingForConnection() {
@@ -68,7 +48,7 @@ class OutgoingConnection extends Thread implements BitFieldEventListener {
             System.out.println("Waiting for connection");
             connection = new Socket(destination_host_name, destination_port);
             return true;
-        }catch(Exception e){
+        } catch (Exception e) {
             return false;
         }
     }
@@ -76,7 +56,7 @@ class OutgoingConnection extends Thread implements BitFieldEventListener {
     public void run() {
         try {
             Thread.sleep(2000);
-            while(!waitingForConnection());
+            while (!waitingForConnection()) ;
             objectOutputStream = new ObjectOutputStream(connection.getOutputStream());
             objectInputStream = new ObjectInputStream(connection.getInputStream());
             Thread.sleep(1000);
@@ -84,31 +64,18 @@ class OutgoingConnection extends Thread implements BitFieldEventListener {
             HandShakeMessageUtils.sendHandshake(objectOutputStream, handShakeMessage);
             HandShakeMessageUtils.receiveHandshake(objectInputStream);
 
-
             Thread.sleep(CommonConfigFileReader.un_chocking_interval * 1000L);
-//            while(HandShakeMessageUtils.getRecvCounter() != PeerInfoConfigFileReader.numberOfPeers-1
-//                    && HandShakeMessageUtils.getSendCounter()!= PeerInfoConfigFileReader.numberOfPeers-1) Thread.sleep(10);
-
-
             sendBitFieldMessage(objectOutputStream);
 
             Thread.sleep(CommonConfigFileReader.un_chocking_interval * 1000L);
-
             while (HandShakeMessageUtils.getOutgoingBitfields() != PeerInfoConfigFileReader.numberOfPeers - 1
                     && HandShakeMessageUtils.getIncomingBitFieldCounter() != PeerInfoConfigFileReader.numberOfPeers - 1)
                 Thread.sleep(10);
-
-
-            // starting the chokehandler
-//            BUG: chokehandler does not work
-//            ChokeHandler.getInstance();
-
 
             // send infinitely
             while (!Peer.isClose_connection()) {
                 triggerPeriodicMessaging();
             }
-
 
             objectOutputStream.close();
             objectInputStream.close();
@@ -132,7 +99,6 @@ class OutgoingConnection extends Thread implements BitFieldEventListener {
             }
         }
     }
-
 
 
     synchronized private void sendBitFieldMessage(ObjectOutputStream objectOutputStream) throws Exception {

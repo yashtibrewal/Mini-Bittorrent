@@ -18,8 +18,8 @@ public class IncomingConnectionHandler extends Thread {
     private final HandShakeMessage handShakeMessage;
     int self_peer_id;
     int client_peer_id;
-    ObjectInputStream listening_stream;
-    ObjectOutputStream speaking_stream;
+    ObjectInputStream inputStream;
+    ObjectOutputStream ouputStream;
     int message_len_val, bytes_read_from_stream;
     byte[] message_len_arr;
     byte[] actual_message_without_len;
@@ -31,84 +31,73 @@ public class IncomingConnectionHandler extends Thread {
         peerLogging = PeerLogging.getInstance();
     }
 
-    public void listenMessage() throws IOException {
+    public void listenAndParseActualMessage() throws IOException {
         // memory for reading message length header
         message_len_arr = new byte[4];
-
         // reading the message length header
         for (int i = 0; i < message_len_arr.length; i++) {
-            message_len_arr[i] = (byte) listening_stream.read();
+            message_len_arr[i] = (byte) inputStream.read();
         }
         // converting to readable int
         message_len_val = new BigInteger(message_len_arr).intValue();
-
         // breaking at the end of the stream
         if (message_len_val == -1) {
             return;
         }
-
         // memory declaration for reading the payload
         actual_message_without_len = new byte[message_len_val];
 
         for (int i = 0; i < actual_message_without_len.length; i++) {
-            actual_message_without_len[i] = (byte) listening_stream.read();
+            actual_message_without_len[i] = (byte) inputStream.read();
         }
-
         // parsing the payload
         MessageParser.parse(new ActualMessage(message_len_arr, actual_message_without_len), client_peer_id);
-
-
     }
 
     public void run() {
 
         // handshake message reading
 
-        try {   
-            listening_stream = new ObjectInputStream(connection.getInputStream());
-            speaking_stream = new ObjectOutputStream(connection.getOutputStream());
+        try {
+            inputStream = new ObjectInputStream(connection.getInputStream());
+            ouputStream = new ObjectOutputStream(connection.getOutputStream());
             Thread.sleep(1000);
-            // Check if it's the actual peer_id
-            // TODO: Ask faculty/TA how can server check the peer id
-//            if(!(new HandShakeMessage(handshake_32_byte_buffer).checkPeerId(1000))){
-//                peerLogging.genericErrorLog("Invalid Peer Id");
-//            }
 
-            //recv handshake
-            this.client_peer_id = HandShakeMessageUtils.receiveHandshake(listening_stream);
+            //receive handshake
+            this.client_peer_id = HandShakeMessageUtils.receiveHandshake(inputStream);
             //sending handshake
-            HandShakeMessageUtils.sendHandshake(speaking_stream, handShakeMessage);
+            HandShakeMessageUtils.sendHandshake(ouputStream, handShakeMessage);
 
-//            while(HandShakeMessageUtils.getRecvCounter() != PeerInfoConfigFileReader.numberOfPeers-1 && HandShakeMessageUtils.getSendCounter()!= PeerInfoConfigFileReader.numberOfPeers-1) Thread.sleep(10);
-
+            // Wait for syncing all peers to common point
             Thread.sleep(CommonConfigFileReader.un_chocking_interval * 1000L);
-            //listen to bitfield message first
-            while (HandShakeMessageUtils.getOutgoingBitfields() != PeerInfoConfigFileReader.numberOfPeers - 1
-                    && HandShakeMessageUtils.getIncomingBitFieldCounter() != PeerInfoConfigFileReader.numberOfPeers - 1)
+
+            // Wait for the outgoing thread to send out the bit field messages.
+            while (HandShakeMessageUtils.getOutgoingBitfields() != PeerInfoConfigFileReader.numberOfPeers - 1)
                 Thread.sleep(10);
-            listenMessage();
+
+            // Single read for bit field message read.
+            listenAndParseActualMessage();
 
             Thread.sleep(CommonConfigFileReader.un_chocking_interval * 1000L);
             // listen infinitely
             while (!Peer.isClose_connection()) {
-                listenMessage();
+                listenAndParseActualMessage();
             }
 
             peerLogging.closeLogger();
-            listening_stream.close();
-            speaking_stream.close();
+            inputStream.close();
+            ouputStream.close();
             connection.close();
         } catch (Exception ioException) {
             ioException.printStackTrace();
         } finally {
-
             deleteChunks();
             try {
-                if (speaking_stream != null) {
-                    speaking_stream.close();
+                if (ouputStream != null) {
+                    ouputStream.close();
                 }
-                if (listening_stream != null) {
-                    listening_stream.close();
+                if (inputStream != null) {
+                    inputStream.close();
                 }
                 if (connection != null) {
                     connection.close();

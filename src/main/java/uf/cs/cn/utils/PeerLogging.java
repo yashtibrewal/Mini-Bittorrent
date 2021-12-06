@@ -15,8 +15,8 @@ import java.util.logging.SimpleFormatter;
 // TODO: convert to single ton
 public class PeerLogging {
     private static PeerLogging peerLogging;
-    private String logFileName;
     private final String peerId;
+    private String logFileName;
     private FileHandler peerLogFileHandler;
     private SimpleDateFormat dateFormat = null;
     private Logger peerLogger;
@@ -85,7 +85,7 @@ public class PeerLogging {
         }
     }
 
-    public synchronized void changeOfOptimisticallyUnchokedNeighbourLog(String peer) {
+    public synchronized void changeOfOptimisticallyUnChokedNeighbourLog(String peer) {
         try {
             Calendar c = Calendar.getInstance();
             String currTime = this.dateFormat.format(c.getTime());

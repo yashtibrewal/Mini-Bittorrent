@@ -1,8 +1,8 @@
 This readme file contains the description for the team-29, with members:
 
-1) Girish Mallya (UFID 57907674)
-2) Punakshi Chaand (UFID 81375377)
-3) Yash Tibrewal (UFID 86029690)
+1) Girish Mallya
+2) Punakshi Chaand
+3) Yash Tibrewal 
 
 * This repository contains the completed code and log files based on our testing
   completed on the CISE servers.
